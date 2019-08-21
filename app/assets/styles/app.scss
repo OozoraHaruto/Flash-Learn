@@ -1,0 +1,50 @@
+//Global
+// @import "mixins";
+//
+@import "bootstrap";
+// @import "foundation";
+// @include foundation-everything;
+@import "animate.min.css";
+
+// functions
+@import "fonts";
+
+// Components
+// @import "components/mainPage";
+
+// CSS hacks
+:focus{outline:none;} //remove lue box shadow
+
+$navHeight: 56px;
+
+body, html{
+  margin: 0;
+  padding: 0;
+}
+ul.list-unstyled{
+  list-style: none;
+}
+.pad-away-from-nav{
+  padding-top: $navHeight;
+}
+
+.maxHeightPage{
+  min-height: 100vh;
+}
+.maxHeightPageWithNav{
+  min-height: calc(100vh - #{$navHeight});
+}
+.maxWidthPage{
+  width: 100%;
+}
+.wholePage{
+  @extend .maxHeightPage;
+  @extend .maxWidthPage;
+  position: relative;
+  padding: 64px 0 20px 0;
+}
+.wholePageWithNav{
+  @extend .maxWidthPage;
+  position: relative;
+  padding: 64px 0 20px 0;
+}
