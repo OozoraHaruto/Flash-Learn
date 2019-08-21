@@ -6,6 +6,7 @@ import {Provider} from 'react-redux';
 // Personal Modules
 // import {startGetUserSession} from 'app/actions/account'
 import Router from 'app/router/';
+import firebase from 'app/firebase';
 
 //App CSS
 require('applicationStyles');
