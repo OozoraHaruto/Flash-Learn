@@ -41,10 +41,6 @@ module.exports = {
       chunks: "all"
     }
   },
-  output:{
-    path: __dirname,
-    filename: './public/bundle.js'
-  },
   plugins: [
     new webpack.ProvidePlugin({
       '$': 'jquery',
@@ -87,7 +83,8 @@ module.exports = {
       actions: 'app/redux/actions.jsx',
       reducers: 'app/redux/reducers.jsx',
       reduxConstants: 'app/redux/constants.jsx',
-      configureStore: 'app/redux/configureStore.jsx'
+      configureStore: 'app/redux/configureStore.jsx',
+      reuse: 'app/components/UIReuseable',
     },
     extensions: ['.js', '.jsx']
   },

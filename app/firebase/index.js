@@ -14,6 +14,6 @@ try {
 } catch (e) {
 
 }
-export var emailProvider  = new firebase.auth.EmailAuthProvider();
-export var firebaseRef    = firebase.database().ref();
+// export var emailProvider  = new firebase.auth.EmailAuthProvider();
+// export var firebaseRef    = firebase.database().ref();
 export default firebase;

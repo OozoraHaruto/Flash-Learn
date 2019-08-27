@@ -7,7 +7,7 @@
     "postinstall": "npm run build",
     "start": "nf start",
     "build": "webpack",
-    "build-dev": "webpack -w --progress"
+    "build-dev": "webpack --mode=development -w --progress"
   },
   "author": {
     "name": "Malcolm Chew",
