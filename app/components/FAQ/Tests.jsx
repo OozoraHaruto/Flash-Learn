@@ -2,11 +2,17 @@ import React, { Component } from 'react'
 
 export default class Tests extends Component {
   componentDidMount(){
-    var hash = document.location.hash
-    if (hash != "") {
-      $('a[href="' + hash + '"]').tab('show')
+    this.changeTab()
+  }
+  componentDidUpdate(prevProps){
+    this.changeTab()
+  }
+  changeTab(){
+    if (this.props.location.hash) {
+      $('a[href="' + this.props.location.hash + '"]').tab('show')
     }
   }
+
   render() {
     return (
       <div className='container pt-3'>
@@ -22,17 +28,32 @@ export default class Tests extends Component {
               <li className="nav-item">
                 <a className="nav-link" id="truefalse-tab" data-toggle="pill" href="#truefalse" role="tab" aria-controls="truefalse" aria-selected="false">True/False</a>
               </li>
+              <li className="nav-item">
+                <a className="nav-link" id="ultimate-tab" data-toggle="pill" href="#ultimate" role="tab" aria-controls="ultimate" aria-selected="false">Ultimate (All)</a>
+              </li>
             </ul>
           </div>
           <div className="card-body tab-content">
             <div className="tab-pane fade show active" id="mcq" role="tabpanel" aria-labelledby="mcq-tab">
-              mcq
+              User will be given either the front or back of the flashcard and asked to pick from 4-6 choices.<br />
+              User can choose the number of words to be tested.
+              {/* TODO: Add screenshot when function is done */}
             </div>
             <div className="tab-pane fade" id="openended" role="tabpanel" aria-labelledby="openended-tab">
-              openended
+              User will be given either the front or back of the flashcard and asked type out the correct answer.<br />
+              User can choose the number of words to be tested.
+              {/* TODO: Add screenshot when function is done */}
             </div>
             <div className="tab-pane fade" id="truefalse" role="tabpanel" aria-labelledby="truefalse-tab">
-              true
+              User will be given both the front and back of the flashcard and asked if it is correct.<br />
+              User can choose the number of words to be tested.
+              {/* TODO: Add screenshot when function is done */}
+            </div>
+            <div className="tab-pane fade" id="ultimate" role="tabpanel" aria-labelledby="truefalse-tab">
+              This is the ultimate test.<br />
+              User will be tested on all the flashcard.<br />
+              All three tests (<a href="#mcq">MCQ</a>, <a href="#openended">Open Ended</a> and <a href="#truefalse">true/false</a>) will be tested. Questions will be randomly assigned.
+              {/* TODO: Add screenshot when function is done */}
             </div>
           </div>
         </div>

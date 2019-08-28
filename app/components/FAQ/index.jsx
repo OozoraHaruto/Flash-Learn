@@ -24,6 +24,9 @@ export default class index extends Component {
               <li className="list-group-item">
                 <NormLink to="/faq/tests#truefalse" title="True/False" />
               </li>
+              <li className="list-group-item">
+                <NormLink to="/faq/tests#ultimate" title="Ultimate (All)" />
+              </li>
             </ul>
           </div>
 
