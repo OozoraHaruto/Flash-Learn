@@ -5,7 +5,7 @@ import DocumentMeta from 'react-document-meta';
 export class MainPage extends React.Component{
   render(){
     var meta = {
-      title: "Page Title"
+      title: "Home"
     }
 
     return(

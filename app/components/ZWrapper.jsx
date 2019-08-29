@@ -2,10 +2,31 @@ import React from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { NavBarLink } from 'reuse';
+import { NavBarLink, NormLink, NavDropdown } from 'reuse';
 
 export class ZWrapper extends React.Component{
-  render(){
+  render() {
+    var renderRightSideBarLoggedIn = () => {
+      var { name, profilePic, verified } = this.props.auth;
+
+      return (
+        <React.Fragment>
+          <NavDropdown title={<img src={profilePic + "?s=36"} alt="Profile Picture" className="rounded-circle" />} id="navFAQ" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
+            <NormLink to="/logout" title="Logout" className="dropdown-item" />
+          </NavDropdown>
+        </React.Fragment>
+      )
+    }
+
+    var renderRightSideBarLoggedOut = () => {
+      return (
+        <React.Fragment>
+          <NavBarLink to="/login" title="Login" />
+          <NavBarLink to="/signup" title="Sign Up" />
+        </React.Fragment>
+      )
+    }
+
     return(
       <div>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -16,7 +37,17 @@ export class ZWrapper extends React.Component{
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
-              <NavBarLink to="/faq" title="FAQ" />
+              <NavDropdown title="FAQ" id="navFAQ" topBar>
+                <NormLink to="/faq/tests" title="Tests" className="dropdown-item" />
+                <NormLink to="/faq/gamification" title="Gamification" className="dropdown-item" />
+                <div className="dropdown-divider" />
+                <NormLink to="/faq" title="All" className="dropdown-item" />
+              </NavDropdown>
+              
+            </ul>
+            <ul className="navbar-nav ml-auto">
+              {(!jQuery.isEmptyObject(this.props.auth)) && renderRightSideBarLoggedIn()}
+              {(jQuery.isEmptyObject(this.props.auth)) && renderRightSideBarLoggedOut()}
             </ul>
           </div>
         </nav>
@@ -25,4 +56,10 @@ export class ZWrapper extends React.Component{
     )
   }
 }
-export default ZWrapper;
+export default withRouter(
+  connect((state) => {
+    return {
+      auth: state.authReducer
+    }
+  })(ZWrapper)
+);

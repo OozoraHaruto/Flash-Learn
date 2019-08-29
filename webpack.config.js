@@ -52,7 +52,7 @@ module.exports = {
         FIREBASE_API_KEY: JSON.stringify(process.env.FIREBASE_API_KEY),
         FIREBASE_AUTH_DOMAIN: JSON.stringify(process.env.FIREBASE_AUTH_DOMAIN),
         FIREBASE_DATABASE_URL: JSON.stringify(process.env.FIREBASE_DATABASE_URL),
-        FIREBASE_API_KEY: JSON.stringify(process.env.FIREBASE_PROJECT_ID),
+        FIREBASE_PROJECT_ID: JSON.stringify(process.env.FIREBASE_PROJECT_ID),
         FIREBASE_MESSAGING_SENDER_ID: JSON.stringify(process.env.FIREBASE_MESSAGING_SENDER_ID),
         FIREBASE_APP_ID: JSON.stringify(process.env.FIREBASE_APP_ID),
       }
@@ -84,6 +84,7 @@ module.exports = {
       reducers: 'app/redux/reducers.jsx',
       reduxConstants: 'app/redux/constants.jsx',
       configureStore: 'app/redux/configureStore.jsx',
+      firebase: 'app/firebase',
       reuse: 'app/components/UIReuseable',
     },
     extensions: ['.js', '.jsx']
@@ -96,7 +97,7 @@ module.exports = {
           presets: ['react', 'env', 'stage-0']
         },
         test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/
+        exclude: /(node_modules|bower_components)/,
       }, {
         test: /\.(s)?css$/,
         use: [
@@ -104,11 +105,15 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
+              autoprefixer: true,
+              minimize: true,
               sourceMap: true
             }
           }, {
             loader: 'sass-loader',
             options: {
+              autoprefixer: true,
+              minimize: true,
               sourceMap: true,
               includePaths: [
                 path.resolve(__dirname, './node_modules/bootstrap/scss')
@@ -119,5 +124,5 @@ module.exports = {
       }
     ]
   },
-  devtool: process.env.NODE_ENV === 'production' ? undefined : 'eval-source-map'
+  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval-source-map'
 };

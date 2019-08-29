@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 // import {startGetUserSession} from 'app/actions/account'
 import Router from 'app/router/';
 import firebase from 'app/firebase';
+import { accounts } from 'actions'
 
 //App CSS
 require('applicationStyles');
@@ -21,6 +22,21 @@ var store = configure();
 
 //check if there is a sessionToken if there is get data from database and add to redux state
 // if (localStorage.getItem("sessionToken")) store.dispatch(startGetUserSession());
+
+firebase.auth().onAuthStateChanged((user) => {
+  const { login, logout } = accounts
+  if (user) {
+    store.dispatch(login({
+      name: user.displayName,
+      profilePic: user.photoURL,
+      verified: user.emailVerified
+    }));
+    console.log(user.hash)
+    console.log(user)
+  } else {
+    store.dispatch(logout())
+  }
+})
 
 // Check for user logged in
 export var checkLoggedIn = () =>{ //return if user is logged in

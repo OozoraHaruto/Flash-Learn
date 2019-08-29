@@ -1,4 +1,7 @@
-import firebase from 'firebase/app'
+import React from 'react';
+import firebase from '@firebase/app';
+import '@firebase/auth';
+import '@firebase/database';
 
 try {
   const config = {
@@ -14,6 +17,5 @@ try {
 } catch (e) {
 
 }
-// export var emailProvider  = new firebase.auth.EmailAuthProvider();
-// export var firebaseRef    = firebase.database().ref();
+
 export default firebase;

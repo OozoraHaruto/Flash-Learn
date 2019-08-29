@@ -1,1 +1,3 @@
-import * as rConst from "reduxConstants";
+import * as accounts from 'app/components/Account/actions'
+
+export { accounts };

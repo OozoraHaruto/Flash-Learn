@@ -22,4 +22,13 @@ Object.defineProperty(exports, 'NormLink', {
   }
 });
 
+var NavDropdown = require('./NavDropdown.jsx');
+
+Object.defineProperty(exports, 'NavDropdown', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(NavDropdown).default;
+  }
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

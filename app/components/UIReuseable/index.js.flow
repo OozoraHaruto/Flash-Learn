@@ -2,3 +2,4 @@
 
 export { default as NavBarLink } from './NavBarLink';
 export { default as NormLink } from './NormLink';
+export { default as NavDropdown } from './NavDropdown';

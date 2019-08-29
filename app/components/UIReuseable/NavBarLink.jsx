@@ -9,7 +9,7 @@ const NavBarLink = ({
   activeClassName,
 }) => {
   return(
-    <li className="nav-item">
+    <li className="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
       <NavLink className={className} to={to} activeClassName={activeClassName}>{title}</NavLink>
     </li>
   )

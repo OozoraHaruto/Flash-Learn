@@ -6,6 +6,13 @@ export const authReducer = (state = {}, action) =>{
       return{
         ...action.session
       }
+    case rConst.EDIT_SESSION:
+      return {
+        ...state,
+        ...action.editedInfo
+      }
+    case rConst.DELETE_SESSION:
+      return {}
     default:
       return state;
   }
