@@ -32,7 +32,7 @@ export const startAddUser = (email, password) =>{
   })
 }
 
-export const startLoginUser           = (email, password) =>{
+export const startLoginUser = (email, password) =>{
   const cleanEmail                    = email.trim().toLowerCase()
 
   return firebase.auth().signInWithEmailAndPassword(cleanEmail, password).catch(e =>{
@@ -44,7 +44,7 @@ export const startLoginUser           = (email, password) =>{
 export const getUserGravatar = (email, hashed=true) =>{
   const hash                          = hashed ? email : crypto.createHash('md5').update(email).digest("hex")
   
-  return axios.get("https://en.gravatar.com/" + hash + ".json")
+  return axios.get(`https://en.gravatar.com/${hash}.json`)
     .then(function (res) {
       return {success: true, ...res.data};
     }).catch(function (error) {

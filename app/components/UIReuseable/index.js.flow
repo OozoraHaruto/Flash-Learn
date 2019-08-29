@@ -1,5 +1,10 @@
 // @flow
 
+// Form
+export { default as MiddleWrapper } from './Form/MiddleWrapper';
+export { default as TextField } from './Form/TextField';
+
+// Others
 export { default as NavBarLink } from './NavBarLink';
 export { default as NormLink } from './NormLink';
 export { default as NavDropdown } from './NavDropdown';

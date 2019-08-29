@@ -28,8 +28,10 @@ export default class SignUp extends Component {
 
     return (
       <DocumentMeta {...meta}>
-        <div className="container mt-3">
-          <SignUpForm login={false} handleFormSubmission={this.handleUserRegistration} />
+        <div className="container-fluid p-0">
+          <MiddleWrapper boxSizing="col-xl-3 col-lg-5 col-md-7 col-9">
+            <SignUpForm login={false} handleFormSubmission={this.handleUserRegistration} />
+          </MiddleWrapper>
         </div>
       </DocumentMeta>
     )

@@ -2,12 +2,17 @@
 // @import "mixins";
 //
 @import "bootstrap";
-// @import "foundation";
-// @include foundation-everything;
 @import "animate.min.css";
 
 // functions
 @import "fonts";
+
+//overwrite bootstrap
+$navHeight: 56px;
+$color-light: #f6faff;
+$color-active: #006eea;
+$color-dark: #212529;
+@import "bootstrap_components/form";
 
 // Components
 // @import "components/mainPage";
@@ -41,10 +46,11 @@ ul.list-unstyled{
   @extend .maxHeightPage;
   @extend .maxWidthPage;
   position: relative;
-  padding: 64px 0 20px 0;
+  padding: 10px;
 }
 .wholePageWithNav{
+  @extend .maxHeightPageWithNav;
   @extend .maxWidthPage;
   position: relative;
-  padding: 64px 0 20px 0;
+  padding: 10px;
 }
