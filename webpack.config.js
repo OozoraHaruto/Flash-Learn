@@ -82,7 +82,7 @@ module.exports = {
       myJS: 'app/assets/js',
       actions: 'app/redux/actions.jsx',
       reducers: 'app/redux/reducers.jsx',
-      reduxConstants: 'app/redux/constants.jsx',
+      reduxConstants: 'app/redux/Constants.jsx',
       configureStore: 'app/redux/configureStore.jsx',
       firebase: 'app/firebase',
       reuse: 'app/components/UIReuseable',
