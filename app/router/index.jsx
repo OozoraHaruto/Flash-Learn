@@ -1,22 +1,23 @@
 //Modules
-import React from 'react';
+import React, { Suspense, lazy }  from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
 
 import firebase from 'app/firebase';
 
 //Components
 // import Error404 from 'app/components/Errors/Error404';
-import MainPage from 'MainPage';
-import ZWrapper from 'ZWrapper';
-import Credits from 'Credits';
+import Fallback from 'app/components/Fallback';
+const MainPage            = lazy(() => import(/* webpackChunkName: "cpo_MainPage" */ 'MainPage'));
+const ZWrapper            = lazy(() => import(/* webpackChunkName: "cpo_ZWrapper" */ 'ZWrapper'));
+const Credits             = lazy(() => import(/* webpackChunkName: "cpo_Credits" */ 'Credits'));
 
-import AccLogin from 'app/components/Account/Login';
-import AccSignUp from 'app/components/Account/SignUp';
-import AccLogout from 'app/components/Account/Logout';
+const AccLogin            = lazy(() => import(/* webpackChunkName: "cpo_Login" */ 'app/components/Account/Login'));
+const AccSignUp           = lazy(() => import(/* webpackChunkName: "cpo_SignUp" */ 'app/components/Account/SignUp'));
+const AccLogout           = lazy(() => import(/* webpackChunkName: "cpo_Logout" */ 'app/components/Account/Logout'));
 
-import FAQMenu from 'app/components/FAQ/index';
-import FAQTests from 'app/components/FAQ/Tests';
-import FAQGamification from 'app/components/FAQ/Gamification';
+const FAQMenu             = lazy(() => import(/* webpackChunkName: "cpo_FAQMenu" */ 'app/components/FAQ/index'));
+const FAQTests            = lazy(() => import(/* webpackChunkName: "cpo_FAQTests" */ 'app/components/FAQ/Tests'));
+const FAQGamification     = lazy(() => import(/* webpackChunkName: "cpo_FAQGamification" */ 'app/components/FAQ/Gamification'));
 
 // Public - Route
 // Not Logged In - NoAuthRoute
@@ -35,24 +36,26 @@ const AuthRoute = ({ component: Component, ...rest }) => (
 
 export default(
   <Router>
-    <ZWrapper>
-      <Switch>
-        {/* <Route exact path='/' component={MainPage} /> */}
-        <Redirect exact from="/" to="/faq" />
+    <Suspense fallback={<Fallback />}>
+      <ZWrapper>
+        <Switch>
+          {/* <Route exact path='/' component={MainPage} /> */}
+          <Redirect exact from="/" to="/faq" />
 
-        <NoAuthRoute exact path='/login' component={AccLogin} />
-        <NoAuthRoute exact path='/signup' component={AccSignUp} />
-        <AuthRoute exact path='/logout' component={AccLogout} />
+          <NoAuthRoute exact path='/login' component={AccLogin} />
+          <NoAuthRoute exact path='/signup' component={AccSignUp} />
+          <AuthRoute exact path='/logout' component={AccLogout} />
 
-        <Route exact path='/faq' component={FAQMenu} />
-        <Route exact path='/faq/tests' component={FAQTests} />
-        <Route exact path='/faq/gamification' component={FAQGamification} />
+          <Route exact path='/faq' component={FAQMenu} />
+          <Route exact path='/faq/tests' component={FAQTests} />
+          <Route exact path='/faq/gamification' component={FAQGamification} />
 
 
-        <Route exact path='/credits' component={Credits} />
+          <Route exact path='/credits' component={Credits} />
 
-        {/* <Route component={Error404} /> */}
-      </Switch>
-    </ZWrapper>
+          {/* <Route component={Error404} /> */}
+        </Switch>
+      </ZWrapper>
+    </Suspense>
   </Router>
 )

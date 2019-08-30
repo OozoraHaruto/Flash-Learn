@@ -1,15 +1,16 @@
-import React, { Component } from 'react'
+import React from 'react'
+import DocumentMeta from 'react-document-meta';
 
-export default class Credits extends Component {
-  render() {
-    return (
+const Credits = () =>{
+  return(
+    <DocumentMeta title="Credits">
       <div className="container pt-3">
         <div id="sectionImages" role="tablist" aria-multiselectable="true">
           <div className="card">
             <a data-toggle="collapse" data-parent="#sectionImages" href="#sectionImagesData" aria-expanded="true" aria-controls="sectionImagesData">
               <div className="card-header" role="tab" id="sectionImagesHeader">
                 <h5 className="mb-0">
-                    Images
+                  Images
                 </h5>
               </div>
             </a>
@@ -38,6 +39,8 @@ export default class Credits extends Component {
           </div>
         </div>
       </div>
-    )
-  }
+    </DocumentMeta>
+  )
 }
+
+export default Credits
