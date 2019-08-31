@@ -5,7 +5,8 @@ import {Provider} from 'react-redux';
 
 // Personal Modules
 import Router from 'app/router/';
-import { auth } from 'firebase';
+// import { auth } from 'firebase';
+import firebase from 'app/firebase';
 import { accounts } from 'actions'
 
 //App CSS
@@ -18,7 +19,7 @@ require('myJS/all.jsx');
 import {configure} from 'configureStore';
 var store = configure();
 
-auth.onAuthStateChanged((user) => {
+firebase.auth().onAuthStateChanged((user) => {
   const { login, logout } = accounts
   if (user) {
     store.dispatch(login({

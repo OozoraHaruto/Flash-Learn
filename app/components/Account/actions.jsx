@@ -1,7 +1,8 @@
 import axios from 'axios';
 const crypto = require('crypto');
 
-import { auth, database } from 'firebase';
+// import { auth, database } from 'firebase';
+import firebase from 'app/firebase';
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
 
@@ -11,7 +12,7 @@ export const startAddUser = (email, password) =>{
     const cleanEmail                    = email.trim().toLowerCase()
     var newUser                         = {}
     var profile                         = {}
-    return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
+    return firebase.auth().createUserWithEmailAndPassword(cleanEmail, password).then(user => {
       newUser                           = user.user
       console.log(user)
       if(user.additionalUserInfo.isNewUser){
@@ -60,11 +61,11 @@ const getUserGravatar = (email) =>{
 }
 
 const writeToUserProfileDatabase = (id, data) =>{
-  return database.collection(dbConst.COL_USER).doc(id).set(data)
+  return firebase.firestore().collection(dbConst.COL_USER).doc(id).set(data)
 }
 
 const sendVerificationEmail = () =>{
-  return auth.currentUser.sendEmailVerification().then(() =>{
+  return firebase.auth().currentUser.sendEmailVerification().then(() =>{
     return true
   }).catch(e =>{
     console.log("sendVerificationEmail", e);
@@ -75,14 +76,14 @@ const sendVerificationEmail = () =>{
 export const startLoginUser = (email, password) => {
   const cleanEmail = email.trim().toLowerCase()
 
-  return auth.signInWithEmailAndPassword(cleanEmail, password).catch(e => {
+  return firebase.auth().signInWithEmailAndPassword(cleanEmail, password).catch(e => {
     console.log('Unable to login', e);
     return { success: false, ...e };
   })
 }
 
 export const startLogoutUser = () =>{
-  return auth.signOut().then( () =>{
+  return firebase.auth().signOut().then( () =>{
     return { success: true };
   }).catch(e =>{
     console.log("startLogoutUser", error);
@@ -106,7 +107,7 @@ export const logout = () => {
 
 // Profile
 export const getUserProfile = id =>{
-  return database.collection(dbConst.COL_USER).doc(id).get().then(doc =>{
+  return firebase.firestore().collection(dbConst.COL_USER).doc(id).get().then(doc =>{
     if(!doc.exists){
       console.log("getUserProfile", "no such file")
       return {success: false, message: "No such file"}
