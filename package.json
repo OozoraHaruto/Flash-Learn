@@ -56,10 +56,11 @@
     "script-loader": "^0.7.0",
     "style-loader": "^0.23.1",
     "tai-password-strength": "^1.1.1",
-    "uglifyjs-webpack-plugin": "^2.0.1",
     "uuid": "^3.3.2",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "terser-webpack-plugin": "^1.4.1"
+  }
 }

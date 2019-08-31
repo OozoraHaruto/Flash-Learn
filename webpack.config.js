@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 const path = require('path');
 var envFile = require('node-env-file');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -21,22 +21,7 @@ module.exports = {
     jquery: 'jQuery'
   },
   optimization: {
-    minimizer: [new UglifyJsPlugin({
-      cache: true,
-      parallel: true,
-      extractComments: true,
-      uglifyOptions: {
-        warnings: false,
-        parse: {},
-        compress: {},
-        mangle: true, // Note `mangle.properties` is `false` by default.
-        output: null,
-        toplevel: true,
-        nameCache: null,
-        ie8: false,
-        keep_fnames: false,
-      }
-    })],
+    minimizer: [new TerserPlugin()],
     splitChunks: {
       chunks: "all"
     }
