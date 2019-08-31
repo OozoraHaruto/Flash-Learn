@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-// import { auth, database } from 'firebase';
-import firebase from 'app/firebase';
+import { auth, database } from 'firebase';
 import Header from 'app/components/Account/subComponents/Profile/Header'
 import { accounts } from 'actions'
 
@@ -22,20 +21,20 @@ class Profile extends Component {
     var state = this.state
 
     if (!this.props.match.params.id) {
-      if (!firebase.auth().currentUser) {
+      if (!auth.currentUser) {
         state.id = "asd" // FIXME: Cannot push history, temp fix
         // this.props.history.push({ pathname: `/login?from=${encodeURI(this.props.location.pathname)}` })
       } else {
-        state.id = firebase.auth().currentUser.uid
+        state.id = auth.currentUser.uid
       }
     } else {
       state.id = this.props.match.params.id
     }
 
-    if (firebase.auth().currentUser) {
-      state.isMe = (firebase.auth().currentUser.uid == state.id)
+    if (auth.currentUser) {
+      state.isMe = (auth.currentUser.uid == state.id)
       if (state.isMe) {
-        const user = firebase.auth().currentUser
+        const user = auth.currentUser
         if (user.displayName) {
           state.profile = {
             name: user.displayName,
