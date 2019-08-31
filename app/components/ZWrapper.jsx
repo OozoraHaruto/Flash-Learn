@@ -14,6 +14,7 @@ const ZWrapper = ({
       <React.Fragment>
         <NavDropdown title={<img src={profilePic + "?s=36"} alt="Profile Picture" className="rounded-circle" />} id="navFAQ" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
           <span className="dropdown-item-text">Hi {name}</span>
+          <NormLink to="/profile" title="Profile" className="dropdown-item" />
           <div className="dropdown-divider" />
           <NormLink to="/logout" title="Logout" className="dropdown-item" />
         </NavDropdown>

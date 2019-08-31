@@ -1,6 +1,7 @@
 //Modules
 import React, { Suspense, lazy }  from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
+import queryString from 'query-string';
 
 import firebase from 'app/firebase';
 
@@ -14,6 +15,7 @@ const Credits             = lazy(() => import(/* webpackChunkName: "cpo_Credits"
 const AccLogin            = lazy(() => import(/* webpackChunkName: "cpo_Login" */ 'app/components/Account/Login'));
 const AccSignUp           = lazy(() => import(/* webpackChunkName: "cpo_SignUp" */ 'app/components/Account/SignUp'));
 const AccLogout           = lazy(() => import(/* webpackChunkName: "cpo_Logout" */ 'app/components/Account/Logout'));
+const AccProfile           = lazy(() => import(/* webpackChunkName: "cpo_Profile" */ 'app/components/Account/Profile'));
 
 const FAQMenu             = lazy(() => import(/* webpackChunkName: "cpo_FAQMenu" */ 'app/components/FAQ/index'));
 const FAQTests            = lazy(() => import(/* webpackChunkName: "cpo_FAQTests" */ 'app/components/FAQ/Tests'));
@@ -23,14 +25,18 @@ const FAQGamification     = lazy(() => import(/* webpackChunkName: "cpo_FAQGamif
 // Not Logged In - NoAuthRoute
 // Need Logged In - AuthRoute
 
-const NoAuthRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={(props) => (
-    (firebase.auth().currentUser) ? <Redirect to='/' /> : <Component {...props} />
-  )} />
-)
+const NoAuthRoute = ({ component: Component, ...rest }) => {
+  var query               = queryString.parse(rest.location.search)
+  console.log(query)
+  return ((
+    <Route {...rest} render={(props) => (
+      (firebase.auth().currentUser) ? <Redirect to={!query.from ? "/" : query.from } /> : <Component {...props} />
+    )} />
+  ))
+}
 const AuthRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (
-    (!firebase.auth().currentUser) ? <Redirect to='/login' /> : <Component {...props} />
+    (!firebase.auth().currentUser) ? <Redirect to={`/login?from=${encodeURI(rest.location.pathname)}`} /> : <Component {...props} />
   )} />
 )
 
@@ -45,6 +51,7 @@ export default(
           <NoAuthRoute exact path='/login' component={AccLogin} />
           <NoAuthRoute exact path='/signup' component={AccSignUp} />
           <AuthRoute exact path='/logout' component={AccLogout} />
+          <Route exact path={['/profile/:id', '/profile']} component={AccProfile} />
 
           <Route exact path='/faq' component={FAQMenu} />
           <Route exact path='/faq/tests' component={FAQTests} />

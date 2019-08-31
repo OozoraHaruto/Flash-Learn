@@ -12,7 +12,6 @@ const SignUp = ({ dispatch }) => {
     const { startAddUser } = accounts
 
     dispatch(startAddUser(email, password)).then(res => {
-      console.log(res)
       if (!res.success) {
         if (res.code) {
           if (res.code == 'auth/email-already-in-use') {

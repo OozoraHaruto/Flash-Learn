@@ -1,34 +1,45 @@
-import firebase from 'app/firebase';
 import axios from 'axios';
 const crypto = require('crypto');
 
+import { auth, database } from 'firebase';
+import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
 
+// Auth
 export const startAddUser = (email, password) =>{
   return (dispatch, getState) => {
     const cleanEmail                    = email.trim().toLowerCase()
     var newUser                         = {}
     var profile                         = {}
-    return firebase.auth().createUserWithEmailAndPassword(cleanEmail, password).then(user => {
+    return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
       newUser                           = user.user
+      console.log(user)
       if(user.additionalUserInfo.isNewUser){
         return getUserGravatar(cleanEmail)
       }
     }).then(function (res) {
       if (res.success){
         profile.displayName             = res.entry[0].name.formatted
-        profile.photoURL                = res.entry[0].thumbnailUrl
+        profile.photoURL                = `https://secure.gravatar.com/avatar/${res.entry[0].hash}`
+        profile.username                = res.entry[0].preferredUsername
       } else {
         profile.displayName             = "君の名は？"
-        profile.photoURL                = `https://www.gravatar.com/avatar/${res.hash}`
+        profile.photoURL                = `https://secure.gravatar.com/avatar/${res.hash}`
+        profile.username                = newUser.uid
       }
-      return newUser.updateProfile({...profile})
-    }).then(() =>{
+      var actions                       = [
+        newUser.updateProfile(profile),
+        writeToUserProfileDatabase(newUser.uid, profile),
+        sendVerificationEmail()
+      ]
       dispatch(login({
-        name                            : profile.displayName,
-        profilePic                      : profile.photoURL,
+        name: profile.displayName,
+        profilePic: profile.photoURL,
       }))
-      return {success: true}
+
+      return Promise.all(actions)
+    }).then(res => {
+      return { success: true }
     }).catch(e =>{
       console.log('Unable to signup', e);
       return {success: false, ...e};
@@ -36,17 +47,8 @@ export const startAddUser = (email, password) =>{
   }
 }
 
-export const startLoginUser = (email, password) =>{
-  const cleanEmail                    = email.trim().toLowerCase()
-
-  return firebase.auth().signInWithEmailAndPassword(cleanEmail, password).catch(e =>{
-    console.log('Unable to login', e);
-    return { success: false, ...e };
-  })
-}
-
-export const getUserGravatar = (email) =>{
-  const hash                          = crypto.createHash('md5').update(email).digest("hex")
+const getUserGravatar = (email) =>{
+  const hash                            = crypto.createHash('md5').update(email).digest("hex")
   
   return axios.get(`https://en.gravatar.com/${hash}.json`)
     .then(function (res) {
@@ -57,8 +59,30 @@ export const getUserGravatar = (email) =>{
     })
 }
 
+const writeToUserProfileDatabase = (id, data) =>{
+  return database.collection(dbConst.COL_USER).doc(id).set(data)
+}
+
+const sendVerificationEmail = () =>{
+  return auth.currentUser.sendEmailVerification().then(() =>{
+    return true
+  }).catch(e =>{
+    console.log("sendVerificationEmail", e);
+    return false
+  })
+}
+
+export const startLoginUser = (email, password) => {
+  const cleanEmail = email.trim().toLowerCase()
+
+  return auth.signInWithEmailAndPassword(cleanEmail, password).catch(e => {
+    console.log('Unable to login', e);
+    return { success: false, ...e };
+  })
+}
+
 export const startLogoutUser = () =>{
-  return firebase.auth().signOut().then( () =>{
+  return auth.signOut().then( () =>{
     return { success: true };
   }).catch(e =>{
     console.log("startLogoutUser", error);
@@ -77,4 +101,20 @@ export const logout = () => {
   return {
     type: rConst.DELETE_SESSION
   }
+}
+
+
+// Profile
+export const getUserProfile = id =>{
+  return database.collection(dbConst.COL_USER).doc(id).get().then(doc =>{
+    if(!doc.exists){
+      console.log("getUserProfile", "no such file")
+      return {success: false, message: "No such file"}
+    }else{
+      return {success: true, data: doc.data()}
+    }
+  }).catch(e =>{
+    console.log("getUserProfile", e)
+    return {success: false, message: e.message}
+  })
 }

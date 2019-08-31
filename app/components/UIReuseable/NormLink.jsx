@@ -13,8 +13,8 @@ const NormLink = ({
 }
 
 NormLink.propTypes ={
-  title               : PropTypes.string,
-  className           : PropTypes.string,
+  title               : PropTypes.string.isRequired,
+  className           : PropTypes.string.isRequired,
   to                  : PropTypes.string.isRequired,
 }
 

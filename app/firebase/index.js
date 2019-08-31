@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from '@firebase/app';
 import '@firebase/auth';
-import '@firebase/database';
+import '@firebase/firestore';
 
 try {
   const config = {
@@ -18,4 +18,6 @@ try {
 
 }
 
+export var database     = firebase.firestore()
+export var auth         = firebase.auth()
 export default firebase;
