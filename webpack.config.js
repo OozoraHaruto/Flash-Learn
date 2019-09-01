@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 const path = require('path');
 var envFile = require('node-env-file');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -14,19 +15,62 @@ module.exports = {
   entry: {
     jquery: "script-loader!jquery/dist/jquery.min.js",
     bootstrap: "script-loader!bootstrap/dist/js/bootstrap.bundle.min.js",
-    polyfill: 'babel-polyfill',
-    app: "./app/app.jsx",
+    polyfill: '@babel/polyfill',
+    main: "./app/app.jsx",
   },
   externals: {
     jquery: 'jQuery'
   },
   optimization: {
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin({
+      cache: true,
+      parallel: true,
+      extractComments: 'all',
+      terserOptions: {
+        ecma: undefined,
+        warnings: false,
+        parse: {},
+        compress: {},
+        mangle: true, // Note `mangle.properties` is `false` by default.
+        module: false,
+        output: null,
+        toplevel: false,
+        nameCache: null,
+        ie8: false,
+        keep_classnames: undefined,
+        keep_fnames: false,
+        safari10: false,
+        output: {
+          comments: false,
+        },
+      },
+    })],
+    runtimeChunk: 'single',
     splitChunks: {
-      chunks: "all"
-    }
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            // get the name. E.g. node_modules/packageName/not/this/part.js
+            // or node_modules/packageName
+            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+
+            // npm package names are URL-safe, but some servers don't like @ symbols
+            return `npm.${packageName.replace('@', '')}`;
+          },
+        },
+      },
+    },
   },
   plugins: [
+    new webpack.HashedModuleIdsPlugin(),
+    new HtmlWebpackPlugin({
+      fileName: 'index.html',
+      template: 'app/html-loader-template.html'
+    }),
     new webpack.ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery',
@@ -50,9 +94,9 @@ module.exports = {
     tls: 'empty'
   },
   output: {
-    filename: '[name].bundle.js',
-    chunkFilename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'public/dist/')
+    filename: 'dist/[name].[contenthash:8].js',
+    publicPath: '/',
+    path: path.resolve(__dirname, 'public/')
   },
   resolve: {
     modules: [
@@ -80,7 +124,15 @@ module.exports = {
       {
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'env', 'stage-0']
+          presets: [
+            '@babel/preset-react', 
+            '@babel/preset-env',
+          ],
+          plugins: [
+            '@babel/plugin-proposal-object-rest-spread',
+            '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-syntax-dynamic-import',
+          ]
         },
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
@@ -91,19 +143,14 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              autoprefixer: true,
-              minimize: true,
+              url: true,
+              import: true,
               sourceMap: true
             }
           }, {
             loader: 'sass-loader',
             options: {
-              autoprefixer: true,
-              minimize: true,
               sourceMap: true,
-              includePaths: [
-                path.resolve(__dirname, './node_modules/bootstrap/scss')
-              ]
             }
           }
         ]

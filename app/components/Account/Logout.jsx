@@ -7,6 +7,7 @@ import { accounts } from 'actions'
 class Logout extends Component {
   constructor(props) {
     super(props);
+    console.log("logout")
     const { startLogoutUser }     = accounts
 
     this.state = {
@@ -21,6 +22,10 @@ class Logout extends Component {
       })
       props.history.replace({ pathname: '/' });
     })
+  }
+
+  componentDidMount(){
+    console.log("mount logout")
   }
 
   render() {

@@ -1,9 +1,13 @@
 //Modules
-import React, { Suspense, lazy }  from 'react';
+import React, { Component, Suspense, lazy }  from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
 import queryString from 'query-string';
+import { connect } from 'react-redux'
+
 
 import { auth } from 'firebase';
+import { accounts } from 'actions'
+import { authenticatedRoute, unAuthenticatedRoute } from 'app/router/authenticationRoutes'
 
 //Components
 // import Error404 from 'app/components/Errors/Error404';
@@ -26,42 +30,85 @@ const FAQGamification     = lazy(() => import(/* webpackChunkName: "cpo_FAQGamif
 // Need Logged In - AuthRoute
 
 const NoAuthRoute = ({ component: Component, ...rest }) => {
-  var query               = queryString.parse(rest.location.search)
-  return ((
-    <Route {...rest} render={(props) => (
-      (auth.currentUser) ? <Redirect to={!query.from ? "/" : query.from } /> : <Component {...props} />
-    )} />
-  ))
+  const query             = queryString.parse(rest.location.search)
+  const redirect          = !query.from ? "/" : query.from
+  
+  const ProtectedRoute = unAuthenticatedRoute(redirect)(Component)
+  return(
+    <Route {...rest} render={(props) => (<ProtectedRoute me={rest.me} {...props} />)} />
+  )
 }
-const AuthRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={(props) => (
-    (!auth.currentUser) ? <Redirect to={`/login?from=${encodeURI(rest.location.pathname)}`} /> : <Component {...props} />
-  )} />
-)
+const AuthRoute = ({ component: Component, ...rest }) => {
+  var redirect            = rest.location.pathname
+  if (redirect == "/logout") {
+    redirect = ""
+  }
+  const ProtectedRoute = authenticatedRoute(`/login${(redirect != "" ? `?from=${redirect}` : "")}`)(Component)
+  return(
+    <Route {...rest} render={(props) => (<ProtectedRoute me={rest.me} {...props} />)} />
+  )
+}
 
-export default(
-  <Router>
-    <Suspense fallback={<Fallback />}>
-      <ZWrapper>
-        <Switch>
-          {/* <Route exact path='/' component={MainPage} /> */}
-          <Redirect exact from="/" to="/faq" />
+class ReactRouter extends Component{
+  constructor(){
+    super()
+    this.state ={
+      me: auth.currentUser
+    }
+  }
 
-          <NoAuthRoute exact path='/login' component={AccLogin} />
-          <NoAuthRoute exact path='/signup' component={AccSignUp} />
-          <AuthRoute exact path='/logout' component={AccLogout} />
-          <Route exact path={['/profile/:id', '/profile']} component={AccProfile} />
+  componentDidMount(){
+    auth.onAuthStateChanged((user) => {
+      this.setState({ me: user })
+      const { login, logout } = accounts
+      if (user) {
+        this.props.dispatch(login({
+          name: user.displayName,
+          profilePic: user.photoURL,
+          verified: user.emailVerified
+        }));
+        // var query = queryString.parse(location.search)
+        // console.log(query.from, location.search)
+        // // window.location.replace(query.from);
+        // window.location.href = query.from 
+      } else {
+        this.props.dispatch(logout())
+      }
+    })
+  }
 
-          <Route exact path='/faq' component={FAQMenu} />
-          <Route exact path='/faq/tests' component={FAQTests} />
-          <Route exact path='/faq/gamification' component={FAQGamification} />
+  render(){
+   const { me }                 = this.state
+    
+    return(
+      <Router>
+        <Suspense fallback={<Fallback />}>
+          <ZWrapper>
+            <Switch>
+              {/* <Route exact path='/' component={MainPage} /> */}
+              <Redirect exact from="/" to="/faq" />
+
+              <NoAuthRoute exact path='/login' component={AccLogin} me={me} />
+              <NoAuthRoute exact path='/signup' component={AccSignUp} me={me} />
+              <AuthRoute exact path='/logout' component={AccLogout} me={me} />
+              {/* <Route exact path='/logout' component={AccLogout} me={me} /> */}
+              <AuthRoute exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />
+              {/* <Route exact path={['/profile/:id', '/profile']} component={AccProfile} /> */}
+
+              <Route exact path='/faq' component={FAQMenu} />
+              <Route exact path='/faq/tests' component={FAQTests} />
+              <Route exact path='/faq/gamification' component={FAQGamification} />
 
 
-          <Route exact path='/credits' component={Credits} />
+              <Route exact path='/credits' component={Credits} />
 
-          {/* <Route component={Error404} /> */}
-        </Switch>
-      </ZWrapper>
-    </Suspense>
-  </Router>
-)
+              {/* <Route component={Error404} /> */}
+            </Switch>
+          </ZWrapper>
+        </Suspense>
+      </Router>
+    )
+  }
+}
+
+export default connect()(ReactRouter)

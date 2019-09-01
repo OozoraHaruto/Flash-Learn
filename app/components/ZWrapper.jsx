@@ -6,7 +6,8 @@ import { NavBarLink, NormLink, NavDropdown } from 'reuse';
 
 const ZWrapper = ({
   auth,
-  children
+  children,
+  location : {pathname}
 }) =>{
   const renderRightSideBarLoggedIn = () => {
     var { name, profilePic } = auth;
@@ -25,7 +26,7 @@ const ZWrapper = ({
   const renderRightSideBarLoggedOut = () => {
     return (
       <React.Fragment>
-        <NavBarLink to="/login" title="Login" />
+        <NavBarLink to={`/login?from=${encodeURI(pathname)}`} title="Login" />
         <NavBarLink to="/signup" title="Sign Up" />
       </React.Fragment>
     )

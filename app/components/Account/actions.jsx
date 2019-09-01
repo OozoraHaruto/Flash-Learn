@@ -7,13 +7,13 @@ import * as rConst from "reduxConstants";
 
 // Auth
 export const startAddUser = (email, password) =>{
+  console.log("addUser")
   return (dispatch, getState) => {
     const cleanEmail                    = email.trim().toLowerCase()
     var newUser                         = {}
     var profile                         = {}
     return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
       newUser                           = user.user
-      console.log(user)
       if(user.additionalUserInfo.isNewUser){
         return getUserGravatar(cleanEmail)
       }
@@ -74,8 +74,11 @@ const sendVerificationEmail = () =>{
 
 export const startLoginUser = (email, password) => {
   const cleanEmail = email.trim().toLowerCase()
+  console.log(cleanEmail)
 
-  return auth.signInWithEmailAndPassword(cleanEmail, password).catch(e => {
+  return auth.signInWithEmailAndPassword(cleanEmail, password).then(()=>{
+    return {success: true}
+  }).catch(e => {
     console.log('Unable to login', e);
     return { success: false, ...e };
   })
