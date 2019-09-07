@@ -63,7 +63,7 @@ const writeToUserProfileDatabase = (id, data) =>{
   return database.collection(dbConst.COL_USER).doc(id).set(data)
 }
 
-const sendVerificationEmail = () =>{
+export const sendVerificationEmail = () =>{
   return auth.currentUser.sendEmailVerification().then(() =>{
     return true
   }).catch(e =>{
@@ -119,5 +119,14 @@ export const getUserProfile = id =>{
   }).catch(e =>{
     console.log("getUserProfile", e)
     return {success: false, message: e.message}
+  })
+}
+
+export const getAchievements = () =>{
+  return database.collection(dbConst.COL_ACHIEVEMENTS).get().then(snapshot =>{
+    return {success: true, data: snapshot}
+  }).catch(e => {
+    console.log("getAchievements", e)
+    return { success: false, message: e.message }
   })
 }

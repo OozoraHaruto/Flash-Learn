@@ -2,16 +2,55 @@ import React, { Component } from 'react'
 import DocumentMeta from 'react-document-meta';
 var Latex = require('react-latex');
 
+import { accounts } from 'actions'
+
 export default class Gamification extends Component {
+  constructor(props){
+    super(props)
+
+    this.state = { achievements: false }
+  }
+
   componentDidMount(){
     var hash = document.location.hash
     if (hash != "") {
       $('a[href="' + hash + '"]').tab('show')
     }
+    const { getAchievements } = accounts
+
+    getAchievements().then(res => {
+      if(res.success){
+        this.setState({ achievements: res.data})
+      }
+    })
   }
+
   render() {
     var meta = {
       title: "FAQ - Gamification"
+    }
+
+    var { achievements } = this.state
+
+    const renderAchievement = achievement =>{
+      const data  = achievement.data()
+      const id    = achievement.id
+
+      return (
+        <tr key={id}>
+          <td scope="row">{data.badges[data.badges.length - 1]}</td>
+          <td>
+            <ul>
+              {
+                data.levels.map(level =>{
+                  return <li key={`${id}_level_${level}`}>{data.name.replace("$1", level)}</li>
+                })
+              }
+            </ul>
+            {data.extraMessage && <small>{data.extraMessage}</small>}
+          </td>
+        </tr>
+      )
     }
 
     return (
@@ -64,38 +103,20 @@ export default class Gamification extends Component {
                 Achievements are awarded after meeting certain requirements<br />
                 Following are the achievements that you can get<br />
                 <br />
-                <table className="table table-striped table-inverse">
-                  <thead className="thead-inverse">
-                    <tr>
-                      <th>Image</th>
-                      <th>Requirements</th>
-                    </tr>
+                {!achievements && <div>Loading..</div>}
+                {achievements && !achievements.empty &&
+                  <table className="table table-striped table-inverse">
+                    <thead className="thead-inverse">
+                      <tr>
+                        <th>Image</th>
+                        <th>Requirements</th>
+                      </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td scope="row"></td>
-                        <td>
-                          <ul>
-                            <li>Hold no. 1 on any test leaderboard for 1 day</li>
-                            <li>Hold no. 1 on any test leaderboard for 15 days</li>
-                            <li>Hold no. 1 on any test leaderboard for 30 days</li>
-                          </ul>
-                          <small>Will be calculated at 0000hrs GMT+0000</small>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td scope="row"></td>
-                        <td>
-                          <ul>
-                            <li>Hold no. 1 for point leaderboard for 1 day</li>
-                            <li>Hold no. 1 for point leaderboard for 15 days</li>
-                            <li>Hold no. 1 for point leaderboard for 30 days</li>
-                          </ul>
-                          <small>Will be calculated at 0000hrs GMT+0000</small>
-                        </td>
-                      </tr>
+                    {achievements.docs.map((doc) => renderAchievement(doc))}
                     </tbody>
-                </table>
+                  </table>
+                }
               </div>
             </div>
           </div>

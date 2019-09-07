@@ -12,8 +12,8 @@ import { authenticatedRoute, unAuthenticatedRoute } from 'app/router/authenticat
 //Components
 // import Error404 from 'app/components/Errors/Error404';
 import Fallback from 'app/components/Fallback';
+import ZWrapper from 'ZWrapper'
 const MainPage            = lazy(() => import(/* webpackChunkName: "cpo_MainPage" */ 'MainPage'));
-const ZWrapper            = lazy(() => import(/* webpackChunkName: "cpo_ZWrapper" */ 'ZWrapper'));
 const Credits             = lazy(() => import(/* webpackChunkName: "cpo_Credits" */ 'Credits'));
 
 const AccLogin            = lazy(() => import(/* webpackChunkName: "cpo_Login" */ 'app/components/Account/Login'));
@@ -67,10 +67,6 @@ class ReactRouter extends Component{
           profilePic: user.photoURL,
           verified: user.emailVerified
         }));
-        // var query = queryString.parse(location.search)
-        // console.log(query.from, location.search)
-        // // window.location.replace(query.from);
-        // window.location.href = query.from 
       } else {
         this.props.dispatch(logout())
       }
@@ -82,30 +78,28 @@ class ReactRouter extends Component{
     
     return(
       <Router>
-        <Suspense fallback={<Fallback />}>
           <ZWrapper>
-            <Switch>
-              {/* <Route exact path='/' component={MainPage} /> */}
-              <Redirect exact from="/" to="/faq" />
+            <Suspense fallback={<Fallback />}>
+              <Switch>
+                {/* <Route exact path='/' component={MainPage} /> */}
+                <Redirect exact from="/" to="/faq" />
 
-              <NoAuthRoute exact path='/login' component={AccLogin} me={me} />
-              <NoAuthRoute exact path='/signup' component={AccSignUp} me={me} />
-              <AuthRoute exact path='/logout' component={AccLogout} me={me} />
-              {/* <Route exact path='/logout' component={AccLogout} me={me} /> */}
-              <AuthRoute exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />
-              {/* <Route exact path={['/profile/:id', '/profile']} component={AccProfile} /> */}
+                <NoAuthRoute exact path='/login' component={AccLogin} me={me} />
+                <NoAuthRoute exact path='/signup' component={AccSignUp} me={me} />
+                <AuthRoute exact path='/logout' component={AccLogout} me={me} />
+                <Route exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />
 
-              <Route exact path='/faq' component={FAQMenu} />
-              <Route exact path='/faq/tests' component={FAQTests} />
-              <Route exact path='/faq/gamification' component={FAQGamification} />
+                <Route exact path='/faq' component={FAQMenu} />
+                <Route exact path='/faq/tests' component={FAQTests} />
+                <Route exact path='/faq/gamification' component={FAQGamification} />
 
 
-              <Route exact path='/credits' component={Credits} />
+                <Route exact path='/credits' component={Credits} />
 
-              {/* <Route component={Error404} /> */}
-            </Switch>
+                {/* <Route component={Error404} /> */}
+              </Switch>
+            </Suspense>
           </ZWrapper>
-        </Suspense>
       </Router>
     )
   }

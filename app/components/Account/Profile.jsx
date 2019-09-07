@@ -22,8 +22,7 @@ class Profile extends Component {
 
     if (!this.props.match.params.id) {
       if (!auth.currentUser) {
-        state.id = "asd" // FIXME: Cannot push history, temp fix
-        // this.props.history.push({ pathname: `/login?from=${encodeURI(this.props.location.pathname)}` })
+        return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}` })
       } else {
         state.id = auth.currentUser.uid
       }
@@ -45,7 +44,6 @@ class Profile extends Component {
 
       }
     }
-    // console.log("asd", state.id, props)
 
     this.setState(state)
     this.getProfile(state)
@@ -75,8 +73,10 @@ class Profile extends Component {
   render() {
     const { isMe, profile } = this.state
     return (
-      <div className="container">
-        {profile.name != "" && <Header {...profile} isMe={isMe} />}
+      <div className="container-fluid">
+        <div className="row bg-light">
+          {profile.name != "" && <Header {...profile} isMe={isMe} />}
+        </div>
       </div>
     )
   }

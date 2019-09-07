@@ -7,7 +7,6 @@ export const authenticatedRoute = redirectPath => WrappedComponent => {
     componentDidMount() {
       const { history } = this.props;
       if (!auth.currentUser) {
-        console.log("no user")
         return history.push(redirectPath)
       }
     }
@@ -15,14 +14,12 @@ export const authenticatedRoute = redirectPath => WrappedComponent => {
       const { me, history } = this.props;
       const { me: nextMe } = nextProps;
       if (me && !nextMe) {
-        console.log("diff me")
         history.push(redirectPath)
       }
     }
     render() {
       const { me } = this.props;
       if (!me) {
-        console.log("need auth no me")
         return null
       }
       return <WrappedComponent {...this.props} />
@@ -45,14 +42,12 @@ export const unAuthenticatedRoute = redirectPath => WrappedComponent => {
       const { me, history } = this.props;
       const { me: nextMe } = nextProps;
       if (me && !nextMe) {
-        console.log("diff me")
         history.push(redirectPath)
       }
     }
     render() {
       const { me } = this.props;
       if (me) {
-        console.log("no need auth have me")
         return null
       }
       return <WrappedComponent {...this.props} />

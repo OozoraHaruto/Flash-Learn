@@ -21,7 +21,7 @@ const Login = () =>{
         } else {
           formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
         }
-      }else{ console.log("login success");}
+      }
     })
   }
 
