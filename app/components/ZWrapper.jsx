@@ -13,7 +13,7 @@ const ZWrapper = ({
     var { name, profilePic } = auth;
     return (
       <React.Fragment>
-        <NavDropdown title={<img src={profilePic + "?s=36"} alt="Profile Picture" className="rounded-circle" />} id="navFAQ" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
+        <NavDropdown title={<img src={profilePic + "?s=36"} alt="Profile Picture" className="rounded-circle" />} id="navProfile" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
           <div className="dropdown-item-text text-muted">{`Hi ${name}`}</div>
           <NormLink to="/profile" title="Profile" className="dropdown-item" />
           <div className="dropdown-divider" />
@@ -32,6 +32,18 @@ const ZWrapper = ({
     )
   }
 
+  const renderLeftSideBarLoggedIn = () => {
+    return (
+      <React.Fragment>
+        <NavDropdown title="Decks" id="navDeck"topBar>
+          <NormLink to="/deck/add" title="Add Decks" className="dropdown-item" />
+          <div className="dropdown-divider" />
+          <NormLink to="/deck" title="View All" className="dropdown-item" />
+        </NavDropdown>
+      </React.Fragment>
+    )
+  }
+
   return(
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -42,6 +54,7 @@ const ZWrapper = ({
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
+            {(!jQuery.isEmptyObject(auth)) && renderLeftSideBarLoggedIn()}
             <NavDropdown title="FAQ" id="navFAQ" topBar>
               <NormLink to="/faq/tests" title="Tests" className="dropdown-item" />
               <NormLink to="/faq/gamification" title="Gamification" className="dropdown-item" />
