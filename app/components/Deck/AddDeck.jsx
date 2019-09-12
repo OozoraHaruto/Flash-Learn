@@ -2,32 +2,42 @@ import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
 import DeckForm from 'app/components/Deck/forms/Deck'
-// import { accounts } from 'actions'
+import { decks } from 'actions'
 
-const AddDeck = () =>{
+const AddDeck = ({
+  history
+}) =>{
   const handleAddDeck = (values, formikBag) => {
-    // var { email, password } = values
-    // const { startLoginUser } = accounts
+    const { startAddDeck } = decks
 
-    // startLoginUser(email, password).then(res => {
-    //   if (!res.success) {
-    //     if (res.code) {
-    //       if (res.code == 'auth/user-not-found') {
-    //         formikBag.setErrors({ email: res.message })
-    //       } else {
-    //         formikBag.setErrors({ password: res.message })
-    //       }
-    //     } else {
-    //       formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
-    //     }
-    //   }
-    // })
+    startAddDeck(values).then(res => {
+      if (!res.success) {
+        if (res.code) {
+          formikBag.setErrors({ cards: res.message })
+        } else {
+          formikBag.setErrors({ cards: "Failed to add to database. Contact administrator is this problem persist" })
+        }
+      }else{
+        return history.push({ pathname: `/deck/${res.deckId}` })
+      }
+    })
+  }
+
+  const createEmptyCard = () => {
+    return { front: "", back: "", backSub: "" }
+  }
+
+  const createEmptyStartDeck = () =>{
+    const deck = []
+    for(var i = 0; i<10; i++){
+      deck.push(createEmptyCard())
+    }
+    return deck
   }
 
   return (
     <DocumentMeta title="Add Deck">
-      <DeckForm initialValues={{ name: "", cards: [] }} handleFormSubmission={handleAddDeck} />
-      
+      <DeckForm initialValues={{ name: "", shownPublic: true, cards: createEmptyStartDeck() }} handleFormSubmission={handleAddDeck} createEmptyCard={createEmptyCard} />
     </DocumentMeta>
   )
 }

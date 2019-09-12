@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getIn } from 'formik'
 
 const TextField = ({
   field, 
@@ -8,22 +9,22 @@ const TextField = ({
   placeholder,
   ...props
 }) => {
-  var checkValid = () => {
-    if (touched[field.name] && errors[field.name]) {
+  const checkValid = () => {
+    if (getIn(touched, field.name) && getIn(errors, field.name)) {
       return "is-invalid"
-    } else if (touched[field.name]) {
+    } else if (getIn(touched, field.name)) {
       return "is-valid"
     }
   }
 
   return(
-    <div className="mb-3">
+    <div className={`mb-3 ${type == 'hidden' ? 'd-none' : ''}`}>
       <div className="form-group">
         <input className={`form-control-borderless ${checkValid()}`} {...field} {...props} placeholder={placeholder} type={type}/>
         <label className={checkValid()} htmlFor={field.name}>{placeholder}</label>
         <span className={`focus-border ${checkValid()}`}></span>
       </div>
-      {(checkValid() == "is-invalid") && <div className="error">{errors[field.name]}</div>}
+      {(checkValid() == "is-invalid") && <div className="error">{getIn(errors, field.name)}</div>}
     </div>
   )
 }
@@ -31,7 +32,6 @@ const TextField = ({
 TextField.propTypes = {
   type: PropTypes.oneOf([
     'button',
-    'checkbox',
     'color',
     'date',
     'datetime-local',
@@ -57,7 +57,7 @@ TextField.propTypes = {
 }
 
 TextField.defaultProps = {
-  type: "text"
+  type: "text",
 }
 
 export default TextField;

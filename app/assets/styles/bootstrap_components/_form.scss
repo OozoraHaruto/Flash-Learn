@@ -84,7 +84,7 @@ $color-dark: $gray-900;
     transition: 0.4s;
   }
 
-  input, textarea{
+  input.form-control-borderless, textarea.form-control-borderless{
     @extend .p-0;
     color: $color-dark; //color of text when not focus
     height: 27px;

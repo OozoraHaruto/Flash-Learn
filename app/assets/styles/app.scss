@@ -2,7 +2,9 @@
 // @import "mixins";
 //
 @import "bootstrap";
-@import "animate.min.css";
+@import "~animate.css/source/_base.css";
+@import "~animate.css/source/attention_seekers/bounce.css";
+@import "~animate.css/source/attention_seekers/pulse.css";
 
 // functions
 @import "fonts";

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Formik, Field } from 'formik';
 
-import { TextField } from 'reuse'
+import { TextField, SubmitButton } from 'reuse'
 
 const Auth = ({ login, handleFormSubmission, dispatch=false }) => {
   const validate = values => {
     const errors              = {};
 
-    if (values.email) { // check if email is valid
+    if (values.email) {
       if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
         errors['email']       = 'Invalid email address';
       }
@@ -35,12 +35,16 @@ const Auth = ({ login, handleFormSubmission, dispatch=false }) => {
         }}
         validate={validate}
         onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
-        render={props => (
-          <form onSubmit={props.handleSubmit}>
+        render={({
+          handleSubmit, 
+          values, 
+          isSubmitting
+        }) => (
+          <form onSubmit={handleSubmit}>
             <Field type="email" placeholder="E-mail" name="email" component={TextField} />
             <Field type="password" placeholder="Password" name="password" component={TextField} />
             <div className="text-center">
-              <button type="submit" className="btn btn-primary">{login ? "Login" : "Sign Up"}</button>
+              <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}/>
             </div>
           </form>
         )}

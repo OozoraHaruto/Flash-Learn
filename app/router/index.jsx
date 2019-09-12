@@ -22,6 +22,7 @@ const AccLogout           = lazy(() => import(/* webpackChunkName: "cpo_Logout" 
 const AccProfile          = lazy(() => import(/* webpackChunkName: "cpo_Profile" */ 'app/components/Account/Profile'));
 
 const DeckAdd             = lazy(() => import(/* webpackChunkName: "cpo_AddDeck" */ 'app/components/Deck/AddDeck'));
+const DeckView            = lazy(() => import(/* webpackChunkName: "cpo_AddDeck" */ 'app/components/Deck/View'));
 
 const FAQMenu             = lazy(() => import(/* webpackChunkName: "cpo_FAQMenu" */ 'app/components/FAQ/index'));
 const FAQTests            = lazy(() => import(/* webpackChunkName: "cpo_FAQTests" */ 'app/components/FAQ/Tests'));
@@ -43,7 +44,7 @@ const NoAuthRoute = ({ component: Component, ...rest }) => {
 const AuthRoute = ({ component: Component, ...rest }) => {
   var redirect            = rest.location.pathname
   if (redirect == "/logout") {
-    redirect = ""
+    redirect              = ""
   }
   const ProtectedRoute = authenticatedRoute(`/login${(redirect != "" ? `?from=${redirect}` : "")}`)(Component)
   return(
@@ -65,9 +66,10 @@ class ReactRouter extends Component{
       const { login, logout } = accounts
       if (user) {
         this.props.dispatch(login({
-          name: user.displayName,
-          profilePic: user.photoURL,
-          verified: user.emailVerified
+          id              : user.uid,
+          name            : user.displayName,
+          profilePic      : user.photoURL,
+          verified        : user.emailVerified,
         }));
       } else {
         this.props.dispatch(logout())
@@ -76,7 +78,7 @@ class ReactRouter extends Component{
   }
 
   render(){
-   const { me }                 = this.state
+   const { me }           = this.state
     
     return(
       <Router>
@@ -92,11 +94,11 @@ class ReactRouter extends Component{
               <Route exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />
 
               <AuthRoute exact path='/deck/add' component={DeckAdd} me={me} />
+              <Route exact path='/deck/:id' component={DeckView} me={me} />
 
               <Route exact path='/faq' component={FAQMenu} />
               <Route exact path='/faq/tests' component={FAQTests} />
               <Route exact path='/faq/gamification' component={FAQGamification} />
-
 
               <Route exact path='/credits' component={Credits} />
 

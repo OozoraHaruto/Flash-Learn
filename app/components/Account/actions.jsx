@@ -7,7 +7,6 @@ import * as rConst from "reduxConstants";
 
 // Auth
 export const startAddUser = (email, password) =>{
-  console.log("addUser")
   return (dispatch, getState) => {
     const cleanEmail                    = email.trim().toLowerCase()
     var newUser                         = {}
@@ -33,8 +32,9 @@ export const startAddUser = (email, password) =>{
         sendVerificationEmail()
       ]
       dispatch(login({
-        name: profile.displayName,
-        profilePic: profile.photoURL,
+        id                              : newUser.uid,
+        name                            : profile.displayName,
+        profilePic                      : profile.photoURL,
       }))
 
       return Promise.all(actions)

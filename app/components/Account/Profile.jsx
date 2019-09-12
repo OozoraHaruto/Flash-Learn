@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { auth, database } from 'firebase';
+import { auth } from 'firebase';
 import Header from 'app/components/Account/subComponents/Profile/Header'
 import { accounts } from 'actions'
 
@@ -82,8 +82,4 @@ class Profile extends Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    auth: state.authReducer
-  }
-})(Profile)
+export default Profile
