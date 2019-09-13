@@ -43,7 +43,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
     }
 
     var tmpCards                          = values.cards.filter(card =>{
-      if (card.front.trim() == "" && card.back.trim() == "") {
+      if (card.front.trim() == "" && card.back.trim() == "" && card.backSub.trim() == "") {
         return false
       }
       return true
@@ -58,7 +58,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
         const card                        = values.cards[i]
         var cardError                     = {}
 
-        if (card.front.trim() == "" && card.back.trim() == "") {
+        if (card.front.trim() == "" && card.back.trim() == "" && card.backSub.trim() == "") {
           cardErrors.push(cardError)
           continue
         }else{

@@ -20,7 +20,7 @@ const TextField = ({
   return(
     <div className={`mb-3 ${type == 'hidden' ? 'd-none' : ''}`}>
       <div className="form-group">
-        <input className={`form-control-borderless ${checkValid()}`} {...field} {...props} placeholder={placeholder} type={type}/>
+        <input className={`form-control-borderless ${checkValid()}`} id={field.name} {...field} {...props} placeholder={placeholder} type={type}/>
         <label className={checkValid()} htmlFor={field.name}>{placeholder}</label>
         <span className={`focus-border ${checkValid()}`}></span>
       </div>
