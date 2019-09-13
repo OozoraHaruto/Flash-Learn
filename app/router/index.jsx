@@ -11,7 +11,7 @@ import { authenticatedRoute, unAuthenticatedRoute } from 'app/router/authenticat
 
 //Components
 // import Error404 from 'app/components/Errors/Error404';
-import Fallback from 'app/components/Fallback';
+import Fallback from 'Fallback'
 import ZWrapper from 'ZWrapper'
 const MainPage            = lazy(() => import(/* webpackChunkName: "cpo_MainPage" */ 'MainPage'));
 const Credits             = lazy(() => import(/* webpackChunkName: "cpo_Credits" */ 'Credits'));
@@ -36,7 +36,7 @@ const NoAuthRoute = ({ component: Component, ...rest }) => {
   const query             = queryString.parse(rest.location.search)
   const redirect          = !query.from ? "/" : query.from
   
-  const ProtectedRoute = unAuthenticatedRoute(redirect)(Component)
+  const ProtectedRoute = unAuthenticatedRoute({ pathname: redirect})(Component)
   return(
     <Route {...rest} render={(props) => (<ProtectedRoute me={rest.me} {...props} />)} />
   )
@@ -46,7 +46,7 @@ const AuthRoute = ({ component: Component, ...rest }) => {
   if (redirect == "/logout") {
     redirect              = ""
   }
-  const ProtectedRoute = authenticatedRoute(`/login${(redirect != "" ? `?from=${redirect}` : "")}`)(Component)
+  const ProtectedRoute = authenticatedRoute({ pathname: '/login', search: (redirect != "" ? `?from=${redirect}` : "")})(Component)
   return(
     <Route {...rest} render={(props) => (<ProtectedRoute me={rest.me} {...props} />)} />
   )

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, FieldArray, ErrorMessage, getIn } from 'formik';
+import { Formik, Field, FieldArray } from 'formik';
 
 import { TextField, CheckBox, SubmitButton } from 'reuse'
 
@@ -59,6 +59,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
         var cardError                     = {}
 
         if (card.front.trim() == "" && card.back.trim() == "") {
+          cardErrors.push(cardError)
           continue
         }else{
           if(!card.front){
@@ -99,7 +100,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
                     </div>
                     <div className="col-xl-2">
                       <SubmitButton title="Add Deck" className="w-100" submitting={isSubmitting} />
-                      {/* TODO: Use when formik upgrade to v2 */}
+                      {/* UPDATE: Use when formik upgrade to v2 */}
                       {/* <Field type="checkbox" placeholder="Public" name="shownPublic" component={CheckBox} /> */}
                       <Field type="hidden" placeholder="Public" name="shownPublic" component={TextField} />
                     </div>

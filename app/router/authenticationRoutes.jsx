@@ -7,14 +7,14 @@ export const authenticatedRoute = redirectPath => WrappedComponent => {
     componentDidMount() {
       const { history } = this.props;
       if (!auth.currentUser) {
-        return history.push(redirectPath)
+        return redirectWithCurrentRoute(history, redirectPath)
       }
     }
     componentDidUpdate(nextProps) {
       const { me, history } = this.props;
       const { me: nextMe } = nextProps;
       if (me && !nextMe) {
-        history.push(redirectPath)
+        redirectWithCurrentRoute(history, redirectPath)
       }
     }
     render() {
@@ -35,14 +35,14 @@ export const unAuthenticatedRoute = redirectPath => WrappedComponent => {
     componentDidMount() {
       const { history } = this.props;
       if (auth.currentUser) {
-        return history.push(redirectPath)
+        return redirectWithCurrentRoute(history, redirectPath)
       }
     }
     componentDidUpdate(nextProps) {
       const { me, history } = this.props;
       const { me: nextMe } = nextProps;
       if (me && !nextMe) {
-        history.push(redirectPath)
+        redirectWithCurrentRoute(history, redirectPath)
       }
     }
     render() {
@@ -57,3 +57,10 @@ export const unAuthenticatedRoute = redirectPath => WrappedComponent => {
   return UnAuthenticatedRoute
 }
 
+
+const redirectWithCurrentRoute = (history, redirectPath) =>{
+  history.push({
+    ...redirectPath,
+    state: { from: history.location.pathname },
+  })
+}

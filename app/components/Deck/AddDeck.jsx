@@ -1,7 +1,7 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
-import DeckForm from 'app/components/Deck/forms/Deck'
+import DeckForm from 'app/components/Deck/subComponents/forms/Deck'
 import { decks } from 'actions'
 
 const AddDeck = ({

@@ -1,5 +1,7 @@
 export const COL_USER                         = 'users'
 export const USER_PROFILE                     = 'profile'
+export const PROFILE_CREATED_DECKS            = 'DecksCreated'
+export const PROFILE_SUBSCRIBED_DECKS         = 'DecksSubscribed'
 
 
 export const COL_DECKS                        = 'decks'

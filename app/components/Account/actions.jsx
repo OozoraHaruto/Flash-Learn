@@ -1,7 +1,7 @@
 import axios from 'axios';
 const crypto = require('crypto');
 
-import { auth, database } from 'firebase';
+import firebase, { auth, database } from 'firebase';
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
 
@@ -118,7 +118,7 @@ export const getUserProfile = id =>{
     }
   }).catch(e =>{
     console.log("getUserProfile", e)
-    return {success: false, message: e.message}
+    return { success: false, ...e };
   })
 }
 
@@ -127,6 +127,30 @@ export const getAchievements = () =>{
     return {success: true, data: snapshot}
   }).catch(e => {
     console.log("getAchievements", e)
-    return { success: false, message: e.message }
+    return { success: false, ...e };
+  })
+}
+
+
+// Decks Related
+export const startAddCreatedDeckRef = (userId, deckId) => {
+  return database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_CREATED_DECKS).doc(deckId).set({
+    createdOn: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(ref => {
+    return { success: true }
+  }).catch(e => {
+    console.log("startAddCreatedDeckRef", e)
+    return { success: false, ...e };
+  })
+}
+
+export const startAddSubscribedDeckRef = (userId, deckId) => {
+  return database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).set({
+    createdOn: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(ref => {
+    return { success: true }
+  }).catch(e => {
+    console.log("startAddSubscribedDeckRef", e)
+    return { success: false, ...e };
   })
 }

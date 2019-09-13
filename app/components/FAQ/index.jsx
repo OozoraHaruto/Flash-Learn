@@ -3,7 +3,7 @@ import DocumentMeta from 'react-document-meta';
 
 import { NormLink } from 'reuse'
 
-const index = () =>{
+const index = (props) =>{
   return (
     <DocumentMeta title="FAQ">
       <div className="container">
