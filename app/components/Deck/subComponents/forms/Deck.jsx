@@ -5,7 +5,7 @@ import { TextField, CheckBox, SubmitButton } from 'reuse'
 
 const CardForm = ({
   index, 
-  arrayHelpers: {remove, form}
+  arrayHelpers: {remove}
 }) =>(
   <div className="form-group mb-3" >
     <div className="card w-100">
@@ -20,13 +20,13 @@ const CardForm = ({
         </div>
       </div>
       <div className="card-body row">
-        <div className="col-4">
+        <div className="col-sm">
           <Field type="text" placeholder="Front" name={`cards.${index}.front`} component={TextField} />
         </div>
-        <div className="col-4">
+        <div className="col-sm">
           <Field type="text" placeholder="Back" name={`cards.${index}.back`} component={TextField} />
         </div>
-        <div className="col-4">
+        <div className="col-sm">
           <Field type="text" placeholder="Back (Bottom)" name={`cards.${index}.backSub`} component={TextField} />
         </div>
       </div>
@@ -108,19 +108,17 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
                 </div>
               </div>
             </div>
-            <div className="container mt-2">
-              <FieldArray name="cards" render={arrayHelpers =>(
-                <React.Fragment>
+            <FieldArray name="cards" render={arrayHelpers => (
+                <div className="container mt-2">
                   {values.cards && values.cards.length > 0 && (
-                    values.cards.map((card, index) => 
+                    values.cards.map((card, index) =>
                       <CardForm index={index} arrayHelpers={arrayHelpers} key={`card#${index}`} />)
                   )}
-                  <div className="text-center">
-                    <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
-                  </div>
-                </React.Fragment>
-              )} />
-            </div>
+                <div className="text-center">
+                  <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
+                </div>
+              </div>
+            )} />
           </form>
         )}
       />

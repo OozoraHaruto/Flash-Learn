@@ -17,6 +17,7 @@ export const startAddDeck = values =>{
     deckId                    = ref.id
     var cards = values.cards.reduce((result, card) =>{
       var tmpCard = {
+        ...card,
         front: card.front.trim(),
         back: card.back.trim(),
         backSub: card.backSub.trim(),
@@ -80,7 +81,7 @@ export const getCards = (id) =>{
   return database.collection(dbConst.COL_DECKS).doc(id).collection(dbConst.DECKS_CARDS).get().then(snapshot =>{
     return { success: true, data: snapshot.docs }
   }).catch(e => {
-    console.log("getDeck", e)
+    console.log("getCards", e)
     return { success: false, ...e };
   })
 }

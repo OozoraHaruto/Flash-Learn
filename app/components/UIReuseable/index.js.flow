@@ -6,7 +6,10 @@ export { default as TextField } from './Form/TextField';
 export { default as CheckBox} from './Form/CheckBox';
 export { default as SubmitButton} from './Form/SubmitButton';
 
-// Others
+// UI
 export { default as NavBarLink } from './NavBarLink';
 export { default as NormLink } from './NormLink';
 export { default as NavDropdown } from './NavDropdown';
+
+// Others
+export { default as dataLoading } from './dataLoading';

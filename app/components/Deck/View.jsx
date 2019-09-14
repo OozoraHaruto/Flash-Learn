@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { auth, database } from 'firebase';
+import { auth } from 'firebase';
 import Fallback from 'Fallback'
 import Header from 'app/components/Deck/subComponents/View/Header'
 import DetailsWrapper from 'app/components/Deck/subComponents/View/DetailsWrapper'
@@ -84,12 +84,10 @@ class View extends Component {
       <React.Fragment>
         {details.loading && <Fallback />}
         {!details.loading && 
-          <div className="container-fluid">
-            <div className="row bg-light">
-              <Header {...details} cards={cards} deckId={id} isMe={isMe} />
-            </div>
-            {!details.loading && <DetailsWrapper cards={cards} leaderboards={leaderboards} />}
-          </div>
+          <React.Fragment>
+            <Header {...details} cards={cards} deckId={id} isMe={isMe} />
+            <DetailsWrapper cards={cards} leaderboards={leaderboards} />
+          </React.Fragment>
         }
       </React.Fragment>
     )
