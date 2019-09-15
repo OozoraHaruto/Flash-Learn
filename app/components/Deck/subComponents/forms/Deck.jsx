@@ -1,21 +1,28 @@
 import React from 'react';
 import { Formik, Field, FieldArray } from 'formik';
+import { SortableContainer, SortableHandle, SortableElement } from 'react-sortable-hoc';
+import { FaBars } from "react-icons/fa";
 
 import { TextField, CheckBox, SubmitButton } from 'reuse'
 
-const CardForm = ({
-  index, 
-  arrayHelpers: {remove}
+const CardForm = SortableElement(({
+  id: index, 
+  arrayHelpers: {remove, insert},
+  createEmptyCard
 }) =>(
   <div className="form-group mb-3" >
     <div className="card w-100">
       <div className="card-header row m-0">
-        <div className="mr-auto col-6 p-0 d-flex align-items-center">
-          <div className="h4 m-0">
-            {`Card #${index + 1}`}
+        <div className="mr-auto col d-flex align-items-center">
+          <div className="h4 m-0 d-flex align-items-center text-muted">
+            <DragHandle />
+          </div>
+          <div className="h4 mb-0 ml-2">
+              {`Card #${index + 1}`}
           </div>
         </div>
-        <div className="ml-auto col-6 p-0 text-right">
+        <div className="ml-auto col text-right">
+            <button type="button" className="btn btn-success mr-3" onClick={() => insert(index, createEmptyCard())}>Insert Above</button>
           <button type="button" className="btn btn-danger" onClick={() => remove(index)}>Delete</button>
         </div>
       </div>
@@ -32,7 +39,11 @@ const CardForm = ({
       </div>
     </div>
   </div>
-)
+))
+
+const DragHandle = SortableHandle (() =>(
+  <FaBars style={{ cursor: "move" }} />
+))
 
 const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmptyCard }) => {
   const validate = values => {
@@ -79,6 +90,28 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
     return errors
   }
 
+  const DeckList = SortableContainer(({
+    cards,
+    arrayHelpers
+  }) => (
+    <div>
+      {
+        cards && cards.length > 0 && (
+          cards.map((card, index) =>
+            <CardForm index={index} id={index} arrayHelpers={arrayHelpers} key={`card#${index}`} createEmptyCard={createEmptyCard} />)
+        )
+      }
+    </div>
+  ))
+
+  const sortEnd = (arrayHelpers) =>({
+    oldIndex, 
+    newIndex,
+  }) =>{
+    console.log(oldIndex, newIndex)
+    arrayHelpers.move(oldIndex, newIndex)
+  }
+
   return (
     <React.Fragment>
       <Formik
@@ -109,11 +142,8 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
               </div>
             </div>
             <FieldArray name="cards" render={arrayHelpers => (
-                <div className="container mt-2">
-                  {values.cards && values.cards.length > 0 && (
-                    values.cards.map((card, index) =>
-                      <CardForm index={index} arrayHelpers={arrayHelpers} key={`card#${index}`} />)
-                  )}
+              <div className="container mt-2">
+                  <DeckList cards={values.cards} useDragHandle={true} arrayHelpers={arrayHelpers} onSortEnd={sortEnd(arrayHelpers)} />
                 <div className="text-center">
                   <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
                 </div>
