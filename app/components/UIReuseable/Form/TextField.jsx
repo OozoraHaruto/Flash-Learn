@@ -53,7 +53,7 @@ TextField.propTypes = {
     'url',
     'week'
   ]),
-  placeholder: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired
 }
 
 TextField.defaultProps = {

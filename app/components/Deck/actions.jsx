@@ -5,22 +5,21 @@ import * as rConst from "reduxConstants";
 import {accounts} from 'actions';
 
 export const startAddDeck = values =>{
-  const { startAddCreatedDeckRef } = accounts
-  var deckId = ""
+  const { startAddCreatedDeckRef }      = accounts
+  var deckId                            = ""
 
   return database.collection(dbConst.COL_DECKS).add({
-    modified                  : firebase.firestore.FieldValue.serverTimestamp(),
-    name                      : values.name,
-    owner                     : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
-    public                    : !values.shownPublic ? false : values.shownPublic ,
+    modified                            : firebase.firestore.FieldValue.serverTimestamp(),
+    name                                : values.name,
+    owner                               : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
+    public                              : !values.shownPublic ? false : values.shownPublic ,
   }).then(ref =>{
-    deckId                    = ref.id
+    deckId                              = ref.id
+    var index                           = 0
     var cards = values.cards.reduce((result, card) =>{
       var tmpCard = {
-        ...card,
-        front: card.front.trim(),
-        back: card.back.trim(),
-        backSub: card.backSub.trim(),
+        ...cleanCardValues(card),
+        index                           : index++
       }
       if(tmpCard.front != "" && tmpCard.back != ""){
         result.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).add(tmpCard))
@@ -37,13 +36,39 @@ export const startAddDeck = values =>{
   })
 }
 
-export const getDeckDetails = (id) =>{
-  var data = {}
-  const { getUserProfile } = accounts
+export const editDeck = (deckId, toAdd, toDelete, toEdit) =>{
+  var databaseActions = []
+
+  toAdd.forEach(card =>{
+    var tmpCard = {...cleanCardValues(card)}
+    databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).add(tmpCard))
+  })
+  toDelete.forEach(card =>{
+    var tmpCard = {...cleanCardValues(card)}
+    databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).delete())
+  })
+  toEdit.forEach(card =>{
+    var tmpCard = {...cleanCardValues(card)}
+    databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).set(tmpCard))
+  })
+
+  return Promise.all(databaseActions).then(()=>{
+    return { success: true }
+  }).catch(e =>{
+    console.log("editDeck", e)
+    return { success: false, ...e };
+  })
+}
+
+// Get methods
+
+export const getDeckDetails = id =>{
+  var data                              = {}
+  const { getUserProfile }              = accounts
 
   return getDeck(id).then(res =>{
     if (res.success){
-      data = res.data
+      data                              = res.data
       return getUserProfile(data.owner.id)
     }else{
       throw (res)
@@ -64,7 +89,7 @@ export const getDeckDetails = (id) =>{
   })
 }
 
-export const getDeck = (id) =>{
+export const getDeck = id =>{
   return database.collection(dbConst.COL_DECKS).doc(id).get().then(doc =>{
     if (!doc.exists){
       return { success: false, message: 'No such document!' }
@@ -77,11 +102,22 @@ export const getDeck = (id) =>{
   })
 }
 
-export const getCards = (id) =>{
-  return database.collection(dbConst.COL_DECKS).doc(id).collection(dbConst.DECKS_CARDS).get().then(snapshot =>{
+export const getCards = id =>{
+  return database.collection(dbConst.COL_DECKS).doc(id).collection(dbConst.DECKS_CARDS).orderBy('index').get().then(snapshot =>{
     return { success: true, data: snapshot.docs }
   }).catch(e => {
     console.log("getCards", e)
     return { success: false, ...e };
   })
 }
+
+//Extra methods
+
+const cleanCardValues = card =>{
+  return {
+    front                               : card.front.trim(),
+    back                                : card.back.trim(),
+    backSub                             : card.backSub.trim(),
+    index                               : card.index ? card.index : 0,
+  }
+} 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import DocumentMeta from 'react-document-meta';
 
 import { auth } from 'firebase';
 import Header from 'app/components/Account/subComponents/Profile/Header'
@@ -73,11 +74,13 @@ class Profile extends Component {
   render() {
     const { isMe, profile } = this.state
     return (
-      <div className="container-fluid">
-        <div className="row bg-light">
-          {profile.name != "" && <Header {...profile} isMe={isMe} />}
+      <DocumentMeta title={(!profile.name ? "Loading profile" : `${profile.name}'s profile`)}>
+        <div className="container-fluid">
+          <div className="row bg-light">
+            {profile.name != "" && <Header {...profile} isMe={isMe} />}
+          </div>
         </div>
-      </div>
+      </DocumentMeta>
     )
   }
 }

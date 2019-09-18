@@ -6,8 +6,6 @@ import { accounts } from 'actions'
 import { MiddleWrapper } from 'reuse'
 
 const Login = () =>{
-  console.log('login')
-
   const handleUserLogin = (values, formikBag) => {
     var { email, password } = values
     const { startLoginUser } = accounts

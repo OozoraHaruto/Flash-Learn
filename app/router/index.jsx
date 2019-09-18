@@ -22,7 +22,8 @@ const AccLogout           = lazy(() => import(/* webpackChunkName: "cpo_Logout" 
 const AccProfile          = lazy(() => import(/* webpackChunkName: "cpo_Profile" */ 'app/components/Account/Profile'));
 
 const DeckAdd             = lazy(() => import(/* webpackChunkName: "cpo_AddDeck" */ 'app/components/Deck/AddDeck'));
-const DeckView            = lazy(() => import(/* webpackChunkName: "cpo_AddDeck" */ 'app/components/Deck/View'));
+const DeckEdit            = lazy(() => import(/* webpackChunkName: "cpo_EditDeck" */ 'app/components/Deck/EditDeck'));
+const DeckView            = lazy(() => import(/* webpackChunkName: "cpo_ViewDeck" */ 'app/components/Deck/View'));
 
 const FAQMenu             = lazy(() => import(/* webpackChunkName: "cpo_FAQMenu" */ 'app/components/FAQ/index'));
 const FAQTests            = lazy(() => import(/* webpackChunkName: "cpo_FAQTests" */ 'app/components/FAQ/Tests'));
@@ -94,6 +95,7 @@ class ReactRouter extends Component{
               <Route exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />
 
               <AuthRoute exact path='/deck/add' component={DeckAdd} me={me} />
+              <AuthRoute exact path='/deck/:id/edit' component={DeckEdit} me={me} />
               <Route exact path='/deck/:id' component={DeckView} me={me} />
 
               <Route exact path='/faq' component={FAQMenu} />

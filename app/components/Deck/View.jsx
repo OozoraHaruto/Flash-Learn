@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import DocumentMeta from 'react-document-meta';
 
 import { auth } from 'firebase';
 import Fallback from 'Fallback'
@@ -81,7 +82,7 @@ class View extends Component {
     const { id } = this.props.match.params
 
     return (
-      <React.Fragment>
+      <DocumentMeta title={(!details.name ? "Loading deck" : details.name)}>
         {details.loading && <Fallback />}
         {!details.loading && 
           <React.Fragment>
@@ -89,7 +90,7 @@ class View extends Component {
             <DetailsWrapper cards={cards} leaderboards={leaderboards} />
           </React.Fragment>
         }
-      </React.Fragment>
+      </DocumentMeta>
     )
   }
 }

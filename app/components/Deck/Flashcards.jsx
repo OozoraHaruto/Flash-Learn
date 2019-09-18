@@ -31,7 +31,7 @@ export default class Flashcards extends React.Component{
     const { cards } = this.props
     
     return (
-      <div className="d-flex flex-column h-100 w-100">
+      <div className="d-flex flex-column h-100 w-100 overflow-hidden">
         <div className="flex-grow-1">
           <Card index={currentIndex} card={cards[currentIndex].data()} />
         </div>

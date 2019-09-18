@@ -29,6 +29,8 @@ const CardForm = SortableElement(({
       <div className="card-body row">
         <div className="col-sm">
           <Field type="text" placeholder="Front" name={`cards.${index}.front`} component={TextField} />
+          <Field type="hidden" placeholder="id" name={`cards.${index}.cardId`} component={TextField} />
+          <Field type="hidden" placeholder="index" name={`cards.${index}.index`} component={TextField} />
         </div>
         <div className="col-sm">
           <Field type="text" placeholder="Back" name={`cards.${index}.back`} component={TextField} />
@@ -45,7 +47,7 @@ const DragHandle = SortableHandle (() =>(
   <FaBars style={{ cursor: "move" }} />
 ))
 
-const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmptyCard }) => {
+const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmptyCard, editingDeck }) => {
   const validate = values => {
     const errors                          = {}; 
 
@@ -108,7 +110,6 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
     oldIndex, 
     newIndex,
   }) =>{
-    console.log(oldIndex, newIndex)
     arrayHelpers.move(oldIndex, newIndex)
   }
 
@@ -132,7 +133,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
                       <Field type="text" placeholder="Deck Name" name="name" component={TextField} />
                     </div>
                     <div className="col-xl-2">
-                      <SubmitButton title="Add Deck" className="w-100" submitting={isSubmitting} />
+                      <SubmitButton title={editingDeck ? "Edit Deck" : "Add Deck"} className="w-100" submitting={isSubmitting} />
                       {/* UPDATE: Use when formik upgrade to v2 */}
                       {/* <Field type="checkbox" placeholder="Public" name="shownPublic" component={CheckBox} /> */}
                       <Field type="hidden" placeholder="Public" name="shownPublic" component={TextField} />

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Fallback from 'Fallback'
 import { NormLink, dataLoading } from 'reuse'
 import Flashcards from 'app/components/Deck/Flashcards'
 
@@ -12,6 +11,21 @@ const Header = ({
   cards
 }) =>{
   const LoadingFlashcards = dataLoading(false, "The flashcards should be loaded soon")(Flashcards)
+
+  const renderActionButtons = () =>{
+    if (isMe){
+      return (
+        <React.Fragment>
+          <NormLink to={`/deck/${deckId}/edit`} title="Edit Deck" className="btn btn-outline-secondary btn-sm mx-3" />
+          <button type="button" className="btn btn-outline-danger btn-sm">Delete Deck</button>
+        </React.Fragment>
+      )
+    }else{
+      return (
+        <button type="button" className="btn btn-outline-danger btn-s ml-3">Save Deck</button>
+      )
+    }
+  }
 
   return(
     <React.Fragment>
@@ -27,6 +41,7 @@ const Header = ({
                 <small className="text-muted">
                   by <NormLink title={displayName} to={`/profile/${id}`} className="text-muted" />
                 </small>
+                {renderActionButtons()}
               </div>
             </div>
           </div>

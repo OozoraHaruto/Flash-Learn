@@ -41,8 +41,8 @@ const Auth = ({ login, handleFormSubmission, dispatch=false }) => {
           isSubmitting
         }) => (
           <form onSubmit={handleSubmit}>
-            <Field type="email" placeholder="E-mail" name="email" component={TextField} />
-            <Field type="password" placeholder="Password" name="password" component={TextField} />
+            <Field type="email" placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
+            <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete="current-password"/>
             <div className="text-center">
               <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}/>
             </div>
