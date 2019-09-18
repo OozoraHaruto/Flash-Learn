@@ -2,7 +2,8 @@ import firebase, { auth, database } from 'firebase';
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
 
-import {accounts} from 'actions';
+import { accounts, firebaseFunctions } from 'actions';
+// import { functionList } from 'firebase'
 
 export const startAddDeck = values =>{
   const { startAddCreatedDeckRef }      = accounts
@@ -56,6 +57,23 @@ export const editDeck = (deckId, toAdd, toDelete, toEdit) =>{
     return { success: true }
   }).catch(e =>{
     console.log("editDeck", e)
+    return { success: false, ...e };
+  })
+}
+
+export const deleteDeck = deckId =>{
+  const { deleteAtPath }                = firebaseFunctions
+
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_CREATED_DECKS).doc(deckId).delete().then(() =>{
+    return deleteAtPath(`${dbConst.COL_DECKS}/${deckId}`)
+  }).then(res=>{
+    if (res.success){
+      return { success: true }
+    }else{
+      throw res
+    }
+  }).catch(e =>{
+    console.log("deleteDeck", e)
     return { success: false, ...e };
   })
 }

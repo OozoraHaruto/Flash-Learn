@@ -38,13 +38,14 @@ const Auth = ({ login, handleFormSubmission, dispatch=false }) => {
         render={({
           handleSubmit, 
           values, 
-          isSubmitting
+          isSubmitting,
+          dirty,
         }) => (
           <form onSubmit={handleSubmit}>
             <Field type="email" placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
             <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete="current-password"/>
             <div className="text-center">
-              <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}/>
+              <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}  dirty={dirty}/>
             </div>
           </form>
         )}

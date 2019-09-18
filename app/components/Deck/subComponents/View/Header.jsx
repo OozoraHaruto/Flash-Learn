@@ -8,7 +8,8 @@ const Header = ({
   isMe,
   name,
   owner: {displayName, id, photoURL},
-  cards
+  cards,
+  deleteDeck,
 }) =>{
   const LoadingFlashcards = dataLoading(false, "The flashcards should be loaded soon")(Flashcards)
 
@@ -17,7 +18,7 @@ const Header = ({
       return (
         <React.Fragment>
           <NormLink to={`/deck/${deckId}/edit`} title="Edit Deck" className="btn btn-outline-secondary btn-sm mx-3" />
-          <button type="button" className="btn btn-outline-danger btn-sm">Delete Deck</button>
+          <button type="button" className="btn btn-outline-danger btn-sm" onClick={()=>deleteDeck()}>Delete Deck</button>
         </React.Fragment>
       )
     }else{

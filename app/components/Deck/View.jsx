@@ -26,9 +26,7 @@ class View extends Component {
     }
   }
   componentDidMount() {
-    const { id } = this.props.match.params
-
-    this.getHeaderDetails(id)
+    this.getHeaderDetails(this.props.match.params.id)
   }
 
   getHeaderDetails = (id) =>{
@@ -76,6 +74,21 @@ class View extends Component {
   getLeaderboards = (id) =>{
     // TODO: Get Top 3 of all leaderboards once it is completed
   }
+
+  deleteDeck = () =>{
+    const { deleteDeck } = decks
+
+    deleteDeck(this.props.match.params.id).then(res =>{
+      if(res.success){
+        return this.props.history.push({ pathname: '/' })
+      }else{
+        // return this.props.history.push({ pathname: '/' }) // TODO: Error Page
+        console.log("Failed to delete deck")
+      }
+    }).catch(e => {
+      console.log(e.message)
+    })
+  }
   
   render() {
     const { isMe, details, cards, leaderboards } = this.state
@@ -86,7 +99,7 @@ class View extends Component {
         {details.loading && <Fallback />}
         {!details.loading && 
           <React.Fragment>
-            <Header {...details} cards={cards} deckId={id} isMe={isMe} />
+            <Header {...details} cards={cards} deckId={id} isMe={isMe} deleteDeck={this.deleteDeck} />
             <DetailsWrapper cards={cards} leaderboards={leaderboards} />
           </React.Fragment>
         }

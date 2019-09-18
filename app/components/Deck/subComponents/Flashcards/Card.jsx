@@ -14,11 +14,16 @@ export default class Card extends React.Component {
   componentDidUpdate(nextProps) {
     const { index } = this.props;
     const { index: nextIndex } = nextProps;
-    if(index < nextIndex){
-      this.animateCard(((nextIndex - index) == 1) ? 'slideInLeft' : 'slideInRight')
+    if (index == nextIndex) {
+      this.animateCard('flipInX') 
     }else{
-      this.animateCard(((index - nextIndex) == 1) ? 'slideInRight' : 'slideInLeft')
+      if(index < nextIndex){
+        this.animateCard(((nextIndex - index) == 1) ? 'slideInLeft' : 'slideInRight')
+      }else{
+        this.animateCard(((index - nextIndex) == 1) ? 'slideInRight' : 'slideInLeft')
+      }
     }
+    
   }
 
   changeIndex = () =>{
@@ -26,7 +31,6 @@ export default class Card extends React.Component {
       ...this.state,
       front: !this.state.front
     })
-    this.animateCard('flipInX')
   }
 
   animateCard = animation => {

@@ -2,6 +2,7 @@ import React from 'react';
 import firebase from '@firebase/app';
 import '@firebase/auth';
 import '@firebase/firestore';
+import '@firebase/functions';
 
 try {
   const config = {
@@ -20,4 +21,5 @@ try {
 
 export var database     = firebase.firestore()
 export var auth         = firebase.auth()
+export var functions    = firebase.functions()
 export default firebase;

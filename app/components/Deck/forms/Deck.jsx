@@ -122,7 +122,8 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
         render={({
           handleSubmit, 
           values, 
-          isSubmitting
+          isSubmitting,
+          dirty,
         }) => (
           <form onSubmit={handleSubmit}>
             <div className="container-fluid bg-light sticky-top">
@@ -133,7 +134,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
                       <Field type="text" placeholder="Deck Name" name="name" component={TextField} />
                     </div>
                     <div className="col-xl-2">
-                      <SubmitButton title={editingDeck ? "Edit Deck" : "Add Deck"} className="w-100" submitting={isSubmitting} />
+                      <SubmitButton title={editingDeck ? "Save Deck" : "Add Deck"} className="w-100" submitting={isSubmitting} dirty={dirty} />
                       {/* UPDATE: Use when formik upgrade to v2 */}
                       {/* <Field type="checkbox" placeholder="Public" name="shownPublic" component={CheckBox} /> */}
                       <Field type="hidden" placeholder="Public" name="shownPublic" component={TextField} />
