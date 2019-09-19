@@ -11,7 +11,7 @@ const NavDropdown = ({
   menuClassName,
 }) => {
   return (
-    <li className={"nav-item dropdown " + listClassName} data-toggle={topBar && "collapse"} data-target={topBar && ".navbar-collapse.show"}>
+    <li className={"nav-item dropdown " + listClassName} data-toggle={topBar && "collapse"} data-target={topBar && ".navbar-collapse.show"} style={{ zIndex: 1021}}>
       <a className={"nav-link dropdown-toggle " + linkClassName} href="#" id={id}role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {title}
         </a>
