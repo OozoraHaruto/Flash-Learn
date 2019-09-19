@@ -9,4 +9,7 @@ export const DECKS_CARDS                      = 'cards'
 export const DECKS_SUBSCRIBERS                = 'subscribedUsers'
 
 
+export const COL_DECKSUBCRIPTION              = 'deckSubscription'
+
+
 export const COL_ACHIEVEMENTS                 = 'achievements'

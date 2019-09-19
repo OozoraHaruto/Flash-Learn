@@ -133,24 +133,34 @@ export const getAchievements = () =>{
 
 
 // Decks Related
-export const startAddCreatedDeckRef = (userId, deckId) => {
+export const startAddOrEditCreatedDeckRef = (userId, deckId, deckDetails) => {
   return database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_CREATED_DECKS).doc(deckId).set({
-    createdOn: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(ref => {
+    modified: firebase.firestore.FieldValue.serverTimestamp(), 
+    ...deckDetails
+  }, { merge: true }).then(ref => {
     return { success: true }
   }).catch(e => {
-    console.log("startAddCreatedDeckRef", e)
+    console.log("startAddOrEditCreatedDeckRef", e)
     return { success: false, ...e };
   })
 }
 
-export const startAddSubscribedDeckRef = (userId, deckId) => {
-  return database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).set({
+export const startAddSubscribedDeckRef = deckId => {
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).set({
     createdOn: firebase.firestore.FieldValue.serverTimestamp()
   }).then(ref => {
     return { success: true }
   }).catch(e => {
     console.log("startAddSubscribedDeckRef", e)
+    return { success: false, ...e };
+  })
+}
+
+export const checkIfUserIsSubscribedToDeck = deckId => {
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).get().then(doc => {
+    return { success: true, data: doc }
+  }).catch(e => {
+    console.log("checkIfUserIsSubscribedToDeck", e)
     return { success: false, ...e };
   })
 }

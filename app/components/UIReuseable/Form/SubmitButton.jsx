@@ -7,7 +7,7 @@ const SubmitButton = ({
   submitting,
   dirty,
 }) =>(
-  <button type="submit" className={`btn btn-primary ${className} ${(submitting || !dirty) && 'disabled'} ${(submitting) && 'animated pulse infinite'}`} >
+  <button type="submit" className={`btn btn-primary ${className} ${(submitting || !dirty) && 'disabled'} ${(submitting) && 'animated pulse infinite'}`}  disabled={(submitting || !dirty)}>
     {submitting ? 'Submitting' : title}
   </button>
 )

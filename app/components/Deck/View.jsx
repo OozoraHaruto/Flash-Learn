@@ -6,23 +6,26 @@ import { auth } from 'firebase';
 import Fallback from 'Fallback'
 import Header from 'app/components/Deck/subComponents/View/Header'
 import DetailsWrapper from 'app/components/Deck/subComponents/View/DetailsWrapper'
-import { decks } from 'actions'
+import { decks, accounts } from 'actions'
 
-class View extends Component {
+export default class View extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      id: props.match.params.id,
-      isMe: false,
+      id                                    : props.match.params.id,
+      isMe                                  : false,
       details: {
-        loading: true
-      },
+        loading                             : true
+      }, 
       cards: {
-        loading: true
-      },
+        loading                             : true
+      }, 
       leaderboards: {
-        loading: true
-      },
+        loading                             : true
+      }, 
+      following                             : undefined,
+      followerCount                         : undefined,
+
     }
   }
   componentDidMount() {
@@ -30,17 +33,24 @@ class View extends Component {
   }
 
   getHeaderDetails = (id) =>{
-    var { getDeckDetails } = decks
+    var { getDeckDetails }                  = decks
 
     getDeckDetails(id).then(res=>{
-      if(res.success){
+      if (res.success) {
+        const newState = {
+          ...this.state,
+          isMe: auth.currentUser ? (res.data.owner.id == auth.currentUser.uid) : false,
+          details: res.data
+        }
         this.getCards(id)
         this.getLeaderboards(id)
-        this.setState({
-          ...this.state,
-          isMe: res.data.owner.id == auth.currentUser.uid,
-          details: res.data
-        })
+        this.getFollowerCount(id)
+        if (!newState.isMe && auth.currentUser){
+          this.getFollowingDeck(id)
+        }
+        //http://localhost:5000/deck/5qG3zxn14q0m4pPvsnUP
+
+        this.setState(newState)
       }else{
         throw(res)
       }
@@ -56,14 +66,14 @@ class View extends Component {
     })
   }
 
-  getCards = (id) =>{
-    var { getCards } = decks
+  getCards = id =>{
+    var { getCards }                        = decks
     
     getCards(id).then(res => {
       if (res.success) {
         this.setState({
           ...this.state,
-          cards: res.data
+          cards                             : res.data
         })
       } else {
         getCards(id);
@@ -71,12 +81,52 @@ class View extends Component {
     }).catch(() => {})
   }
 
-  getLeaderboards = (id) =>{
+  getLeaderboards = id =>{
     // TODO: Get Top 3 of all leaderboards once it is completed
   }
 
+  getFollowerCount = id =>{
+    const { getFollowerCount }              = decks
+
+    getFollowerCount(id).then(res =>{
+      if(res.success){
+        this.setState({
+          ...this.state,
+          followerCount                     : res.data
+        })
+      }else{
+        getFollowerCount(id)
+      }
+    }).catch( () =>{})
+  }
+
+  getFollowingDeck = id => {
+    var { checkIfUserIsSubscribedToDeck }   = accounts
+
+    checkIfUserIsSubscribedToDeck(id).then(res=>{
+      this.setState({
+        ...this.state,
+        following                           : res.data.exists
+      })
+    }).catch(e => {
+      console.log(e.message)
+    })
+  }
+
+  followDeck = () => {
+    var { startAddSubscribedDeckRef }       = decks
+    //this.props.match.params.id
+    this.setState({
+      ...this.state,
+      following                           : "editing"
+    })
+
+    // TODO: Follow Deck
+    console.log("Follow")
+  }
+
   deleteDeck = () =>{
-    const { deleteDeck } = decks
+    const { deleteDeck }                    = decks
 
     deleteDeck(this.props.match.params.id).then(res =>{
       if(res.success){
@@ -91,15 +141,22 @@ class View extends Component {
   }
   
   render() {
-    const { isMe, details, cards, leaderboards } = this.state
-    const { id } = this.props.match.params
+    const { 
+      isMe, 
+      details, 
+      cards, 
+      leaderboards,
+      followerCount,
+      following,
+    }                                       = this.state
+    const { id }                            = this.props.match.params
 
     return (
       <DocumentMeta title={(!details.name ? "Loading deck" : details.name)}>
         {details.loading && <Fallback />}
         {!details.loading && 
           <React.Fragment>
-            <Header {...details} cards={cards} deckId={id} isMe={isMe} deleteDeck={this.deleteDeck} />
+            <Header {...details} {...{cards, followerCount, following}} deckId={id} isMe={isMe} deleteDeck={this.deleteDeck} followDeck={this.followDeck}/>
             <DetailsWrapper cards={cards} leaderboards={leaderboards} />
           </React.Fragment>
         }
@@ -107,9 +164,3 @@ class View extends Component {
     )
   }
 }
-
-export default connect((state) => {
-  return {
-    auth: state.authReducer
-  }
-})(View)

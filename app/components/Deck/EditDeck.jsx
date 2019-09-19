@@ -77,11 +77,17 @@ class View extends Component {
       const { editDeck }                = decks
       const { id }                      = this.props.match.params
       const toCheck                     = ["front", "back", "backSub", "index"]
-      var tmpCards                      = cards.slice() // seperate cards from memory to prevent problems
+      var tmpCards                      = cards.slice() // separate cards from memory to prevent problems
       var cardsCleaned                  = [] // removed cards that have front and back empty w/o new cards
       var cardsAdded                    = []
       var cardsEdited                   = []
+      var detailsEdited                 = {}
       var index                         = 0
+
+      if(details.name != values.name.trim()){
+        detailsEdited.name              = values.name.trim()
+      }
+      // UPDATE: if formik updates add check for public
 
       const findCard = cardId =>{
         for(var i=0; i<tmpCards.length; i++){
@@ -112,7 +118,7 @@ class View extends Component {
         }
       })
 
-      editDeck(id, cardsAdded, tmpCards, cardsEdited).then(res => {
+      editDeck(id, detailsEdited, cardsAdded, tmpCards, cardsEdited).then(res => {
         if (!res.success) {
           if (res.code) {
             formikBag.setErrors({ cards: res.message })

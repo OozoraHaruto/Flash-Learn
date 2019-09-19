@@ -6,14 +6,17 @@ import { accounts, firebaseFunctions } from 'actions';
 // import { functionList } from 'firebase'
 
 export const startAddDeck = values =>{
-  const { startAddCreatedDeckRef }      = accounts
+  const { startAddOrEditCreatedDeckRef }      = accounts
   var deckId                            = ""
+  var deckDetails = {
+    name: values.name.trim(),
+    public: !values.shownPublic ? false : values.shownPublic,
+  }
 
   return database.collection(dbConst.COL_DECKS).add({
     modified                            : firebase.firestore.FieldValue.serverTimestamp(),
-    name                                : values.name,
     owner                               : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
-    public                              : !values.shownPublic ? false : values.shownPublic ,
+    ...deckDetails
   }).then(ref =>{
     deckId                              = ref.id
     var index                           = 0
@@ -27,7 +30,7 @@ export const startAddDeck = values =>{
       }
       return result
     }, [])
-    cards.push(startAddCreatedDeckRef(auth.currentUser.uid, deckId))
+    cards.push(startAddOrEditCreatedDeckRef(auth.currentUser.uid, deckId, deckDetails))
     return Promise.all(cards)
   }).then(ref=>{
     return { success: true, deckId }
@@ -37,21 +40,27 @@ export const startAddDeck = values =>{
   })
 }
 
-export const editDeck = (deckId, toAdd, toDelete, toEdit) =>{
+export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
   var databaseActions = []
+  const { startAddOrEditCreatedDeckRef } = accounts
 
   toAdd.forEach(card =>{
     var tmpCard = {...cleanCardValues(card)}
     databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).add(tmpCard))
   })
   toDelete.forEach(card =>{
-    var tmpCard = {...cleanCardValues(card)}
     databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).delete())
   })
   toEdit.forEach(card =>{
     var tmpCard = {...cleanCardValues(card)}
     databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).set(tmpCard))
   })
+
+  databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).set({
+    ...detailsEdited,
+    modified                            : firebase.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true}))
+  databaseActions.push(startAddOrEditCreatedDeckRef(auth.currentUser.uid, deckId, detailsEdited))
 
   return Promise.all(databaseActions).then(()=>{
     return { success: true }
@@ -125,6 +134,15 @@ export const getCards = id =>{
     return { success: true, data: snapshot.docs }
   }).catch(e => {
     console.log("getCards", e)
+    return { success: false, ...e };
+  })
+}
+
+export const getFollowerCount = id =>{
+  return database.collection(dbConst.COL_DECKSUBCRIPTION).doc(id).get().then(doc =>{
+    return { success: true, data: doc.exists ? doc.data().count : 0 }
+  }).catch(e => {
+    console.log("getFollowerCount", e)
     return { success: false, ...e };
   })
 }

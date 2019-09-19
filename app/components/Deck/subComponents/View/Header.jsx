@@ -31,12 +31,31 @@ export default class Header extends React.Component{
       isMe, 
       name, 
       owner: { displayName, id, photoURL }, 
-      cards 
+      cards,
+      followerCount,
+      following,
+      followDeck,
     }                                                     = this.props
     const LoadingFlashcards                               = dataLoading(false, "The flashcards should be loaded soon")(Flashcards)
 
     const renderActionButtons = () => {
       const { submittingDelete }                          = this.state
+      const setButtonText = () => {
+        const formatSubriberNumber = () =>{
+          if(followerCount == undefined){
+            return ""
+          }else{
+            return followerCount
+          }  
+        }
+
+        switch (following) {
+          case "editing": return "Submitting"
+          case true: return `Cancel Follow (${formatSubriberNumber()})`
+          default: return `Follow Deck (${formatSubriberNumber()})`
+        }
+      }
+
       if (isMe) {
         return (
           <React.Fragment>
@@ -46,11 +65,12 @@ export default class Header extends React.Component{
             </button>
           </React.Fragment>
         )
-      } else {
-        return (
-          <button type="button" className="btn btn-outline-danger btn-s ml-3">Save Deck</button>
+      } 
+      return (
+          <button type="button" className={`btn btn-outline-danger btn-sm ml-3 ${(following == "editing") && 'disabled animated pulse infinite'}`} onClick={() => followDeck()} disabled={(following == "editing" || isMe || following == undefined)}>
+            {setButtonText()}
+          </button>
         )
-      }
     }
 
     return (
