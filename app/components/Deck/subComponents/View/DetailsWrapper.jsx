@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Fallback from 'Fallback'
 import { dataLoading } from 'reuse'
 import WordList from 'app/components/Deck/WordList'
 

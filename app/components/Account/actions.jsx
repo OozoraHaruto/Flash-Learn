@@ -131,6 +131,49 @@ export const getAchievements = () =>{
   })
 }
 
+export const getSubscribedDecks = (userId, limit = 0) =>{
+  var subscribedDeck                    = database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).orderBy('createdOn', 'desc')
+
+  if(limit != 0){
+    subscribedDeck.limit(limit)
+  }
+
+  return subscribedDeck.get().then(snapshot => {
+    return { success: true, data: snapshot.docs }
+  }).catch(e => {
+    console.log("getSubscribedDecks", e)
+    return { success: false, ...e };
+  })
+}
+
+export const getCreatedDecks = (userId, limit = 0) =>{
+  var createdDeck                       = database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_CREATED_DECKS).orderBy('modified', 'desc')
+
+  if(limit != 0){
+    createdDeck.limit(limit)
+  }
+
+  return createdDeck.get().then(snapshot => {
+    return { success: true, data: snapshot.docs }
+  }).catch(e => {
+    console.log("getCreatedDecks", e)
+    return { success: false, ...e };
+  })
+}
+
+export const addProfileToRedux = profile =>{
+  return{
+    type: rConst.ADD_CURRENT_PROFILE,
+    profile
+  }
+}
+
+export const deleteReduxProfile = () => {
+  return {
+    type: rConst.DELETE_CURRENT_PROFILE
+  }
+}
+
 
 // Decks Related
 export const startAddOrEditCreatedDeckRef = (userId, deckId, deckDetails) => {

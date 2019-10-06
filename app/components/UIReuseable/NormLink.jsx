@@ -6,14 +6,15 @@ const NormLink = ({
   title,
   className,
   to,
+  children,
 }) => {
   return(
-    <Link className={className} to={to}>{title}</Link>
+    <Link className={className} to={to}>{title || children}</Link>
   )
 }
 
 NormLink.propTypes ={
-  title               : PropTypes.string.isRequired,
+  title               : PropTypes.string,
   className           : PropTypes.string.isRequired,
   to                  : PropTypes.string.isRequired,
 }

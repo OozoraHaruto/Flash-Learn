@@ -18,6 +18,24 @@ export const authReducer = (state = {}, action) =>{
   }
 }
 
+export const currentProfileReducer = (state = {}, action) => {
+  switch (action.type) {
+    case rConst.ADD_CURRENT_PROFILE:
+      return {
+        ...action.profile
+      }
+    case rConst.EDIT_CURRENT_PROFILE:
+      return {
+        ...state,
+        ...action.editedInfo
+      }
+    case rConst.DELETE_CURRENT_PROFILE:
+      return {}
+    default:
+      return state;
+  }
+}
+
 
 export const currentDeckReducer = (state = {}, action) =>{
   switch (action.type) {
@@ -66,7 +84,7 @@ export const testReducer = (state = {}, action) => {
     case rConst.EDIT_TEST_USER_ANSWERED:
       var answerDetails     = state.answerDetails
       answerDetails.push(action.details)
-      
+
       return {
         ...state,
         answerDetails

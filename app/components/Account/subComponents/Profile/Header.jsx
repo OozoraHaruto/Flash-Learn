@@ -67,10 +67,10 @@ export default class Header extends React.Component {
     return (
       <div className="container">
         <div className="row p-3">
-          <div className="col">
+          <div className="col align-self-center">
             <img src={`${profilePic}?s=200`} className="img-thumbnail" />
           </div>
-          <div className="col-10 d-flex align-items-center">
+          <div className="col-9 col-md-10 d-flex align-items-center">
             <div>
               <span className="h3 align-middle text-capitalize">{name}</span>
               <span className="align-middle">{isMe && renderVerified()}</span>
