@@ -8,7 +8,7 @@ import Header from 'app/components/Deck/subComponents/View/Header'
 import DetailsWrapper from 'app/components/Deck/subComponents/View/DetailsWrapper'
 import { decks, accounts } from 'actions'
 
-export default class View extends Component {
+export class View extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -67,7 +67,7 @@ export default class View extends Component {
   }
 
   getCards = id =>{
-    var { getCards }                        = decks
+    var { getCards, addDeckToRedux}         = decks
     
     getCards(id).then(res => {
       if (res.success) {
@@ -75,6 +75,7 @@ export default class View extends Component {
           ...this.state,
           cards                             : res.data
         })
+        this.props.dispatch(addDeckToRedux(id, this.state.details.name, res.data))
       } else {
         getCards(id);
       }
@@ -114,17 +115,37 @@ export default class View extends Component {
   }
 
   followDeck = () => {
-    var { startAddSubscribedDeckRef }       = decks
-    //this.props.match.params.id
+    var { startAddSubscribedDeckRef, startDeleteSubscribedDeckRef }     = accounts
+    const subscribe                       = !this.state.following
+
     this.setState({
       ...this.state,
       following                           : "editing"
     })
 
-    // TODO: Follow Deck
-    console.log("Follow")
-  }
+    const editFollowingState = (success) =>{
+      var newState = {
+        ...this.state,
+        following: success ? subscribe: !subscribe
+      }
+      if(success){
+        newState.followerCount = subscribe ? this.state.followerCount + 1 : this.state.followerCount - 1
+      }
+      this.setState(newState)
+    }
 
+    if (subscribe){
+      const {name, owner} = this.state.details
+      startAddSubscribedDeckRef(this.props.match.params.id, name, owner.id).then(res => {
+        editFollowingState(res.success)
+      })
+    }else{
+      startDeleteSubscribedDeckRef(this.props.match.params.id).then(res => {
+        editFollowingState(res.success)
+      })
+    }
+  }
+  
   deleteDeck = () =>{
     const { deleteDeck }                    = decks
 
@@ -164,3 +185,5 @@ export default class View extends Component {
     )
   }
 }
+
+export default connect()(View)

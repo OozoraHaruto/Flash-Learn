@@ -111,7 +111,8 @@ module.exports = {
       configureStore: 'app/redux/configureStore.jsx',
       firebase: 'app/firebase',
       reuse: 'app/components/UIReuseable',
-      databaseConstants: 'app/components/ConstantsDb'
+      databaseConstants: 'app/components/ConstantsDb',
+      componentConstants: 'app/components/Constants.jsx',
     },
     extensions: ['.js', '.jsx']
   },

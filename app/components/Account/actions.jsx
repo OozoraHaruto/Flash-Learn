@@ -145,10 +145,31 @@ export const startAddOrEditCreatedDeckRef = (userId, deckId, deckDetails) => {
   })
 }
 
-export const startAddSubscribedDeckRef = deckId => {
+export const startAddSubscribedDeckRef = (deckId, name, owner) => {
   return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).set({
-    createdOn: firebase.firestore.FieldValue.serverTimestamp()
+    createdOn                           : firebase.firestore.FieldValue.serverTimestamp(),
+    name,
+    owner                               : database.doc(`/${dbConst.COL_USER}/${owner}`),
   }).then(ref => {
+    var actions = []
+    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).update('count', firebase.firestore.FieldValue.increment(1)))
+    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).collection(dbConst.COL_DECKSUBCRIPTION_FOLLOWERS).doc(auth.currentUser.uid).set({ modified: firebase.firestore.FieldValue.serverTimestamp()}))
+    return Promise.all(actions)
+  }).then(() =>{
+    return { success: true }
+  }).catch(e => {
+    console.log("startAddSubscribedDeckRef", e)
+    return { success: false, ...e };
+  })
+}
+
+export const startDeleteSubscribedDeckRef = deckId => {
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).delete().then(ref => {
+    var actions = []
+    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).update('count', firebase.firestore.FieldValue.increment(-1)))
+    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).collection(dbConst.COL_DECKSUBCRIPTION_FOLLOWERS).doc(auth.currentUser.uid).delete())
+    return Promise.all(actions)
+  }).then(() =>{
     return { success: true }
   }).catch(e => {
     console.log("startAddSubscribedDeckRef", e)

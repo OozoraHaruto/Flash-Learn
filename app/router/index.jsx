@@ -96,6 +96,11 @@ class ReactRouter extends Component{
 
               <AuthRoute exact path='/deck/add' component={DeckAdd} me={me} />
               <AuthRoute exact path='/deck/:id/edit' component={DeckEdit} me={me} />
+              <AuthRoute exact path='/deck/:id/test' component={DeckEdit} me={me} />
+              <AuthRoute exact path='/deck/:id/test/mcq' component={DeckEdit} me={me} />
+              <AuthRoute exact path='/deck/:id/test/open' component={DeckEdit} me={me} />
+              <AuthRoute exact path='/deck/:id/test/truefalse' component={DeckEdit} me={me} />
+              <AuthRoute exact path='/deck/:id/test/all' component={DeckEdit} me={me} />
               <Route exact path='/deck/:id' component={DeckView} me={me} />
 
               <Route exact path='/faq' component={FAQMenu} />
