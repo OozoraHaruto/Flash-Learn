@@ -41,7 +41,7 @@ class DeckFull extends React.Component{
         profilePic                    : reduxProfile.profilePic,
         verified                      : reduxProfile.verified
       }
-      this.loaddecksData()
+      this.loadDecksData()
     }
 
     this.setState(state)
@@ -76,12 +76,12 @@ class DeckFull extends React.Component{
             verified                  : res.data.emailVerified
           }
         })
-        this.loaddecksData()
+        this.loadDecksData()
       }
     })
   }
 
-  loaddecksData = () => {
+  loadDecksData = () => {
     switch (this.props.match.params.deckType) {
       case comConst.PROFILE_DECK_CREATED:
         this.getCreatedDecks(); break;
@@ -130,6 +130,8 @@ class DeckFull extends React.Component{
       decksLoading, 
     }                                 = this.state
 
+    console.log(profile)
+
     const generateEmptyArrayMessage = () =>{
       switch (this.props.match.params.deckType) {
         case comConst.PROFILE_DECK_CREATED:
@@ -144,7 +146,9 @@ class DeckFull extends React.Component{
         {profile.name == "" && <Fallback />}
         <div className="container-fluid">
           <div className="row bg-light">
-            {profile.name != "" && <Header {...profile} isMe={isMe} />}
+            {profile.name != "" && 
+              <Header {...profile} isMe={isMe} id={this.props.match.params.id} subpage={this.props.match.params.deckType} />
+            }
           </div>
         </div>
         {

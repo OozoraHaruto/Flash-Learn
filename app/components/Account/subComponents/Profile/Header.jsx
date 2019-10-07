@@ -2,6 +2,8 @@ import React from 'react'
 import { GoUnverified, GoVerified } from 'react-icons/go'
 
 import { accounts } from 'actions'
+import { NormLink } from 'reuse'
+import * as comConst from 'componentConstants'
 
 export default class Header extends React.Component {
   constructor(){
@@ -36,7 +38,7 @@ export default class Header extends React.Component {
   }
 
   render(){
-    const { name, profilePic, verified, isMe, } = this.props
+    const { name, profilePic, verified, isMe, id, subpage = "" } = this.props
 
     const renderVerified = () => {
       if (verified) {
@@ -63,6 +65,25 @@ export default class Header extends React.Component {
         return <small className="text-muted ">{emailStatusMessage()}</small>
       }
     }
+    const renderName = () =>{
+      if(subpage == ""){
+        return name
+      }else{
+        return (
+          <React.Fragment>
+            <NormLink className="text-body" title={name} to={`/profile/${id}`} />{`'s ${getAdditionalTextForName()}`}
+          </React.Fragment>
+        )
+      }
+    }
+    const getAdditionalTextForName = () =>{
+      switch (subpage) {
+        case comConst.PROFILE_DECK_CREATED:
+          return "Created Decks"
+        case comConst.PROFILE_DECK_SUBSCRIBED:
+          return "Subscribed Decks"
+      }
+    }
 
     return (
       <div className="container">
@@ -70,11 +91,17 @@ export default class Header extends React.Component {
           <div className="col align-self-center">
             <img src={`${profilePic}?s=200`} className="img-thumbnail" />
           </div>
-          <div className="col-9 col-md-10 d-flex align-items-center">
+          <div className="col-9 col-md-10 d-flex flex-column justify-content-center">
             <div>
-              <span className="h3 align-middle text-capitalize">{name}</span>
+              <span className="h3 align-middle text-capitalize">{renderName()}</span>
               <span className="align-middle">{isMe && renderVerified()}</span>
               <span className="align-middle">{isMe && !verified && renderEmailStatus()}</span>
+            </div>
+            <div>
+              {
+                isMe &&
+                  <NormLink className="btn btn-outline-warning" title="Edit Profile" to="/profile/edit" />
+              }
             </div>
             <div>
               {/* TODO: Add monthly points here */}

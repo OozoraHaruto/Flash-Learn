@@ -3,7 +3,6 @@ import React from 'react';
 import { NormLink, dataLoading } from 'reuse'
 import Flashcards from 'app/components/Deck/Flashcards'
 
-// TODO: Able to go back to user profile if not there
 export default class Header extends React.Component{
   constructor(){
     super()

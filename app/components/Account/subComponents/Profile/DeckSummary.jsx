@@ -10,6 +10,7 @@ const DeckSummary = ({
   title,
   cards,
   seeAllLink,
+  hideFooter,
 }) => {
   const generateEmptyArrayMessage = () =>{
     switch(seeAllLink){
@@ -37,12 +38,11 @@ const DeckSummary = ({
             <div className="row d-flex justify-content-between d-flex align-items-center px-3">
               <h2>{title}</h2>
               {cards.length == 5 && <div><NormLink title="See all" to={`/profile/${userId}/deck/${seeAllLink}`} /></div>}
-              {<div><NormLink title="See all" to={`/profile/${userId}/deck/${seeAllLink}`} /></div>}
             </div>
             <div className="card-deck-scrollable flex-nowrap overflow-auto py-2">
               {
                 cards.map(card =>
-                  <Card key={card.id} card={card} />
+                  <Card key={card.id} card={card} noFooter={hideFooter}/>
                 )
               }
             </div>

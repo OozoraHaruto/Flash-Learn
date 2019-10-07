@@ -20,6 +20,7 @@ const AccLogin            = lazy(() => import(/* webpackChunkName: "cpo_Login" *
 const AccSignUp           = lazy(() => import(/* webpackChunkName: "cpo_SignUp" */ 'app/components/Account/SignUp'));
 const AccLogout           = lazy(() => import(/* webpackChunkName: "cpo_Logout" */ 'app/components/Account/Logout'));
 const AccProfile          = lazy(() => import(/* webpackChunkName: "cpo_Profile" */ 'app/components/Account/Profile'));
+const AccProfileEdit      = lazy(() => import(/* webpackChunkName: "cpo_ProfileEdit" */ 'app/components/Account/ProfileEdit'));
 const AccDeck             = lazy(() => import(/* webpackChunkName: "cpo_DeckFull" */ 'app/components/Account/DeckFull'));
 
 const DeckAdd             = lazy(() => import(/* webpackChunkName: "cpo_AddDeck" */ 'app/components/Deck/AddDeck'));
@@ -93,6 +94,7 @@ class ReactRouter extends Component{
               <NoAuthRoute exact path='/login' component={AccLogin} me={me} />
               <NoAuthRoute exact path='/signup' component={AccSignUp} me={me} />
               <AuthRoute exact path='/logout' component={AccLogout} me={me} />
+              <AuthRoute exact path='/profile/edit' component={AccProfileEdit} me={me} />
               <Route exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />
               <Route exact path='/profile/:id/deck/:deckType' component={AccDeck} me={me} />
 

@@ -149,7 +149,7 @@ class Profile extends Component {
           </div>
         </div>
         {profile.name != "" && <LoadingCreatedDecks loading={createdDecks == undefined} title="Created Decks" cards={createdDecks} seeAllLink={comConst.PROFILE_DECK_CREATED} userId={id} />}
-        {profile.name != "" && <LoadingSubscribedDecks loading={subscribedDecks == undefined} title="Subscribed Decks" cards={subscribedDecks} seeAllLink={comConst.PROFILE_DECK_SUBSCRIBED} userId={id} />}
+        {profile.name != "" && <LoadingSubscribedDecks loading={subscribedDecks == undefined} title="Subscribed Decks" cards={subscribedDecks} seeAllLink={comConst.PROFILE_DECK_SUBSCRIBED} userId={id} hideFooter={true}/>}
       </DocumentMeta>
     )
   }
