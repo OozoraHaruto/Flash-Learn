@@ -7,6 +7,7 @@ export { default as CheckBox} from './Form/CheckBox';
 export { default as SubmitButton} from './Form/SubmitButton';
 
 // UI
+export { default as Alert } from './Alert';
 export { default as NavBarLink } from './NavBarLink';
 export { default as NormLink } from './NormLink';
 export { default as NavDropdown } from './NavDropdown';

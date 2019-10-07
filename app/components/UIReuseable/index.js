@@ -45,6 +45,16 @@ Object.defineProperty(exports, 'SubmitButton', {
 
 // UI
 
+var Alert = require('./Alert.jsx');
+
+Object.defineProperty(exports, 'Alert', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(Alert).default;
+  }
+});
+
+
 var NavBarLink = require('./NavBarLink.jsx');
 
 Object.defineProperty(exports, 'NavBarLink', {

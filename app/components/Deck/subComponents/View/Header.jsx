@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NormLink, dataLoading } from 'reuse'
+import { Alert, NormLink, dataLoading } from 'reuse'
 import Flashcards from 'app/components/Deck/Flashcards'
 
 export default class Header extends React.Component{
@@ -9,20 +9,6 @@ export default class Header extends React.Component{
     this.state = {
       submittingDelete                                    : false
     }
-  }
-
-  deleteCurrentDeck(){
-    if(this.state.submittingDelete){
-      return
-    }
-
-    const { deleteDeck } = this.props
-
-    this.setState({
-      ...this.state,
-      submittingDelete                                    : true
-    })
-    deleteDeck()
   }
 
   render(){
@@ -60,7 +46,7 @@ export default class Header extends React.Component{
         return (
           <React.Fragment>
             <NormLink to={`/deck/${deckId}/edit`} title="Edit Deck" className="btn btn-outline-secondary btn-sm mx-3" />
-            <button type="button" className={`btn btn-outline-danger btn-sm ${submittingDelete && "animated pulse infinite"}`} onClick={() => this.deleteCurrentDeck()}>
+            <button type="button" className={`btn btn-outline-danger btn-sm ${submittingDelete && "animated pulse infinite"}`} data-toggle="modal" data-target="#deleteConfirmationModal">
               {submittingDelete ? "Deleting Deck" : "Delete Deck"}
             </button>
           </React.Fragment>
@@ -71,6 +57,20 @@ export default class Header extends React.Component{
             {setButtonText()}
           </button>
         )
+    }
+
+    const deleteCurrentDeck = () =>{
+      if(this.state.submittingDelete){
+        return
+      }
+
+      const { deleteDeck } = this.props
+
+      this.setState({
+        ...this.state,
+        submittingDelete                                    : true
+      })
+      deleteDeck()
     }
 
     return (
@@ -114,6 +114,9 @@ export default class Header extends React.Component{
             </div>
           </div>
         </div>
+        <Alert id="deleteConfirmationModal" title={`Are you sure you want to delete "${name}"`} message="You won't be able to recover this deck after deletion. Do you want to continue?" closeButtonText="No" extraButtons={[
+          {func: deleteCurrentDeck, title: "Yes"}
+        ]} />
       </React.Fragment>
     )
   }
