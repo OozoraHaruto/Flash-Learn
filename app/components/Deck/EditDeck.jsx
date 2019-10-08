@@ -8,7 +8,7 @@ import { decks } from 'actions'
 import DeckForm from 'app/components/Deck/forms/Deck'
 import { dataLoading } from 'reuse'
 
-class View extends Component {
+export default class View extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -142,9 +142,3 @@ class View extends Component {
     )
   }
 }
-
-export default connect((state) => {
-  return {
-    auth: state.authReducer
-  }
-})(View)

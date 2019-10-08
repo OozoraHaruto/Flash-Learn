@@ -1,5 +1,8 @@
 import moment from 'moment';
 
+// Profile Reauth
+export const PROFILE_RE_AUTH                                = "reauth"
+
 // Profile Decks
 export const PROFILE_DECK_CREATED                           = "created"
 export const PROFILE_DECK_SUBSCRIBED                        = "subscribed"

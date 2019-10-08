@@ -3,7 +3,7 @@ import { Formik, Field } from 'formik';
 
 import { TextField, SubmitButton } from 'reuse'
 
-const Auth = ({ login, handleFormSubmission, dispatch=false }) => {
+const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmission, dispatch=false }) => {
   const validate = values => {
     const errors              = {};
 
@@ -29,20 +29,16 @@ const Auth = ({ login, handleFormSubmission, dispatch=false }) => {
   return (
     <React.Fragment>
       <Formik
-        initialValues={{
-          email               : "",
-          password            : "",
-        }}
+        initialValues={initialValues}
         validate={validate}
         onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
         render={({
           handleSubmit, 
-          values, 
           isSubmitting,
           dirty,
         }) => (
           <form onSubmit={handleSubmit}>
-            <Field type="email" placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
+            <Field type={initialValues.email=="" ? 'email' : 'hidden'} placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
             <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete="current-password"/>
             <div className="text-center">
               <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}  dirty={dirty}/>

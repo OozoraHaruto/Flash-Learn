@@ -48,7 +48,7 @@ class Profile extends Component {
 
     if (auth.currentUser) {
       state.isMe                        = (auth.currentUser.uid == state.id)
-      if (state.isMe && state.profile.name == "") {
+      if (state.isMe) {
         const user                      = auth.currentUser
         if (user.displayName) {
           state.profile = {

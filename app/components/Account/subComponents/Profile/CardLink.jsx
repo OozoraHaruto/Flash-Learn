@@ -34,7 +34,7 @@ const CardLink = ({
   return (
     <NormLink to={`/deck/${card.id}`} className={`card hover ${className} text-decoration-none`}>
       <div className="card-body text-center">
-        <div className="card-title text-body font-weight-bold">{card.data().name}</div>
+        <h5 className="card-title text-body m-0">{card.data().name}</h5>
       </div>
       { 
         !hideFooter &&

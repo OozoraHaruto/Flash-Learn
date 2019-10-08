@@ -97,12 +97,12 @@ export default class Header extends React.Component {
               <span className="align-middle">{isMe && renderVerified()}</span>
               <span className="align-middle">{isMe && !verified && renderEmailStatus()}</span>
             </div>
-            <div>
-              {
-                isMe &&
-                  <NormLink className="btn btn-outline-warning" title="Edit Profile" to="/profile/edit" />
-              }
-            </div>
+            {
+              isMe &&
+                <div className="mt-1">
+                  <NormLink className="btn btn-outline-warning btn-sm" title="Edit Profile" to={{ pathname: "/reauth", state: {to: '/profile/edit'}}} />
+                </div>
+            }
             <div>
               {/* TODO: Add monthly points here */}
             </div>

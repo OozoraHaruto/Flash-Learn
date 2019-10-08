@@ -1,8 +1,3 @@
-//Session
-export const ADD_SESSION                = 'auth::ADD_SESSION';
-export const EDIT_SESSION               = 'auth::EDIT_SESSION';
-export const DELETE_SESSION             = 'auth::DELETE_SESSION';
-
 // Current Profile
 export const ADD_CURRENT_PROFILE        = 'prof::ADD_CURRENT_PROFILE';
 export const EDIT_CURRENT_PROFILE       = 'prof::EDIT_CURRENT_PROFILE';

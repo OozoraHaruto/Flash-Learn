@@ -7,56 +7,40 @@ import * as rConst from "reduxConstants";
 
 // Auth
 export const startAddUser = (email, password) =>{
-  return (dispatch, getState) => {
-    const cleanEmail                    = email.trim().toLowerCase()
-    var newUser                         = {}
-    var profile                         = {}
-    return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
-      newUser                           = user.user
-      if(user.additionalUserInfo.isNewUser){
-        return getUserGravatar(cleanEmail)
-      }
-    }).then(function (res) {
-      if (res.success){
-        profile.displayName             = res.entry[0].name.formatted
-        profile.photoURL                = `https://secure.gravatar.com/avatar/${res.entry[0].hash}`
-        profile.username                = res.entry[0].preferredUsername
-      } else {
-        profile.displayName             = "君の名は？"
-        profile.photoURL                = `https://secure.gravatar.com/avatar/${res.hash}`
-        profile.username                = newUser.uid
-      }
-      var actions                       = [
-        newUser.updateProfile(profile),
-        writeToUserProfileDatabase(newUser.uid, profile),
-        sendVerificationEmail()
-      ]
-      dispatch(login({
-        id                              : newUser.uid,
-        name                            : profile.displayName,
-        profilePic                      : profile.photoURL,
-      }))
-
-      return Promise.all(actions)
-    }).then(res => {
-      return { success: true }
-    }).catch(e =>{
-      console.log('Unable to signup', e);
-      return {success: false, ...e};
-    })
-  }
+  const cleanEmail                      = email.trim().toLowerCase()
+  var newUser                           = {}
+  var profile                           = {}
+  return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
+    newUser                             = user.user
+    const hash                          = crypto.createHash('md5').update(cleanEmail).digest("hex")
+    if(user.additionalUserInfo.isNewUser){
+      return getUserGravatar(hash)
+    }
+  }).then(function (res) {
+    profile.displayName                 = res.success ? res.entry[0].name.formatted : "君の名は？"
+    profile.photoURL                    = `https://secure.gravatar.com/avatar/${hash}`
+    profile.username                    = res.success ? res.entry[0].preferredUsername : newUser.uid
+    var actions                         = [
+      newUser.updateProfile(profile),
+      writeToUserProfileDatabase(newUser.uid, profile),
+      sendVerificationEmail()
+    ]
+    return Promise.all(actions)
+  }).then(res => {
+    return { success: true }
+  }).catch(e =>{
+    console.log('Unable to signup', e);
+    return {success: false, ...e};
+  })
 }
 
-const getUserGravatar = (email) =>{
-  const hash                            = crypto.createHash('md5').update(email).digest("hex")
-  
-  return axios.get(`https://en.gravatar.com/${hash}.json`)
-    .then(function (res) {
-      return {success: true, ...res.data};
-    }).catch(function (error) {
-      console.log("getUserGravatar", error);
-      return { success: false, hash, message: error }
-    })
+const getUserGravatar = hash =>{
+  return axios.get(`https://en.gravatar.com/${hash}.json`).then(function (res) {
+    return {success: true, ...res.data};
+  }).catch(function (error) {
+    console.log("getUserGravatar", error);
+    return { success: false, hash, message: error }
+  })
 }
 
 const writeToUserProfileDatabase = (id, data) =>{
@@ -84,6 +68,45 @@ export const startLoginUser = (email, password) => {
   })
 }
 
+export const startReAuthentication = (email, password) =>{
+  return auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(email, password)).then(() =>{
+    return {success: true}
+  }).catch(e => {
+    console.log('startReAuthentication', e);
+    return { success: false, ...e };
+  })
+}
+
+export const startEditUserName = displayName =>{
+  const user                            = auth.currentUser
+  return user.updateProfile({displayName}).then(() =>{
+    return database.collection(dbConst.COL_USER).doc(user.uid).set({ displayName }, { merge: true })
+  }).then(() => {
+    return { success: true }
+  }).catch(e => {
+    console.log('startEditUserName', e);
+    return { success: false, ...e };
+  })
+}
+
+export const startEditUserEmail = email =>{
+  return auth.currentUser.updateEmail(email).then(() => {
+    return { success: true }
+  }).catch(e => {
+    console.log('startEditUserName', e);
+    return { success: false, ...e };
+  })
+}
+
+export const startEditUserPassword = password =>{
+  return auth.currentUser.updatePassword(password).then(() => {
+    return { success: true }
+  }).catch(e => {
+    console.log('startEditUserName', e);
+    return { success: false, ...e };
+  })
+}
+
 export const startLogoutUser = () =>{
   return auth.signOut().then( () =>{
     return { success: true };
@@ -91,19 +114,6 @@ export const startLogoutUser = () =>{
     console.log("startLogoutUser", error);
     return { success: false, ...e };
   })
-}
-
-export const login = (session) =>{
-  return {
-    type: rConst.ADD_SESSION,
-    session
-  }
-}
-
-export const logout = () => {
-  return {
-    type: rConst.DELETE_SESSION
-  }
 }
 
 

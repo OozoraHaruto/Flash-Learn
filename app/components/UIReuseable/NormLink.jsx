@@ -16,7 +16,7 @@ const NormLink = ({
 NormLink.propTypes ={
   title               : PropTypes.string,
   className           : PropTypes.string.isRequired,
-  to                  : PropTypes.string.isRequired,
+  to                  : PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 }
 
 NormLink.defaultProps = {

@@ -3,18 +3,17 @@ import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { NavBarLink, NormLink, NavDropdown } from 'reuse';
+import { auth } from 'firebase'
 
 const ZWrapper = ({
-  auth,
   children,
   location : {pathname}
 }) =>{
   const renderRightSideBarLoggedIn = () => {
-    var { name, profilePic } = auth;
     return (
       <React.Fragment>
-        <NavDropdown title={<img src={profilePic + "?s=36"} alt="Profile Picture" className="rounded-circle" />} id="navProfile" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
-          <div className="dropdown-item-text text-muted">{`Hi ${name}`}</div>
+        <NavDropdown title={<img src={`${auth.currentUser.photoURL}?s=36`} alt="Profile Picture" className="rounded-circle" />} id="navProfile" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
+          <div className="dropdown-item-text text-muted">{`Hi ${auth.currentUser.displayName}`}</div>
           <NormLink to="/profile" title="Profile" className="dropdown-item" />
           <div className="dropdown-divider" />
           <NormLink to="/logout" title="Logout" className="dropdown-item" />
@@ -64,8 +63,8 @@ const ZWrapper = ({
 
           </ul>
           <ul className="navbar-nav ml-auto">
-            {(!jQuery.isEmptyObject(auth)) && renderRightSideBarLoggedIn()}
-            {(jQuery.isEmptyObject(auth)) && renderRightSideBarLoggedOut()}
+            {auth.currentUser && renderRightSideBarLoggedIn()}
+            {!auth.currentUser && renderRightSideBarLoggedOut()}
           </ul>
         </div>
       </nav>
@@ -74,10 +73,4 @@ const ZWrapper = ({
   )
 }
 
-export default withRouter(
-  connect((state) => {
-    return {
-      auth: state.authReducer
-    }
-  })(ZWrapper)
-);
+export default withRouter(ZWrapper);

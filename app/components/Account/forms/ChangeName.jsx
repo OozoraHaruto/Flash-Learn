@@ -3,15 +3,12 @@ import { Formik, Field } from 'formik';
 
 import { TextField, SubmitButton } from 'reuse'
 
-const ChangePassword = ({ initialValues, handleFormSubmission, dispatch = false }) => {
+const ChangeName = ({ initialValues, handleFormSubmission, dispatch = false }) => {
   const validate = values => {
     const errors = {};
-    if (values.password) {
-      if (values.password.length < 6) {
-        errors['password'] = 'Password should be at least 6 characters'
-      }
-    } else {
-      errors['password'] = 'Required';
+
+    if (!values.name) {
+      errors['name'] = 'Required';
     }
 
     return errors
@@ -29,8 +26,7 @@ const ChangePassword = ({ initialValues, handleFormSubmission, dispatch = false 
           dirty,
         }) => (
             <form onSubmit={handleSubmit}>
-              <Field type="hidden" placeholder="" name="username" component={TextField} />
-              <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete="new-password" />
+              <Field type="text" placeholder="Name" name="name" component={TextField} />
               <div className="text-center">
                 <SubmitButton title="Update" submitting={isSubmitting} dirty={dirty} />
               </div>
@@ -41,4 +37,4 @@ const ChangePassword = ({ initialValues, handleFormSubmission, dispatch = false 
   )
 };
 
-export default ChangePassword;
+export default ChangeName;
