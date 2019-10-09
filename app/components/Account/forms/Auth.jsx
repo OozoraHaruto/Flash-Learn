@@ -39,7 +39,7 @@ const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmissi
         }) => (
           <form onSubmit={handleSubmit}>
             <Field type={initialValues.email=="" ? 'email' : 'hidden'} placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
-            <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete="current-password"/>
+            <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete={login ? 'current-password' : 'new-password'}/>
             <div className="text-center">
               <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}  dirty={dirty}/>
             </div>

@@ -104,6 +104,7 @@ export default class Header extends React.Component{
                   <NormLink title="Open Ended" to={`/deck/${deckId}/test/OpenEnded`} /><br />
                   <NormLink title="True / False" to={`/deck/${deckId}/test/TrueFalse`} /><br />
                   <NormLink title="All" to={`/deck/${deckId}/test/All`} /><br />
+                  <NormLink title="Select with options" to={`/deck/${deckId}/test`} /><br />
                 </div>
                 <div className="col">
                   <div className="row h-100">

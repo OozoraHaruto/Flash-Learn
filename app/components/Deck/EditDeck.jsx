@@ -8,7 +8,7 @@ import { decks } from 'actions'
 import DeckForm from 'app/components/Deck/forms/Deck'
 import { dataLoading } from 'reuse'
 
-export default class View extends Component {
+class EditDeck extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -24,6 +24,8 @@ export default class View extends Component {
   }
   componentDidMount() {
     this.getHeaderDetails(this.props.match.params.id)
+    const { deleteDeck, deleteReduxDeck } = decks
+        this.props.dispatch(deleteReduxDeck())
   }
 
   getHeaderDetails = (id) => {
@@ -142,3 +144,5 @@ export default class View extends Component {
     )
   }
 }
+
+export default connect()(EditDeck)

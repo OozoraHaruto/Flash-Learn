@@ -17,6 +17,10 @@ export default class Card extends React.Component {
     if (index == nextIndex) {
       this.animateCard('flipInX') 
     }else{
+      this.setState({
+        ...this.state,
+        front: true
+      })
       if(index < nextIndex){
         this.animateCard(((nextIndex - index) == 1) ? 'slideInLeft' : 'slideInRight')
       }else{

@@ -25,7 +25,6 @@ export class View extends Component {
       }, 
       following                             : undefined,
       followerCount                         : undefined,
-
     }
   }
   componentDidMount() {
@@ -48,7 +47,6 @@ export class View extends Component {
         if (!newState.isMe && auth.currentUser){
           this.getFollowingDeck(id)
         }
-        //http://localhost:5000/deck/5qG3zxn14q0m4pPvsnUP
 
         this.setState(newState)
       }else{
@@ -147,10 +145,11 @@ export class View extends Component {
   }
   
   deleteDeck = () =>{
-    const { deleteDeck }                    = decks
+    const { deleteDeck, deleteReduxDeck }   = decks
 
     deleteDeck(this.props.match.params.id).then(res =>{
       if(res.success){
+        this.props.dispatch(deleteReduxDeck())
         return this.props.history.push({ pathname: '/' })
       }else{
         // return this.props.history.push({ pathname: '/' }) // TODO: Error Page

@@ -23,7 +23,7 @@ const ReAuthenticate = ({
           formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
         }
       }else{
-        history.replace({ pathname: location.state.to, state: { from: comConst.PROFILE_RE_AUTH}})
+        history.replace({ pathname: !location.state.to ? "/profile/edit" : location.state.to, state: { from: comConst.PROFILE_RE_AUTH}})
       }
     })
   }
