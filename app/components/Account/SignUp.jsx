@@ -1,6 +1,5 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
-import { connect } from 'react-redux';
 
 import SignUpForm from 'app/components/Account/forms/Auth'
 import { accounts } from 'actions'
@@ -11,7 +10,7 @@ const SignUp = ({ dispatch }) => {
     var { email, password } = values
     const { startAddUser } = accounts
 
-    dispatch(startAddUser(email, password)).then(res => {
+    startAddUser(email, password).then(res => {
       if (!res.success) {
         if (res.code) {
           if (res.code == 'auth/email-already-in-use') {
@@ -37,4 +36,4 @@ const SignUp = ({ dispatch }) => {
   )
 }
 
-export default connect()(SignUp)
+export default SignUp

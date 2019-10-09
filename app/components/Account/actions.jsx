@@ -8,11 +8,12 @@ import * as rConst from "reduxConstants";
 // Auth
 export const startAddUser = (email, password) =>{
   const cleanEmail                      = email.trim().toLowerCase()
+  const hash                            = crypto.createHash('md5').update(cleanEmail).digest("hex")
   var newUser                           = {}
   var profile                           = {}
   return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
     newUser                             = user.user
-    const hash                          = crypto.createHash('md5').update(cleanEmail).digest("hex")
+    
     if(user.additionalUserInfo.isNewUser){
       return getUserGravatar(hash)
     }
@@ -34,7 +35,7 @@ export const startAddUser = (email, password) =>{
   })
 }
 
-const getUserGravatar = hash =>{
+export const getUserGravatar = hash =>{
   return axios.get(`https://en.gravatar.com/${hash}.json`).then(function (res) {
     return {success: true, ...res.data};
   }).catch(function (error) {
