@@ -38,7 +38,7 @@ export const currentDeckReducer = (state = {}, action) =>{
 }
 
 
-export const testReducer = (state = {}, action) => {
+export const currentTestReducer = (state = {}, action) => {
   switch (action.type) {
     case rConst.ADD_TEST:
       return {
@@ -51,17 +51,7 @@ export const testReducer = (state = {}, action) => {
     case rConst.EDIT_TEST_START:
       return {
         ...state,
-        timeStart          : new Date()
-      }
-    case rConst.EDIT_TEST_CORRECT_ANS:
-      return {
-        ...state,
-        gotCorrect          : state.gotCorrect + 1
-      }
-    case rConst.EDIT_TEST_WRONG_ANS:
-      return {
-        ...state,
-        gotWrong            : state.gotWrong + 1 
+        timeStart           : new Date()
       }
     case rConst.EDIT_TEST_USER_ANSWERED:
       var answerDetails     = state.answerDetails
@@ -69,7 +59,9 @@ export const testReducer = (state = {}, action) => {
 
       return {
         ...state,
-        answerDetails
+        answerDetails,
+        gotCorrect          : (state.gotCorrect + (state.correct ? 1 : 0)),
+        gotWrong            : (state.gotWrong + (state.correct ? 0 : 1)),
       }
     case rConst.DELETE_TEST:
       return {}

@@ -93,7 +93,7 @@ class TestOptions extends Component {
     }
 
     return (
-      <DocumentMeta title="Edit Profile">
+      <DocumentMeta title={!name ? "Loading Test Options" : `${name}'s Test Options`}>
         {jQuery.isEmptyObject(this.props.deck) &&
           <Fallback />
         }

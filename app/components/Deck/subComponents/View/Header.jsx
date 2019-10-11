@@ -1,5 +1,6 @@
 import React from 'react';
 
+import * as comConst from 'componentConstants'
 import { Alert, NormLink, dataLoading } from 'reuse'
 import Flashcards from 'app/components/Deck/Flashcards'
 
@@ -100,10 +101,10 @@ export default class Header extends React.Component{
                 <div className="col-sm text-sm-center text-md-left text-sm-left text-center">
                   <NormLink title="Flashcards" to={`/deck/${deckId}/flashcards`} /><br />
                   <span className="text-muted">Tests</span><br />
-                  <NormLink title="MCQ" to={`/deck/${deckId}/test/MCQ`} /><br />
-                  <NormLink title="Open Ended" to={`/deck/${deckId}/test/OpenEnded`} /><br />
-                  <NormLink title="True / False" to={`/deck/${deckId}/test/TrueFalse`} /><br />
-                  <NormLink title="All" to={`/deck/${deckId}/test/All`} /><br />
+                  <NormLink title="MCQ" to={`/deck/${deckId}/test/${comConst.TEST_MCQ}`} /><br />
+                  <NormLink title="Open Ended" to={`/deck/${deckId}/test/${comConst.TEST_OPENENDED}`} /><br />
+                  <NormLink title="True / False" to={`/deck/${deckId}/test/${comConst.TEST_TRUEFALSE}`} /><br />
+                  <NormLink title="Ultimate" to={`/deck/${deckId}/test/${comConst.TEST_ULTIMATE}`} /><br />
                   <NormLink title="Select with options" to={`/deck/${deckId}/test`} /><br />
                 </div>
                 <div className="col">
