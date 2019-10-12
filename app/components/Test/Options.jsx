@@ -46,7 +46,6 @@ class TestOptions extends Component {
         this.props.dispatch(addDeckToRedux(id, name, res.data))
       }
     }).catch(e => {
-      console.log("error", e)
       if (!this.props.history.location.state) {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}` })
       } else if (this.props.history.location.state.from == '/login') {

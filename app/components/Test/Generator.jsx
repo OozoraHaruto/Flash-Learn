@@ -1,21 +1,20 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
+const { Random, MersenneTwister19937 } = require("random-js");
+const random = new Random(MersenneTwister19937.autoSeed());
 
 import * as comConst from 'componentConstants'
 import Fallback from 'Fallback'
 import { decks } from 'actions'
 
-import OpenEndedAnswer from 'app/components/Test/subComponents/View/OpenEndedAnswer'
-import SelectAnswer from 'app/components/Test/subComponents/View/SelectAnswer'
+import Flashcards from 'app/components/Deck/Flashcards'
 
-class View extends Component {
+class Generator extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      id                                : props.match.params.id,
       loadingMessage                    : "We are getting the cards ready",
-      name                              : undefined,
     }
   }
 
@@ -70,38 +69,28 @@ class View extends Component {
     const typesOfQn                     = [comConst.TEST_MCQ, comConst.TEST_OPENENDED, comConst.TEST_TRUEFALSE]
     const testType                      = this.props.match.params.testType
     const isTestUltimate                = comConst.TEST_ULTIMATE == testType
-    const cardDataListRows              = deck.length
     var cardDataList                    = []
     var questions                       = []
 
-    const generateRandomNumber = max => {
-      const option                      = Math.round(Math.random() * 2)
-      const randomNumber                = Math.random() * (max-1)
-      
-      switch(option){
-        case 0: return Math.floor(randomNumber)
-        case 1: return Math.ceil(randomNumber)
-        case 2: return Math.round(randomNumber)
-      }
-    }
-    const addToQuestionArray = (question, answer, options, type) => {
-      const shuffle = arr => arr.reduceRight((res, _, __, arr) => [...res, arr.splice(~~(Math.random() * arr.length), 1)[0]], []); //https://stackoverflow.com/a/56749849/1092339
+    const generateRandomNumber = max => random.integer(0, (max - 1))
+    const addToQuestionArray = (question, answer, options, type, card) => {
       questions.push({
         question,
         answer,
-        options: shuffle(options),
+        options,
         type,
+        card                            : card.data()
       })
     }
     const typeOfQn = () => isTestUltimate ? typesOfQn[generateRandomNumber(typesOfQn.length)] : testType
     const createMCQQuestion = card =>{
       const numberOfOptionsChoices      = [2, 4, 6]
-      const numberOfOptions             = numberOfOptionsChoices[generateRandomNumber(3)]
-      const front                       = generateRandomNumber(1) == 0 ? true : false
+      const numberOfOptions             = random.pick(numberOfOptionsChoices)
+      const front                       = random.bool()
       var choices                       = [front ? card.data().back : card.data().front]
 
       do{
-        var answerPotential             = cardDataList[generateRandomNumber(cardDataListRows)]
+        var answerPotential             = random.pick(cardDataList)
         var answer                      = front ? answerPotential.back : answerPotential.front
 
         if (!choices.includes(answer)){
@@ -109,32 +98,27 @@ class View extends Component {
         }
       }while(choices.length != numberOfOptions)
 
-      addToQuestionArray(front ? card.data().front : card.data().back, choices[0], choices, comConst.TEST_MCQ)
+      addToQuestionArray(front ? card.data().front : card.data().back, choices[0], random.shuffle(choices), comConst.TEST_MCQ, card)
     }
     const createOpenEndedQuestion = card =>{
-      const frontQuestion               = generateRandomNumber(1) == 0 ? true : false
-
-      if (frontQuestion){
-        addToQuestionArray(card.data().front, card.data().back.toLowerCase(), [], comConst.TEST_OPENENDED)
+      if (random.bool()){
+        addToQuestionArray(card.data().front, card.data().back.toLowerCase(), [], comConst.TEST_OPENENDED, card)
       }else{
-        addToQuestionArray(card.data().back, card.data().front.toLowerCase(), [], comConst.TEST_OPENENDED)
+        addToQuestionArray(card.data().back, card.data().front.toLowerCase(), [], comConst.TEST_OPENENDED, card)
       }
     }
     const createTrueFalseQuestion = card =>{
-      const correct                     = generateRandomNumber(1) == 0 ? true : false
-      const front                       = generateRandomNumber(1) == 0 ? true : false
+      const correct                     = random.bool()
+      const front                       = random.bool()
       const dataA                       = front ? card.data().front : card.data().back
       const dataACorrectAns             = front ? card.data().back : card.data().front
-      var dataB                         = ""
+      var dataB                         = dataACorrectAns
 
-      if (correct){
-        dataB                           = dataACorrectAns
-      }else{
-        var dataBPotential              = cardDataList[generateRandomNumber(cardDataListRows)]
-        dataB                           = front ? dataBPotential.back : dataBPotential.front
+      if (!correct){
+        dataB                           = front ? random.pick(cardDataList).back : random.pick(cardDataList).front
       }
 
-      addToQuestionArray(`Is ${dataA} = ${dataB}?`, dataB == dataACorrectAns ? "True" : "False", ["True", "False"], comConst.TEST_TRUEFALSE)
+      addToQuestionArray(`Is ${dataA} = ${dataB}?`, dataB == dataACorrectAns ? "True" : "False", ["True", "False"], comConst.TEST_TRUEFALSE, card)
     }
     const createQuestion = () => {
       var card                          = deck.splice(generateRandomNumber(deck.length), 1)[0]
@@ -149,7 +133,7 @@ class View extends Component {
     this.setState({
       ...this.state,
       loadingMessage                    : "Hold on just a little longer, we are generating the questions now.",
-      noOfQn
+      cards                             : deck.slice(0),
     })
 
     if (comConst.TEST_OPENENDED != testType){
@@ -162,77 +146,48 @@ class View extends Component {
 
     this.setState({
       ...this.state,
-      loadingMessage                    : false,
+      loadingMessage                    : "We are done generating your test questions!",
       questions,
-      timeStart                         : new Date(),
-      currentQuestion                   : 0,
-      gotCorrect                        : 0,
-      gotWrong                          : 0,
-      currentStreak                     : 0,
-      longestStreak                     : false,
-      answerDetails                     : [],
     })
   }
 
-  processAnswer = userAnswer =>{
-    var {
-      currentQuestion,
-      gotCorrect,
-      gotWrong,
-      currentStreak,
-      longestStreak,
-      answerDetails,
-    }                                   = this.state
+  startTest = () =>{
+    const {name, questions}             = this.state
 
-    this.setState({
-      ...this.state,
-      currentQuestion                   : currentQuestion + 1,
+    this.props.history.push({
+      pathname                          : `/deck/${this.props.match.params.id}/test/start`,
+      state :{
+        name                            : name,
+        questions
+      }
     })
   }
-
 
   render() {
     var { 
-      id, 
       loadingMessage, 
-      noOfQn,
-      name,
-      questions,
-      currentQuestion,
-      gotCorrect,
-      gotWrong,
-      currentStreak,
-      longestStreak,
-      answerDetails,
+      cards, 
+      questions 
     }                                   = this.state
-
-    const renderTestOptions = question =>{
-      var AnswerComponent               = question.type == comConst.TEST_OPENENDED ? OpenEndedAnswer : SelectAnswer
-
-      return <AnswerComponent options={question.options} userAnswered={this.processAnswer}/>
-    }
 
     return (
       <DocumentMeta title={!name ? "Loading Test Options" : `${name}'s Test`}>
         {
-          loadingMessage != false &&
+          loadingMessage != false && !cards &&
             <Fallback message={loadingMessage} />
         }
         {
-          loadingMessage == false &&
-            <div className="d-flex flex-column wholePageWithNav">
-              <div>
-                <div className="progress">
-                  <div className="progress-bar" style={{ width: `${((currentQuestion) / noOfQn) * 100}%` }} role="progressbar" aria-valuenow={currentQuestion + 1} aria-valuemin="1" aria-valuemax={noOfQn}></div>
-                </div>
+          cards &&
+            <div className="d-flex wholePageWithNav justify-content-center align-items-center">
+              <div className="text-center">
+                <h5>{loadingMessage}</h5>
+                If you'd like to have a short revision
+                <Flashcards cards={cards}/>
+                {
+                  questions &&
+                    <button className="btn btn-primary mt-2" onClick={() => this.startTest()}>Start Test</button>
+                }
               </div>
-              <div className="text-center mt-2">
-                <h2>{questions[currentQuestion].question}</h2>
-              </div>
-              <div>
-                <button className="btn btn-outline-primary" onClick={() => this.processAnswer(1)}>Next</button>
-              </div>
-              {renderTestOptions(questions[currentQuestion])}
             </div>
         }
       </DocumentMeta>
@@ -244,4 +199,4 @@ export default connect(state => {
   return {
     deck                                : state.currentDeckReducer,
   }
-})(View)
+})(Generator)

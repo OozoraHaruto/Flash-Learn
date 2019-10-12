@@ -12,6 +12,9 @@ export const TEST_MCQ                                       = "mcq"
 export const TEST_OPENENDED                                 = "openended"
 export const TEST_TRUEFALSE                                 = "truefalse"
 export const TEST_ULTIMATE                                  = "ultimate"
+export const TEST_PROGRESS_TYPE_COMBO                       = "combo"
+export const TEST_PROGRESS_TYPE_INFO                        = "info"
+
 
 
 
