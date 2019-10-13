@@ -204,39 +204,14 @@ export const deleteReduxDeck = () => {
 }
 
 // - Tests
-export const addTestToRedux = (id, name, cards) => {
-  console.log("adding deck to redux")
+export const addTestToRedux = (id, name, questions, qualifiedForLeaderboard) => {
   return {
     type: rConst.ADD_TEST,
     info: {
       id,
       name,
-      cards,
-    }
-  }
-}
-
-export const userGotCorrectRedux = () => {
-  return {
-    type: rConst.EDIT_TEST_CORRECT_ANS
-  }
-}
-
-export const userGotWrongRedux = () => {
-  return {
-    type: rConst.EDIT_TEST_WRONG_ANS
-  }
-}
-
-export const userAnsweredQuestionRedux = (gotCorrect, answer, timeTaken) => {
-  gotCorrect ? userGotCorrectRedux() : userGotWrongRedux()
-
-  return {
-    type: rConst.EDIT_TEST_USER_ANSWERED,
-    details: {
-      gotCorrect,
-      answer,
-      timeTaken,
+      questions,
+      leaderboard                       : qualifiedForLeaderboard
     }
   }
 }

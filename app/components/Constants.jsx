@@ -14,6 +14,7 @@ export const TEST_TRUEFALSE                                 = "truefalse"
 export const TEST_ULTIMATE                                  = "ultimate"
 export const TEST_PROGRESS_TYPE_COMBO                       = "combo"
 export const TEST_PROGRESS_TYPE_INFO                        = "info"
+export const TEST_RESULT_SORT_QUESTION_NUMBER               = {value: 'qn', label: 'Question Number'}
 
 
 

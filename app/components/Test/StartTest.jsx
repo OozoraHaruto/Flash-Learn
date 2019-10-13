@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
+var moment = require('moment');
 
 import * as comConst from 'componentConstants'
+import { decks } from 'actions'
 
 import OpenEndedAnswer from 'app/components/Test/subComponents/View/OpenEndedAnswer'
 import SelectAnswer from 'app/components/Test/subComponents/View/SelectAnswer'
 
-export default class StartTest extends Component {
+class StartTest extends Component {
   constructor(){
     super()
 
@@ -17,15 +20,18 @@ export default class StartTest extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.location.state) {
+    if (jQuery.isEmptyObject(this.props.test)) {
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
-    }else if(!this.props.location.state.questions){
+    } else if (!this.props.test.id == this.props.match.params.id){
+      const { deleteReduxTest }         = decks
+      this.props.dispatch(deleteReduxTest())
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
     }
 
     this.setState({
-      noOfQn                            : this.props.location.state.questions.length,
-      timeStart                         : new Date() ,
+      noOfQn                            : this.props.test.questions.length,
+      totalTime                         : 0,
+      questionTimeStart                 : new Date(),
       currentQuestion                   : 0,
       gotCorrect                        : 0,
       gotWrong                          : 0,
@@ -38,6 +44,9 @@ export default class StartTest extends Component {
 
   processAnswer = userAnswer => {
     var {
+      noOfQn,
+      totalTime,
+      questionTimeStart,
       currentQuestion,
       gotCorrect,
       gotWrong,
@@ -45,13 +54,20 @@ export default class StartTest extends Component {
       longestStreak,
       answerDetails,
     }                                   = this.state
-    const currentQuestionObject         = this.props.location.state.questions[currentQuestion]
+    const currentQuestionObject         = this.props.test.questions[currentQuestion]
+    const userCorrect                   = currentQuestionObject.answer == userAnswer
+    const timeTaken                     = moment().diff(moment(questionTimeStart), 'milliseconds')
     var newState = {
       answerDetails,
       currentQuestion                   : currentQuestion + 1,
+      totalTime                         : (totalTime + timeTaken)
     }
-    newState.answerDetails.push(userAnswer)
-
+    newState.answerDetails.push({
+      userAnswer,
+      userCorrect,
+      questionIndex                     : currentQuestion,
+      timeTaken
+    })
     if (currentQuestionObject.answer == userAnswer) {
       newState.gotCorrect               = gotCorrect + 1
       newState.currentStreak            = currentStreak + 1
@@ -66,6 +82,33 @@ export default class StartTest extends Component {
     this.setState({
       ...this.state,
       ...newState,
+      questionTimeStart                 : new Date(),
+    }, () =>{
+      if (newState.currentQuestion == noOfQn){
+        this.finalizeResults()
+      }
+    })
+  }
+
+  finalizeResults = () =>{
+    var {
+      noOfQn,
+      totalTime,
+      gotCorrect,
+      gotWrong,
+      longestStreak,
+      answerDetails,
+    }                                   = this.state
+    this.props.history.replace({
+      pathname                          : `/deck/${this.props.test.id}/test/results`,
+      state: {
+        noOfQn,
+        gotCorrect,
+        gotWrong,
+        longestStreak,
+        totalTime,
+        answers                         : answerDetails,
+      }
     })
   }
 
@@ -90,8 +133,8 @@ export default class StartTest extends Component {
     var {
       noOfQn,
       currentQuestion,
-    } = this.state
-    var { name, questions }             = this.props.location.state
+    }                                   = this.state
+    var { name, questions }             = this.props.test
 
     const renderTestOptions = question => {
       var AnswerComponent = question.type == comConst.TEST_OPENENDED ? OpenEndedAnswer : SelectAnswer
@@ -138,7 +181,7 @@ export default class StartTest extends Component {
     return (
       <DocumentMeta title={`${name}'s Test`}>
         {
-          noOfQn &&
+          (currentQuestion != noOfQn) &&
             <div className="d-flex flex-column wholePageWithNav">
               <div>
                 <div className="progress" onClick={() => this.changeProgressBar()}>
@@ -151,7 +194,22 @@ export default class StartTest extends Component {
               {renderTestOptions(questions[currentQuestion])}
             </div>
         }
+        {
+          (currentQuestion == noOfQn && Number.isInteger(noOfQn)) &&
+            <div className="d-flex flex-column wholePageWithNav justify-content-center align-items-center">
+              <div className="text-center mt-2">
+                <h2>We are crunching your results</h2>
+                <p>Please give us a moment</p>
+              </div>
+            </div>
+        }
       </DocumentMeta>
     )
   }
 }
+
+export default connect(state => {
+  return {
+    test                                : state.currentTestReducer,
+  }
+})(StartTest)

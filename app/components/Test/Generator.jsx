@@ -22,34 +22,30 @@ class Generator extends Component {
     if (this.props.match.params.id != this.props.deck.id) {
       this.getDeckAndCards();
     }else{
-      this.setState({
-        ...this.state,
-        name                            : this.props.deck.name,
-      })
-      this.generateQuestions(this.props.deck.cards)
+      this.generateQuestions()
     }
   }
 
   getDeckAndCards = () => {
     const {
       getDeck,
-      getCards
+      getCards,
+      addDeckToRedux,
     } = decks
     const { id }                        = this.props.match.params
+    var name                            = ""
 
     getDeck(id).then(res => {
       if (res.success) {
-        this.setState({
-          ...this.state,
-          name                          : res.data.name
-        })
+        name                            = res.data.name
         return getCards(id)
       } else {
         throw res
       }
     }).then(res => {
       if (res.success) {
-        this.generateQuestions(res.data)
+        this.props.dispatch(addDeckToRedux(id, name, res.data))
+        this.generateQuestions()
       }
     }).catch(e => {
       console.log("error", e)
@@ -64,11 +60,13 @@ class Generator extends Component {
     })
   }
 
-  generateQuestions = deck =>{
+  generateQuestions = () =>{
+    var deck                            = this.props.deck.cards.slice(0)
     const noOfQn                        = !this.props.match.params.noOfQn ? deck.length : this.props.match.params.noOfQn
     const typesOfQn                     = [comConst.TEST_MCQ, comConst.TEST_OPENENDED, comConst.TEST_TRUEFALSE]
     const testType                      = this.props.match.params.testType
     const isTestUltimate                = comConst.TEST_ULTIMATE == testType
+    const { addTestToRedux }            = decks
     var cardDataList                    = []
     var questions                       = []
 
@@ -133,42 +131,36 @@ class Generator extends Component {
     this.setState({
       ...this.state,
       loadingMessage                    : "Hold on just a little longer, we are generating the questions now.",
-      cards                             : deck.slice(0),
     })
 
     if (comConst.TEST_OPENENDED != testType){
       cardDataList                      = deck.map(card=> {return {front: card.data().front, back: card.data().back}})
     }
     
-    for (var i = 0; i < noOfQn; i++){
+    do{
+      if (deck.length == 0) {
+        deck                            = this.props.deck.cards.slice(0)
+      }
       createQuestion()
-    }
+    }while (noOfQn != questions.length)
+
+    this.props.dispatch(addTestToRedux(this.props.deck.id, this.props.deck.name, questions, this.props.deck.cards.length == questions.length))
 
     this.setState({
       ...this.state,
-      loadingMessage                    : "We are done generating your test questions!",
-      questions,
+      loadingMessage                    : false
     })
   }
 
   startTest = () =>{
-    const {name, questions}             = this.state
-
     this.props.history.push({
-      pathname                          : `/deck/${this.props.match.params.id}/test/start`,
-      state :{
-        name                            : name,
-        questions
-      }
+      pathname                          : `/deck/${this.props.match.params.id}/test/start`
     })
   }
 
   render() {
-    var { 
-      loadingMessage, 
-      cards, 
-      questions 
-    }                                   = this.state
+    var { name, cards }                 = this.props.deck
+    var { loadingMessage }              = this.state
 
     return (
       <DocumentMeta title={!name ? "Loading Test Options" : `${name}'s Test`}>
@@ -180,11 +172,14 @@ class Generator extends Component {
           cards &&
             <div className="d-flex wholePageWithNav justify-content-center align-items-center">
               <div className="text-center">
-                <h5>{loadingMessage}</h5>
+                <h5>
+                  {loadingMessage != false && loadingMessage}
+                  {loadingMessage == false && "We are done generating your test questions!"}
+                </h5>
                 If you'd like to have a short revision
                 <Flashcards cards={cards}/>
                 {
-                  questions &&
+                  loadingMessage == false &&
                     <button className="btn btn-primary mt-2" onClick={() => this.startTest()}>Start Test</button>
                 }
               </div>
