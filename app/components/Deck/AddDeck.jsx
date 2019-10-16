@@ -14,8 +14,10 @@ const AddDeck = ({
       if (!res.success) {
         if (res.code) {
           formikBag.setErrors({ cards: res.message })
+          formikBag.setSubmitting(false)
         } else {
           formikBag.setErrors({ cards: "Failed to add to database. Contact administrator is this problem persist" })
+          formikBag.setSubmitting(false)
         }
       }else{
         return history.push({ pathname: `/deck/${res.deckId}` })

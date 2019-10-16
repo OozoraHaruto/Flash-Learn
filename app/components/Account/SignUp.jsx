@@ -15,11 +15,14 @@ const SignUp = ({ dispatch }) => {
         if (res.code) {
           if (res.code == 'auth/email-already-in-use') {
             formikBag.setErrors({ email: res.message })
+            formikBag.setSubmitting(false)
           } else {
             formikBag.setErrors({ password: res.message })
+            formikBag.setSubmitting(false)
           }
         } else {
           formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
+          formikBag.setSubmitting(false)
         }
       }
     })

@@ -62,11 +62,10 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
       return true
     })
 
-    if (tmpCards.length == 0){
-      errors['cards']                     = 'Required';
-    }if (tmpCards.length < 6){
-      errors['cards']                     = 'A deck needs at least 6 cards for tests to be generated';
-    }else{
+    if (tmpCards.length < 6){
+      errors['cardParent']                     = 'A deck needs at least 6 cards';
+    }
+    if (tmpCards.length != 0){
       var cardErrors                      = []
       var haveError                       = false
       for (var i=0; i< values.cards.length; i++){
@@ -124,6 +123,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
         render={({
           handleSubmit, 
           values, 
+          errors,
           isSubmitting,
           dirty,
         }) => (
@@ -132,14 +132,15 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
               <div className="row">
                 <div className="container mt-3">
                   <div className="form-group row py-2">
-                    <div className="col-xl-10">
+                    <div className="col-xl-9">
                       <Field type="text" placeholder="Deck Name" name="name" component={TextField} />
                     </div>
-                    <div className="col-xl-2">
+                    <div className="col-xl-3">
                       <SubmitButton title={editingDeck ? "Save Deck" : "Add Deck"} className="w-100" submitting={isSubmitting} dirty={dirty} />
                       {/* UPDATE: Use when formik upgrade to v2 */}
                       {/* <Field type="checkbox" placeholder="Public" name="shownPublic" component={CheckBox} /> */}
                       <Field type="hidden" placeholder="Public" name="shownPublic" component={TextField} />
+                      <small className="text-danger">{errors.cardParent}</small>
                     </div>
                   </div>
                 </div>

@@ -19,8 +19,10 @@ const ReAuthenticate = ({
       if (!res.success) {
         if (res.code) {
           formikBag.setErrors({ password: res.message })
+          formikBag.setSubmitting(false)
         } else {
           formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
+          formikBag.setSubmitting(false)
         }
       }else{
         history.replace({ pathname: !location.state.to ? "/profile/edit" : location.state.to, state: { from: comConst.PROFILE_RE_AUTH}})

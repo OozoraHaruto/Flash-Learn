@@ -47,6 +47,7 @@ export default class ProfileEdit extends React.Component{
         }
       }).catch(e =>{
         formikBag.setErrors({ name: e.message ? e.message : "Failed to change your name. Please try again later" })
+        formikBag.setSubmitting(false)
       })
     }
     const handleChangeEmail = (values, formikBag) => {
@@ -64,6 +65,7 @@ export default class ProfileEdit extends React.Component{
         }
       }).catch(e =>{
         formikBag.setErrors({ email: e.message ? e.message : "Failed to change your email. Please try again later" })
+        formikBag.setSubmitting(false)
       })
     }
 
@@ -82,6 +84,7 @@ export default class ProfileEdit extends React.Component{
         }
       }).catch(e =>{
         formikBag.setErrors({ password: e.message ? e.message : "Failed to change your password. Please try again later" })
+        formikBag.setSubmitting(false)
       })
     }
 
