@@ -1,79 +1,80 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
-var moment = require('moment');
+const { Random, MersenneTwister19937 } = require("random-js");
+const random = new Random(MersenneTwister19937.autoSeed());
 
 import * as comConst from 'componentConstants'
+import { NormLink } from 'reuse'
 import { decks } from 'actions'
 
+import ResultFull from 'app/components/Test/subComponents/TestResult/ResultFull'
+import { timingSafeEqual } from 'crypto';
+
 class TestResult extends Component {
-  constructor() {
-    super()
-
-    this.state = {
-      sortBy                            : comConst.TEST_RESULT_SORT_QUESTION_NUMBER.value,
-    }
-  }
-
   componentDidMount() {
     if (!this.props.location.state) {
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
     } else if (!this.props.location.state.answers) {
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
     }
+    // TODO: Get leaderboard First and compare
   }
-  // formatTime = (timeFrom, timeTo) =>{
-  //   const from                          = moment(timeFrom)
-  //   const to                            = moment(timeTo)
-  //   var hr                              = to.diff(from, 'hours')
-  //   var min                             = to.diff(from, 'minutes')
-  //   var sec                             = to.diff(from, 'seconds')
-  //   var ms                              = to.diff(from, 'milliseconds')
-  //   var textForm                        = ""
 
-  //   if (hr != 0){
-  //     textForm                          = `${textForm} ${hr} ${hr > 1 ? "hrs" : "hr"} `
-  //   }
-  //   if (min != 0){
-  //     textForm                          = `${textForm} ${min} ${min > 1 ? "mins" : "min"} `
-  //   }
-  //   if (sec != 0){
-  //     textForm                          = `${textForm} ${sec} ${sec > 1 ? "secs" : "sec"} `
-  //   }
-  //   if (ms != 0){
-  //     textForm                          = `${textForm} ${ms} ms `
-  //   }
-  //   return textForm.trim()
-  // }
-  formatTime = ms =>{
-    const duration                      = moment.duration(ms, 'milliseconds')
-    var hr                              = duration.hours()
-    var min                             = duration.minutes()
-    var sec                             = duration.seconds()
-    var ms                              = duration.milliseconds()
-    var textForm                        = ""
+  sortAnswers = (sort, filter) => {
+    if (!this.props.location.state.answers) { return undefined }
+    var sortData                        = sort.split("_")
+    const sortBy = (key, a, b) =>{
+      if(a[key] < b[key]){
+        return -1
+      } else if (a[key] > b[key]){
+        return 1
+      } else {
+        return 0
+      }
+    }
+    var tmpAnswers = this.props.location.state.answers.filter(answer =>{
+      switch(filter){
+        case comConst.TEST_RESULT_FILTER_ALL.value:
+          return true
+        case comConst.TEST_RESULT_FILTER_CORRECT.value:
+          return answer.userCorrect == true
+        case comConst.TEST_RESULT_FILTER_WRONG.value:
+          return answer.userCorrect == false
+        default:
+      }
+    })
+    tmpAnswers = tmpAnswers.sort((a, b) =>{
+      switch (sortData[0]) {
+        case comConst.TEST_RESULT_SORT_QUESTION_NUMBER.value:
+          return sortBy("questionIndex", a, b)
+        case comConst.TEST_RESULT_SORT_TIME_TAKEN.value:
+          return sortBy("timeTaken", a, b)
+      }
+    })
+    
+    if (sortData.length == 2){
+      if (sortData[1] == comConst.TEST_RESULT_SORT.desc){
+        tmpAnswers                      = tmpAnswers.reverse()
+      }
+    }
 
-    if (hr != 0){
-      textForm                          = `${textForm} ${hr} ${hr > 1 ? "hrs" : "hr"} `
-    }
-    if (min != 0){
-      textForm                          = `${textForm} ${min} ${min > 1 ? "mins" : "min"} `
-    }
-    if (sec != 0){
-      textForm                          = `${textForm} ${sec} ${sec > 1 ? "secs" : "sec"} `
-    }
-    if (ms != 0){
-      textForm                          = `${textForm} ${ms} ms `
-    }
-    return textForm.trim()
+    return tmpAnswers
   }
 
   render() {
-    var { sortBy }                      = this.state
-    var { name, questions }             = this.props.test
-    var { answers }                     = this.props.location.state
+    const { name, questions }           = this.props.test
+    const { id }                        = this.props.match.params
     const sortOptions                   = [
-      comConst.TEST_RESULT_SORT_QUESTION_NUMBER,
+      comConst.TEST_RESULT_SORT_QUESTION_NUMBER_ASC,
+      comConst.TEST_RESULT_SORT_QUESTION_NUMBER_DESC,
+      comConst.TEST_RESULT_SORT_TIME_TAKEN_ASC,
+      comConst.TEST_RESULT_SORT_TIME_TAKEN_DESC,
+    ]
+    const filterOptions                 = [
+      comConst.TEST_RESULT_FILTER_ALL,
+      comConst.TEST_RESULT_FILTER_CORRECT,
+      comConst.TEST_RESULT_FILTER_WRONG,
     ]
 
     const renderTopMessage = () =>{
@@ -120,7 +121,7 @@ class TestResult extends Component {
           <div className="display-4">
             Here is a short summary
           </div>
-          <div>You answered {noOfQn} questions in {this.formatTime(totalTime)}</div>
+          <div>You answered {noOfQn} questions in {comConst.formatTime(totalTime)}</div>
           {renderAnsweredCorrectlyText()}
           <div>Your longest correct streak is {!longestStreak ? noOfQn : longestStreak }</div>
         </div>
@@ -131,35 +132,38 @@ class TestResult extends Component {
       <DocumentMeta title={`${name}'s Test`}>
         {renderTopMessage()}
         {renderSummary()}
-
-        <div>
-          <div className="display-4 text-center">Here is the full details of your test</div>
-          {/* TODO: Details subpage */}
+        <div className="py-5 d-flex flex-column wholePage justify-content-center align-items-center text-center">
+          <div className="display-4">Here is the full details of your test</div>
+          <ResultFull {...{ questions, sortOptions, filterOptions }} getAnswerSortedBy={this.sortAnswers} />
         </div>
-        <div className="text-center py-5 container">
-          <div className="row">
-            <div className="col">
-              <h4 className="text-center">Here are some buttons to lead you where you want to go faster</h4>
+        <div className="text-center py-5 d-flex flex-column wholePage justify-content-center align-items-center">
+          <div className="container">
+            <div className="row">
+              <div className="col">
+                <h4 className="text-center">Here are some buttons to lead you where you want to go faster</h4>
+              </div>
             </div>
-          </div>
-          <div className="row">
-            {/* TODO: Redirect */}
-            <div className="col-md-6 col-lg-3 mt-2">
-              <button className="btn btn-primary btn-block">Retake Test*</button>
+            <div className="row">
+              <div className="col-md-6 col-lg-3 mt-2">
+                <NormLink className="btn btn-primary btn-block" title="Retake Test*" to={`/deck/${id}/test/start`}/>
+              </div>
+              <div className="col-md-6 col-lg-3 mt-2">
+                <NormLink className="btn btn-primary btn-block" title="Retake Test (Shuffle)*" to={{
+                  pathname                : `/deck/${id}/test/start`,
+                  search                  : "?shuffle=true",
+                }} />
+              </div>
+              <div className="col-md-6 col-lg-3 mt-2">
+                <NormLink className="btn btn-primary btn-block" title="Test (Options page)" to={`/deck/${id}/test`} />
+              </div>
+              <div className="col-md-6 col-lg-3 mt-2">
+                <NormLink className="btn btn-primary btn-block" title="Study again" to={`/deck/${id}/flashcards`} />
+              </div>
             </div>
-            <div className="col-md-6 col-lg-3 mt-2">
-              <button className="btn btn-primary btn-block">Retake Test (Shuffle)*</button>
-            </div>
-            <div className="col-md-6 col-lg-3 mt-2">
-              <button className="btn btn-primary btn-block">Test (Options page)</button>
-            </div>
-            <div className="col-md-6 col-lg-3 mt-2">
-              <button className="btn btn-primary btn-block">Study again</button>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col">
-              <small>* Questions will be the same</small>
+            <div className="row">
+              <div className="col">
+                <small>* Questions will be the same</small>
+              </div>
             </div>
           </div>
         </div>

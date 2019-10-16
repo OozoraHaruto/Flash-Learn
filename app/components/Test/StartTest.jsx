@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
 var moment = require('moment');
+import queryString from 'query-string';
 
 import * as comConst from 'componentConstants'
 import { decks } from 'actions'
 
-import OpenEndedAnswer from 'app/components/Test/subComponents/View/OpenEndedAnswer'
-import SelectAnswer from 'app/components/Test/subComponents/View/SelectAnswer'
+import OpenEndedAnswer from 'app/components/Test/subComponents/StartTest/OpenEndedAnswer'
+import SelectAnswer from 'app/components/Test/subComponents/StartTest/SelectAnswer'
 
 class StartTest extends Component {
   constructor(){
@@ -26,6 +27,13 @@ class StartTest extends Component {
       const { deleteReduxTest }         = decks
       this.props.dispatch(deleteReduxTest())
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
+    }
+
+    var query                           = queryString.parse(this.props.location.search)
+    
+    if (query.shuffle){
+      const {shuffleQuestionsReduxTest} = decks
+      this.props.dispatch(shuffleQuestionsReduxTest())
     }
 
     this.setState({
@@ -66,7 +74,8 @@ class StartTest extends Component {
       userAnswer,
       userCorrect,
       questionIndex                     : currentQuestion,
-      timeTaken
+      timeTaken,
+      timeTakenFormatted                : comConst.formatTime(timeTaken)
     })
     if (currentQuestionObject.answer == userAnswer) {
       newState.gotCorrect               = gotCorrect + 1

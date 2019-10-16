@@ -1,4 +1,4 @@
-import moment from 'moment';
+var moment = require('moment');
 
 // Profile Reauth
 export const PROFILE_RE_AUTH                                = "reauth"
@@ -14,7 +14,28 @@ export const TEST_TRUEFALSE                                 = "truefalse"
 export const TEST_ULTIMATE                                  = "ultimate"
 export const TEST_PROGRESS_TYPE_COMBO                       = "combo"
 export const TEST_PROGRESS_TYPE_INFO                        = "info"
+export const TEST_RESULT_SORT                               = { asc: "asc", desc: "desc" }
 export const TEST_RESULT_SORT_QUESTION_NUMBER               = {value: 'qn', label: 'Question Number'}
+export const TEST_RESULT_SORT_QUESTION_NUMBER_ASC = {
+  value                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.value}_${TEST_RESULT_SORT.asc}`, 
+  label                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.label} ↑`
+}
+export const TEST_RESULT_SORT_QUESTION_NUMBER_DESC = {
+  value                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.value}_${TEST_RESULT_SORT.desc}`, 
+  label                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.label} ↓`
+}
+export const TEST_RESULT_SORT_TIME_TAKEN                    = {value: 'time', label: 'Time Taken'}
+export const TEST_RESULT_SORT_TIME_TAKEN_ASC = {
+  value                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.value}_${TEST_RESULT_SORT.asc}`, 
+  label                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.label} ↑`
+}
+export const TEST_RESULT_SORT_TIME_TAKEN_DESC = {
+  value                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.value}_${TEST_RESULT_SORT.desc}`, 
+  label                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.label} ↓`
+}
+export const TEST_RESULT_FILTER_ALL                         = {value: 'all', label: 'View All'}
+export const TEST_RESULT_FILTER_CORRECT                     = {value: 'correct', label: 'Correct'}
+export const TEST_RESULT_FILTER_WRONG                       = {value: 'wrong', label: 'Wrong'}
 
 
 
@@ -41,4 +62,27 @@ export const formatDateTime = (timeFormat, format="") =>{
       return (moment().diff(dateTime, 'hours') > 24) ? dateTime.format(FMT_FULL_TEXT) : dateTime.fromNow()
 
   }
+}
+
+export const formatTime = ms => {
+  const duration = moment.duration(ms, 'milliseconds')
+  var hr = duration.hours()
+  var min = duration.minutes()
+  var sec = duration.seconds()
+  var ms = duration.milliseconds()
+  var textForm = ""
+
+  if (hr != 0) {
+    textForm = `${textForm} ${hr} ${hr > 1 ? "hrs" : "hr"} `
+  }
+  if (min != 0) {
+    textForm = `${textForm} ${min} ${min > 1 ? "mins" : "min"} `
+  }
+  if (sec != 0) {
+    textForm = `${textForm} ${sec} ${sec > 1 ? "secs" : "sec"} `
+  }
+  if (ms != 0) {
+    textForm = `${textForm} ${ms} ms `
+  }
+  return textForm.trim()
 }

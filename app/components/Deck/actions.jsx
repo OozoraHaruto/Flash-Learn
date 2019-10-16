@@ -216,6 +216,12 @@ export const addTestToRedux = (id, name, questions, qualifiedForLeaderboard) => 
   }
 }
 
+export const shuffleQuestionsReduxTest = () => {
+  return {
+    type: rConst.EDIT_TEST_SHUFFLE
+  }
+}
+
 export const deleteReduxTest = () => {
   return {
     type: rConst.DELETE_TEST

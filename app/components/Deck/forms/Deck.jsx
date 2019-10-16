@@ -49,7 +49,7 @@ const DragHandle = SortableHandle (() =>(
 
 const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmptyCard, editingDeck }) => {
   const validate = values => {
-    const errors                          = {}; 
+    const errors                          = {};
 
     if(!values.name){
       errors['name']                      = 'Required';
@@ -64,6 +64,8 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
 
     if (tmpCards.length == 0){
       errors['cards']                     = 'Required';
+    }if (tmpCards.length < 6){
+      errors['cards']                     = 'A deck needs at least 6 cards for tests to be generated';
     }else{
       var cardErrors                      = []
       var haveError                       = false

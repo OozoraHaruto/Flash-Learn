@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Row from 'app/components/Test/subComponents/View/SelectAnswer/Row'
+import Row from 'app/components/Test/subComponents/StartTest/SelectAnswer/Row'
 
 const SelectAnswer = ({
   options,

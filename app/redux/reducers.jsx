@@ -1,4 +1,6 @@
 import * as rConst from "reduxConstants";
+const { Random, MersenneTwister19937 } = require("random-js");
+const random = new Random(MersenneTwister19937.autoSeed());
 
 export const currentProfileReducer = (state = {}, action) => {
   switch (action.type) {
@@ -43,6 +45,11 @@ export const currentTestReducer = (state = {}, action) => {
     case rConst.ADD_TEST:
       return {
         ...action.info,
+      }
+    case rConst.EDIT_TEST_SHUFFLE:
+      return {
+        ...state,
+        questions                     : random.shuffle(state.questions)
       }
     case rConst.DELETE_TEST:
       return {}

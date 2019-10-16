@@ -10,4 +10,5 @@ export const DELETE_CURRENT_DECK        = 'deck::DELETE_CURRENT_DECK';
 
 // Test
 export const ADD_TEST                   = 'test::ADD_TEST';
+export const EDIT_TEST_SHUFFLE          = 'test::EDIT_TEST_SHUFFLE';
 export const DELETE_TEST                = 'test::DELETE_TEST';

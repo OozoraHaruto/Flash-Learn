@@ -77,7 +77,7 @@ class Generator extends Component {
         answer,
         options,
         type,
-        card                            : card.data()
+        card                            : card.data().index
       })
     }
     const typeOfQn = () => isTestUltimate ? typesOfQn[generateRandomNumber(typesOfQn.length)] : testType
