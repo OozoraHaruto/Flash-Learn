@@ -6,12 +6,21 @@ const random = new Random(MersenneTwister19937.autoSeed());
 
 import * as comConst from 'componentConstants'
 import { NormLink } from 'reuse'
-import { decks } from 'actions'
+import { accounts } from 'actions'
+import Fallback from 'Fallback'
 
 import ResultFull from 'app/components/Test/subComponents/TestResult/ResultFull'
 import { timingSafeEqual } from 'crypto';
 
 class TestResult extends Component {
+  constructor(){
+    super()
+
+    this.state={
+      userFastestTime                   : undefined,
+      deckFastestTime                   : undefined,
+    }
+  }
   componentDidMount() {
     if (!this.props.location.state) {
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
@@ -19,6 +28,66 @@ class TestResult extends Component {
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
     }
     // TODO: Get leaderboard First and compare
+
+    if (this.props.test.leaderboard){
+      this.getDeckFastest()
+      this.getUserFastest()
+      this.updateUserPointLeaderboard()
+    }
+  }
+
+  getDeckFastest = () =>{
+    const { getFastestUserTiming }      = accounts
+
+    getFastestUserTiming(this.props.test.testType, this.props.match.params.id).then(res =>{
+      this.setState({
+        ...this.state,
+        deckFastestTime                 : res.data
+      })
+    })
+  }
+  getUserFastest = () =>{
+    const { getUserFastestTiming }      = accounts
+
+    getUserFastestTiming(this.props.test.testType, this.props.match.params.id).then(res =>{
+      this.setState({
+        ...this.state,
+        userFastestTime                 : res.data
+      }, () => this.updateUserTimingLeaderboard())
+    })
+  }
+
+  updateUserPointLeaderboard = () =>{
+    const { addPointToLeaderboard }     = accounts
+    const { longestStreak, noOfQn }     = this.props.location.state
+
+    const calculatePoints = percentage => {
+      if (percentage >= 0.8) {
+        return 5
+      } else if (percentage >= 0.7) {
+        return 4
+      } else if (percentage >= 0.6) {
+        return 3
+      } else if (percentage >= 0.5) {
+        return 2
+      } else if (percentage >= 0.4) {
+        return 1
+      } else {
+        return 0
+      }
+    }
+
+    addPointToLeaderboard(calculatePoints((longestStreak / noOfQn))).then(res=>{
+      if(!res.success){
+        throw res
+      }
+    }).catch(e =>{
+      console.log("error adding points", e)
+    })
+  }
+
+  updateUserTimingLeaderboard = () =>{
+    console.log("test")
   }
 
   sortAnswers = (sort, filter) => {
@@ -41,7 +110,6 @@ class TestResult extends Component {
           return answer.userCorrect == true
         case comConst.TEST_RESULT_FILTER_WRONG.value:
           return answer.userCorrect == false
-        default:
       }
     })
     tmpAnswers = tmpAnswers.sort((a, b) =>{
@@ -63,7 +131,15 @@ class TestResult extends Component {
   }
 
   render() {
-    const { name, questions }           = this.props.test
+    const { 
+      userFastestTime, 
+      deckFastestTime,
+    }                                   = this.state
+    const { 
+      name, 
+      questions, 
+      leaderboard,
+    }                                   = this.props.test
     const { id }                        = this.props.match.params
     const sortOptions                   = [
       comConst.TEST_RESULT_SORT_QUESTION_NUMBER_ASC,
@@ -116,12 +192,44 @@ class TestResult extends Component {
         }
       }
 
+      const renderOwnComparison = () =>{
+        const { userFastestTime }       = this.state
+        if (userFastestTime != false){
+          if (userFastestTime > totalTime){
+            return <div>You broke your own record by {comConst.formatTime((userFastestTime - totalTime))}</div>
+          } else if (userFastestTime < totalTime) {
+            return <div>You behind your own record by {comConst.formatTime((totalTime - userFastestTime))}</div>
+          }
+        }
+      }
+
+      const renderFastestUserComparison = () =>{
+        const { 
+          deckFastestTime,
+          userFastestTime,
+        }                               = this.state
+
+        if (deckFastestTime != false){
+          if (deckFastestTime == userFastestTime){
+            return <div>You are currently the 1<sup>st</sup> on the leaderboard</div>
+          }else if (deckFastestTime > totalTime){
+            return <div>You broke the record! You now hold the 1<sup>st</sup> place for the leaderboard! Congratulations!!! ٩(๑′∀ ‵๑)۶•*¨*•.¸¸♪</div>
+          } else if (deckFastestTime < totalTime) {
+            return <div>You behind the person that holds the first place by {comConst.formatTime((totalTime - deckFastestTime))}</div>
+          }
+        }else{
+          return <div>You broke the record! You now hold the 1<sup>st</sup> place for the leaderboard! Congratulations!!! ٩(๑′∀ ‵๑)۶•*¨*•.¸¸♪</div>
+        }
+      }
+
       return (
         <div className="text-center d-flex flex-column wholePage justify-content-center align-items-center">
           <div className="display-4">
             Here is a short summary
           </div>
           <div>You answered {noOfQn} questions in {comConst.formatTime(totalTime)}</div>
+          {leaderboard && renderOwnComparison()}
+          {leaderboard && renderFastestUserComparison()}
           {renderAnsweredCorrectlyText()}
           <div>Your longest correct streak is {!longestStreak ? noOfQn : longestStreak }</div>
         </div>
@@ -130,46 +238,55 @@ class TestResult extends Component {
 
     return (
       <DocumentMeta title={`${name}'s Test`}>
-        {renderTopMessage()}
-        {renderSummary()}
-        <div className="py-5 d-flex flex-column wholePage justify-content-center align-items-center text-center">
-          <div className="display-4">Here is the full details of your test</div>
-          <ResultFull {...{ questions, sortOptions, filterOptions }} getAnswerSortedBy={this.sortAnswers} />
-        </div>
-        <div className="text-center py-5 d-flex flex-column wholePage justify-content-center align-items-center">
-          <div className="container">
-            <div className="row">
-              <div className="col">
-                <h4 className="text-center">Here are some buttons to lead you where you want to go faster</h4>
+        {
+          (leaderboard && (userFastestTime == undefined || deckFastestTime == undefined)) &&
+            <Fallback message="We are processing as fast as we can to get your results processed" />
+        }
+        {
+          (leaderboard && (userFastestTime != undefined && deckFastestTime != undefined)) &&
+            <React.Fragment>
+              {renderTopMessage()}
+              {renderSummary()}
+              <div className="py-5 d-flex flex-column wholePage justify-content-center align-items-center text-center">
+                <div className="display-4">Here is the full details of your test</div>
+                <ResultFull {...{ questions, sortOptions, filterOptions }} getAnswerSortedBy={this.sortAnswers} />
               </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6 col-lg-3 mt-2">
-                <NormLink className="btn btn-primary btn-block" title="Retake Test*" to={`/deck/${id}/test/start`}/>
+              <div className="text-center py-5 d-flex flex-column wholePage justify-content-center align-items-center">
+                <div className="container">
+                  <div className="row">
+                    <div className="col">
+                      <h4 className="text-center">Here are some buttons to lead you where you want to go faster</h4>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-6 col-lg-3 mt-2">
+                      <NormLink className="btn btn-primary btn-block" title="Retake Test*" to={`/deck/${id}/test/start`} />
+                    </div>
+                    <div className="col-md-6 col-lg-3 mt-2">
+                      <NormLink className="btn btn-primary btn-block" title="Retake Test (Shuffle)*" to={{
+                        pathname: `/deck/${id}/test/start`,
+                        search: "?shuffle=true",
+                      }} />
+                    </div>
+                    <div className="col-md-6 col-lg-3 mt-2">
+                      <NormLink className="btn btn-primary btn-block" title="Test (Options page)" to={`/deck/${id}/test`} />
+                    </div>
+                    <div className="col-md-6 col-lg-3 mt-2">
+                      <NormLink className="btn btn-primary btn-block" title="Study again" to={`/deck/${id}/flashcards`} />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col">
+                      <small>* Questions will be the same</small>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="col-md-6 col-lg-3 mt-2">
-                <NormLink className="btn btn-primary btn-block" title="Retake Test (Shuffle)*" to={{
-                  pathname                : `/deck/${id}/test/start`,
-                  search                  : "?shuffle=true",
-                }} />
+              <div className="text-center d-flex flex-column wholePage justify-content-center align-items-center">
+                <h3>Lastly, we would like to thank you for using this application and all the best for whatever you are studying {name} for.</h3>
               </div>
-              <div className="col-md-6 col-lg-3 mt-2">
-                <NormLink className="btn btn-primary btn-block" title="Test (Options page)" to={`/deck/${id}/test`} />
-              </div>
-              <div className="col-md-6 col-lg-3 mt-2">
-                <NormLink className="btn btn-primary btn-block" title="Study again" to={`/deck/${id}/flashcards`} />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <small>* Questions will be the same</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="text-center d-flex flex-column wholePage justify-content-center align-items-center">
-          <h3>Lastly, we would like to thank you for using this application and all the best for whatever you are studying {name} for.</h3>
-        </div>
+            </React.Fragment>
+        }
       </DocumentMeta>
     )
   }

@@ -239,3 +239,55 @@ export const checkIfUserIsSubscribedToDeck = deckId => {
     return { success: false, ...e };
   })
 }
+
+
+
+// Leaderboard Related
+export const getFastestUserTiming = (testType, deckId) =>{
+  return database.collection(dbConst.COL_LEADERBOARD).doc(testType).collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.COL_USER).orderBy('timeMillis').limit(1).get().then(snapshot => {
+    return { success: true, data: snapshot.docs.length == 0 ? false : snapshot.docs[0].timeMillis }
+  }).catch(e => {
+    console.log("getFastestUserTiming", e)
+    return { success: false, ...e };
+  })
+}
+
+export const getUserFastestTiming = (testType, deckId) =>{
+  return database.collection(dbConst.COL_LEADERBOARD).doc(testType).collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.COL_USER).doc(auth.currentUser.uid).get().then(doc => {
+    return { success: true, data: doc.exists ? doc.data().timeMillis : false }
+  }).catch(e => {
+    console.log("getFastestUserTiming", e)
+    return { success: false, ...e };
+  })
+}
+
+export const getUserPointLeaderboard = userId =>{
+
+}
+
+const checkIfCurrentUserPointLeaderboardExist = () =>{
+  return database.collection(dbConst.COL_LEADERBOARD).doc(dbConst.LEADERBOARD_POINT).collection(dbConst.COL_USER).doc(auth.currentUser.uid).get().then(doc => {
+    return doc.exists
+  }).catch(e => {
+    console.log("getFastestUserTiming", e)
+    return false
+  })
+}
+
+export const addPointToLeaderboard = point =>{
+  return checkIfCurrentUserPointLeaderboardExist().then(userExists =>{
+    if(userExists){
+      return database.collection(dbConst.COL_LEADERBOARD).doc(dbConst.LEADERBOARD_POINT).collection(dbConst.COL_USER).doc(auth.currentUser.uid).update('point', firebase.firestore.FieldValue.increment(point))
+    }else{
+      return database.collection(dbConst.COL_LEADERBOARD).doc(dbConst.LEADERBOARD_POINT).collection(dbConst.COL_USER).doc(auth.currentUser.uid).set({
+        point,
+        user                                : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
+      })
+    }
+  }).then(() =>{
+    return { success: true }
+  }).catch(e => {
+    console.log("addPointToLeaderboard", e)
+    return { success: false, ...e };
+  })
+}

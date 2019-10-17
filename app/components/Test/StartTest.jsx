@@ -80,12 +80,12 @@ class StartTest extends Component {
     if (currentQuestionObject.answer == userAnswer) {
       newState.gotCorrect               = gotCorrect + 1
       newState.currentStreak            = currentStreak + 1
+      if (newState.currentStreak > longestStreak){
+        newState.longestStreak          = newState.currentStreak
+      }
     } else {
       newState.gotWrong                 = gotWrong + 1
       newState.currentStreak            = 0
-      if (currentStreak > longestStreak){
-        newState.longestStreak          = newState.currentStreak
-      }
     }
 
     this.setState({

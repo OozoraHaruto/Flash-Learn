@@ -13,4 +13,8 @@ export const COL_DECKSUBCRIPTION              = 'deckSubscription'
 export const COL_DECKSUBCRIPTION_FOLLOWERS    = 'Followers'
 
 
+export const COL_LEADERBOARD                  = 'leaderboards'
+export const LEADERBOARD_POINT                = 'point'
+
+
 export const COL_ACHIEVEMENTS                 = 'achievements'

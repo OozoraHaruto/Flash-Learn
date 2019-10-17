@@ -144,7 +144,7 @@ class Generator extends Component {
       createQuestion()
     }while (noOfQn != questions.length)
 
-    this.props.dispatch(addTestToRedux(this.props.deck.id, this.props.deck.name, questions, this.props.deck.cards.length == questions.length))
+    this.props.dispatch(addTestToRedux(this.props.deck.id, testType, this.props.deck.name, questions, this.props.deck.cards.length == questions.length))
 
     this.setState({
       ...this.state,

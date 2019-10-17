@@ -204,11 +204,12 @@ export const deleteReduxDeck = () => {
 }
 
 // - Tests
-export const addTestToRedux = (id, name, questions, qualifiedForLeaderboard) => {
+export const addTestToRedux = (id, testType, name, questions, qualifiedForLeaderboard) => {
   return {
     type: rConst.ADD_TEST,
     info: {
       id,
+      testType,
       name,
       questions,
       leaderboard                       : qualifiedForLeaderboard
