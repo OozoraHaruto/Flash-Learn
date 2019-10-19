@@ -1,6 +1,7 @@
 import firebase, { auth, database } from 'firebase';
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
+import * as comConst from 'componentConstants'
 
 import { accounts, firebaseFunctions } from 'actions';
 // import { functionList } from 'firebase'
@@ -114,6 +115,17 @@ export const deleteDeck = deckId =>{
   })
 }
 
+const deleteLeaderboard = (testType, deckId) =>{
+  const { deleteAtPath }                = firebaseFunctions
+
+  return deleteAtPath(`${dbConst.COL_LEADERBOARD}/${testType}/${dbConst.COL_DECKS}/${deckId}`).then(() =>{
+    return {success: true}
+  }).catch(e =>{
+    console.log("deleteDeck", e)
+    return { success: false, ...e };
+  })
+}
+
 // Get methods
 
 export const getDeckDetails = id =>{
@@ -161,6 +173,15 @@ export const getCards = id =>{
     return { success: true, data: snapshot.docs }
   }).catch(e => {
     console.log("getCards", e)
+    return { success: false, ...e };
+  })
+}
+
+export const getDeckTopLeaderboard = (testType, deckId) => {
+  return database.collection(dbConst.COL_LEADERBOARD).doc(testType).collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.COL_USER).orderBy('timeMillis').limit(3).get().then(snapshot => {
+    return { success: true, data: snapshot.docs.length == 0 ? false : snapshot.docs }
+  }).catch(e => {
+    console.log("getDeckTopLeaderboard", e)
     return { success: false, ...e };
   })
 }

@@ -27,7 +27,6 @@ export default class Card extends React.Component {
         this.animateCard(((index - nextIndex) == 1) ? 'slideInRight' : 'slideInLeft')
       }
     }
-    
   }
 
   changeIndex = () =>{
@@ -69,7 +68,7 @@ export default class Card extends React.Component {
     }
     
     return (
-      <div id="flashcard_card" className="card w-100 h-100" onClick={()=>this.changeIndex()}>
+      <div id="flashcard_card" className="card flex-grow-1 w-100" onClick={()=>this.changeIndex()}>
         <div className="card-body text-center d-flex flex-column align-items-center justify-content-center">
           {renderCardDetails()}
         </div>

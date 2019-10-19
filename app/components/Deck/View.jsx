@@ -4,6 +4,7 @@ import DocumentMeta from 'react-document-meta';
 
 import { auth } from 'firebase';
 import Fallback from 'Fallback'
+import * as comConst from 'componentConstants'
 import Header from 'app/components/Deck/subComponents/View/Header'
 import DetailsWrapper from 'app/components/Deck/subComponents/View/DetailsWrapper'
 import { decks, accounts } from 'actions'
@@ -81,7 +82,28 @@ export class View extends Component {
   }
 
   getLeaderboards = id =>{
-    // TODO: Get Top 3 of all leaderboards once it is completed
+    const { getDeckTopLeaderboard }         = decks
+    const leaderboardRequests = [
+      getDeckTopLeaderboard(comConst.TEST_MCQ, id),
+      getDeckTopLeaderboard(comConst.TEST_OPENENDED, id),
+      getDeckTopLeaderboard(comConst.TEST_TRUEFALSE, id),
+      getDeckTopLeaderboard(comConst.TEST_ULTIMATE, id),
+    ]
+
+    Promise.all(leaderboardRequests).then(res =>{
+      var leaderboards                      = {}
+      leaderboards[comConst.TEST_MCQ]       = res[0].success ? res[0].data : undefined
+      leaderboards[comConst.TEST_OPENENDED] = res[1].success ? res[1].data : undefined
+      leaderboards[comConst.TEST_TRUEFALSE] = res[2].success ? res[2].data : undefined
+      leaderboards[comConst.TEST_ULTIMATE]  = res[3].success ? res[3].data : undefined
+      
+      this.setState({
+        ...this.state,
+        leaderboards
+      })
+    }).catch(e =>{
+      console.log("error getting leaderboard", e)
+    })
   }
 
   getFollowerCount = id =>{

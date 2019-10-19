@@ -7,7 +7,7 @@ import * as comConst from 'componentConstants'
 import { NormLink } from 'reuse'
 import { decks } from 'actions'
 
-import Card from 'app/components/Deck/subComponents/WordList/Card'
+import Card from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList/Card'
 // import ResultFull from 'app/components/Test/subComponents/TestResult/ResultFull'
 
 class ResultFull extends Component {

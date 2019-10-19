@@ -1,13 +1,17 @@
 import React from 'react';
 
 import { dataLoading } from 'reuse'
-import WordList from 'app/components/Deck/WordList'
+import * as comConst from 'componentConstants'
+
+import WordList from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList'
+import Leaderboard from 'app/components/Deck/subComponents/View/DetailsWrapper/leaderboard'
 
 const DetailsWrapper = ({
   cards,
   leaderboards
 })=>{
-  const LoadingWordList = dataLoading(false, "The word list should be loaded soon")(WordList)
+  const LoadingWordList     = dataLoading(false, "The word list should be loaded soon")(WordList)
+  const LoadingLeaderboard  = dataLoading(false, "The leaderboard should be loaded soon")(Leaderboard)
 
   return (
     <React.Fragment>
@@ -26,9 +30,10 @@ const DetailsWrapper = ({
           <LoadingWordList loading={cards.loading} cards={cards} />
         </div>
         <div className="tab-pane fade" id="leaderboards" role="tabpanel" aria-labelledby="leaderboards-tab">
-          User will be given either the front or back of the flashcard and asked type out the correct answer.<br />
-          User can choose the number of words to be tested.
-          {/* TODO: Do when leaderboard is completed */}
+          <LoadingLeaderboard loading={leaderboards.loading} name="MCQ" rankings={leaderboards[comConst.TEST_MCQ]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="Open ended" rankings={leaderboards[comConst.TEST_OPENENDED]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="True or False" rankings={leaderboards[comConst.TEST_TRUEFALSE]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="Ultimate" rankings={leaderboards[comConst.TEST_ULTIMATE]} />
         </div>
       </div>
     </React.Fragment>

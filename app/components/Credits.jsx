@@ -25,12 +25,24 @@ const Credits = () =>{
                   </thead>
                   <tbody>
                     <tr>
-                      <td scope="row"><a href="/images/Test-card.png" target="_blank">Test picture in FAQ</a></td>
-                      <td>Image by <a href="https://pixabay.com/users/flag-276981/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=670091">flag</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=670091">Pixabay</a></td>
+                      <td scope="row"><a href="/images/FAQ/Test-card.jpg" target="_blank">Test picture in FAQ</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/Pixapopz-2873171/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1500720">Chuk Yong</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1500720">Pixabay</a></td>
                     </tr>
                     <tr>
-                      <td scope="row"><a href="/images/Gamification-card.jpg" target="_blank">Gamification picture in FAQ</a></td>
+                      <td scope="row"><a href="/images/FAQ/Gamification-card.jpg" target="_blank">Gamification picture in FAQ</a></td>
                       <td>Image from <a href="https://commons.wikimedia.org/wiki/File:Gamification-in-business-illustration-web.jpg">Wiki Commons</a></td>
+                    </tr>
+                    <tr>
+                      <td scope="row"><a href="/images/ProfileLeaderboard/first.png" target="_blank">1<sup>st</sup> place picture in decks</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/qimono-1962238/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614530">Arek Socha</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614530">Pixabay</a></td>
+                    </tr>
+                    <tr>
+                      <td scope="row"><a href="/images/ProfileLeaderboard/second.png" target="_blank">2<sup>nd</sup> place picture in decks</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/qimono-1962238/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614673">Arek Socha</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614673">Pixabay</a></td>
+                    </tr>
+                    <tr>
+                      <td scope="row"><a href="/images/ProfileLeaderboard/third.png" target="_blank">3<sup>rd</sup> place picture in decks</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/qimono-1962238/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614844">Arek Socha</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614844">Pixabay</a></td>
                     </tr>
                   </tbody>
                 </table>

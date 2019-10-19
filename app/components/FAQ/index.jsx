@@ -10,7 +10,7 @@ const index = (props) =>{
         <div className="text-center display-4">FAQs</div>
         <div className="card-columns">
           <div className="card">
-            <img className="card-img-top" src="/images/Test-card.png" alt="" />
+            <img className="card-img-top" src="/images/FAQ/Test-card.jpg" alt="" />
             <div className="card-body">
               <h4 className="card-title">Tests</h4>
               <p className="card-text">Different tests that will be offered in the future</p>
@@ -32,7 +32,7 @@ const index = (props) =>{
           </div>
 
           <div className="card">
-            <img className="card-img-top" src="/images/Gamification-card.jpg" alt="" />
+            <img className="card-img-top" src="/images/FAQ/Gamification-card.jpg" alt="" />
             <div className="card-body">
               <h4 className="card-title">Gamification</h4>
               <p className="card-text">Gamification refers to the use of game elements and mechanics in non-game contexts</p>

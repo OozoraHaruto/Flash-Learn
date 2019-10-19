@@ -262,10 +262,6 @@ export const getUserFastestTiming = (testType, deckId) =>{
   })
 }
 
-export const getUserPointLeaderboard = userId =>{
-
-}
-
 const checkIfCurrentUserPointLeaderboardExist = () =>{
   return database.collection(dbConst.COL_LEADERBOARD).doc(dbConst.LEADERBOARD_POINT).collection(dbConst.COL_USER).doc(auth.currentUser.uid).get().then(doc => {
     return doc.exists

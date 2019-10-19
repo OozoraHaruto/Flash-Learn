@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 
-import Card from 'app/components/Deck/subComponents/WordList/Card'
+import Card from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList/Card'
 
 const WordList = ({
   cards,
