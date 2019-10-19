@@ -4,6 +4,7 @@ const crypto = require('crypto');
 import firebase, { auth, database } from 'firebase';
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
+import * as comConst from 'componentConstants'
 
 // Auth
 export const startAddUser = (email, password) =>{
@@ -245,7 +246,7 @@ export const checkIfUserIsSubscribedToDeck = deckId => {
 // Leaderboard Related
 export const getFastestUserTiming = (testType, deckId) =>{
   return database.collection(dbConst.COL_LEADERBOARD).doc(testType).collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.COL_USER).orderBy('timeMillis').limit(1).get().then(snapshot => {
-    return { success: true, data: snapshot.docs.length == 0 ? false : snapshot.docs[0].timeMillis }
+    return { success: true, data: snapshot.docs.length == 0 ? false : snapshot.docs[0].data().timeMillis }
   }).catch(e => {
     console.log("getFastestUserTiming", e)
     return { success: false, ...e };
@@ -288,6 +289,21 @@ export const addPointToLeaderboard = point =>{
     return { success: true }
   }).catch(e => {
     console.log("addPointToLeaderboard", e)
+    return { success: false, ...e };
+  })
+}
+
+export const updateUserTimingLeaderboard = (testType, deckId, timing) =>{
+  return database.collection(dbConst.COL_LEADERBOARD).doc(testType).collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.COL_USER).doc(auth.currentUser.uid).set({
+    timeMillis                          : timing,
+    timeString                          : comConst.formatTime(timing),
+    name                                : auth.currentUser.displayName,
+    user                                : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
+    achievedOn                          : firebase.firestore.FieldValue.serverTimestamp(),
+  }).then(() => {
+    return { success: true }
+  }).catch(e => {
+    console.log("updateUserTimingLeaderboard", e)
     return { success: false, ...e };
   })
 }

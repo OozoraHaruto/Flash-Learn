@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
-const { Random, MersenneTwister19937 } = require("random-js");
-const random = new Random(MersenneTwister19937.autoSeed());
 
 import * as comConst from 'componentConstants'
 import { NormLink } from 'reuse'
@@ -10,15 +8,15 @@ import { accounts } from 'actions'
 import Fallback from 'Fallback'
 
 import ResultFull from 'app/components/Test/subComponents/TestResult/ResultFull'
-import { timingSafeEqual } from 'crypto';
 
 class TestResult extends Component {
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
 
     this.state={
       userFastestTime                   : undefined,
       deckFastestTime                   : undefined,
+      qualifyForLeaderboard             : props.location.state.gotWrong == 0 && props.test.leaderboard
     }
   }
   componentDidMount() {
@@ -29,11 +27,11 @@ class TestResult extends Component {
     }
     // TODO: Get leaderboard First and compare
 
-    if (this.props.test.leaderboard){
+    if (this.props.test.leaderboard && this.state.qualifyForLeaderboard){
       this.getDeckFastest()
       this.getUserFastest()
-      this.updateUserPointLeaderboard()
     }
+    this.updateUserPointLeaderboard()
   }
 
   getDeckFastest = () =>{
@@ -44,6 +42,9 @@ class TestResult extends Component {
         ...this.state,
         deckFastestTime                 : res.data
       })
+    }).catch(e => {
+      console.log("error getting deck fastest", e)
+      this.getDeckFastest()
     })
   }
   getUserFastest = () =>{
@@ -54,6 +55,9 @@ class TestResult extends Component {
         ...this.state,
         userFastestTime                 : res.data
       }, () => this.updateUserTimingLeaderboard())
+    }).catch(e => {
+      console.log("error getting users' fastest", e)
+      this.getUserFastest()
     })
   }
 
@@ -87,7 +91,19 @@ class TestResult extends Component {
   }
 
   updateUserTimingLeaderboard = () =>{
-    console.log("test")
+    const {updateUserTimingLeaderboard} = accounts
+    const { userFastestTime }           = this.state
+    const { totalTime }                 = this.props.location.state
+
+    if (userFastestTime > totalTime || userFastestTime == false) {
+      updateUserTimingLeaderboard(this.props.test.testType, this.props.match.params.id, totalTime).then(res =>{
+        if(!res.success){
+          throw res
+        }
+      }).catch(e =>{
+        console.log("error updating leaderboard", e)
+      })
+    }
   }
 
   sortAnswers = (sort, filter) => {
@@ -134,11 +150,11 @@ class TestResult extends Component {
     const { 
       userFastestTime, 
       deckFastestTime,
+      qualifyForLeaderboard,
     }                                   = this.state
     const { 
       name, 
-      questions, 
-      leaderboard,
+      questions,
     }                                   = this.props.test
     const { id }                        = this.props.match.params
     const sortOptions                   = [
@@ -228,10 +244,10 @@ class TestResult extends Component {
             Here is a short summary
           </div>
           <div>You answered {noOfQn} questions in {comConst.formatTime(totalTime)}</div>
-          {leaderboard && renderOwnComparison()}
-          {leaderboard && renderFastestUserComparison()}
+          {qualifyForLeaderboard && renderOwnComparison()}
+          {qualifyForLeaderboard && renderFastestUserComparison()}
           {renderAnsweredCorrectlyText()}
-          <div>Your longest correct streak is {!longestStreak ? noOfQn : longestStreak }</div>
+          { (gotCorrect != 0 && gotWrong != 0) && <div>Your longest correct streak is {longestStreak}</div>}
         </div>
       )
     }
@@ -239,11 +255,11 @@ class TestResult extends Component {
     return (
       <DocumentMeta title={`${name}'s Test`}>
         {
-          (leaderboard && (userFastestTime == undefined || deckFastestTime == undefined)) &&
+          (qualifyForLeaderboard && (userFastestTime == undefined || deckFastestTime == undefined)) &&
             <Fallback message="We are processing as fast as we can to get your results processed" />
         }
         {
-          (leaderboard && (userFastestTime != undefined && deckFastestTime != undefined)) &&
+          ((qualifyForLeaderboard && (userFastestTime != undefined && deckFastestTime != undefined)) || !qualifyForLeaderboard) &&
             <React.Fragment>
               {renderTopMessage()}
               {renderSummary()}
