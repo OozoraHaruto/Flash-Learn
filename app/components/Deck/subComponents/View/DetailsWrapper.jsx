@@ -4,7 +4,7 @@ import { dataLoading } from 'reuse'
 import * as comConst from 'componentConstants'
 
 import WordList from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList'
-import Leaderboard from 'app/components/Deck/subComponents/View/DetailsWrapper/leaderboard'
+import Leaderboard from 'app/components/Deck/subComponents/View/DetailsWrapper/Leaderboard'
 
 const DetailsWrapper = ({
   cards,
