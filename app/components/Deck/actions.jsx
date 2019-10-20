@@ -75,6 +75,13 @@ export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
   }, { merge: true}))
   databaseActions.push(startAddOrEditCreatedDeckRef(auth.currentUser.uid, deckId, detailsEdited))
 
+  if (toAdd.length > 0 || toDelete.length > 0 || toEdit.length > 0){
+    databaseActions.push(deleteLeaderboard(comConst.TEST_MCQ, deckId))
+    databaseActions.push(deleteLeaderboard(comConst.TEST_OPENENDED, deckId))
+    databaseActions.push(deleteLeaderboard(comConst.TEST_TRUEFALSE, deckId))
+    databaseActions.push(deleteLeaderboard(comConst.TEST_ULTIMATE, deckId))
+  }
+
   return Promise.all(databaseActions).then(()=>{
     return { success: true }
   }).catch(e =>{
@@ -106,6 +113,10 @@ export const deleteDeck = deckId =>{
     }
     serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKSUBCRIPTION}/${deckId}`))
     serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKS}/${deckId}`))
+    serverActions.push(deleteLeaderboard(comConst.TEST_MCQ, deckId))
+    serverActions.push(deleteLeaderboard(comConst.TEST_OPENENDED, deckId))
+    serverActions.push(deleteLeaderboard(comConst.TEST_TRUEFALSE, deckId))
+    serverActions.push(deleteLeaderboard(comConst.TEST_ULTIMATE, deckId))
     return Promise.all(serverActions)
   }).then(() =>{
     return {success: true}
