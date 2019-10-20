@@ -43,7 +43,7 @@ export const startAddDeck = values =>{
 }
 
 const addEmptyDeckSubscription = deckId =>{
-  return database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).set({
+  return database.collection(dbConst.COL_DECKS_LIKED).doc(deckId).set({
     count                               : 0
   }).then(() => {
     return { success: true }
@@ -93,25 +93,25 @@ export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
 export const deleteDeck = deckId =>{
   const { 
     deleteAtPath,
-    deleteUsersSubscribedToDeck,
+    deleteUsersLikedToDeck,
   }                                     = firebaseFunctions
 
   return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_CREATED_DECKS).doc(deckId).delete().then(() =>{
-    return getFollowers(deckId)
+    return getLikes(deckId)
   }).then(res=>{
     var serverActions                   = []
 
     if (res.data.length > 50){
-      var paths = res.data.map(subscriber => {
-        return `${dbConst.COL_USER}/${subscriber.id}/${dbConst.PROFILE_SUBSCRIBED_DECKS}/${deckId}`
+      var paths = res.data.map(user => {
+        return `${dbConst.COL_USER}/${user.id}/${dbConst.PROFILE_LIKED_DECKS}/${deckId}`
       })
-      serverActions.push(deleteUsersSubscribedToDeck(deckId, paths))
+      serverActions.push(deleteUsersLikedToDeck(deckId, paths))
     }else{
-      serverActions = res.data.map(subscriber =>{
-        return database.collection(dbConst.COL_USER).doc(subscriber.id).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).delete()
+      serverActions = res.data.map(user =>{
+        return database.collection(dbConst.COL_USER).doc(user.id).collection(dbConst.PROFILE_LIKED_DECKS).doc(deckId).delete()
       })
     }
-    serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKSUBCRIPTION}/${deckId}`))
+    serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKS_LIKED}/${deckId}`))
     serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKS}/${deckId}`))
     serverActions.push(deleteLeaderboard(comConst.TEST_MCQ, deckId))
     serverActions.push(deleteLeaderboard(comConst.TEST_OPENENDED, deckId))
@@ -197,20 +197,20 @@ export const getDeckTopLeaderboard = (testType, deckId) => {
   })
 }
 
-export const getFollowerCount = id =>{
-  return database.collection(dbConst.COL_DECKSUBCRIPTION).doc(id).get().then(doc =>{
+export const getLikeCount = id =>{
+  return database.collection(dbConst.COL_DECKS_LIKED).doc(id).get().then(doc =>{
     return { success: true, data: doc.exists ? doc.data().count : 0 }
   }).catch(e => {
-    console.log("getFollowerCount", e)
+    console.log("getLikeCount", e)
     return { success: false, ...e };
   })
 }
 
-const getFollowers = id =>{
-  return database.collection(dbConst.COL_DECKSUBCRIPTION).doc(id).collection(dbConst.COL_DECKSUBCRIPTION_FOLLOWERS).get().then(snapshot => {
+const getLikes = id =>{
+  return database.collection(dbConst.COL_DECKS_LIKED).doc(id).collection(dbConst.COL_USER).get().then(snapshot => {
     return { success: true, data: snapshot.docs }
   }).catch(e => {
-    console.log("getFollowers", e)
+    console.log("getLikes", e)
     return { success: false, ...e };
   })
 }

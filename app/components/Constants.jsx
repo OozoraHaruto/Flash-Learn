@@ -5,7 +5,7 @@ export const PROFILE_RE_AUTH                                = "reauth"
 
 // Profile Decks
 export const PROFILE_DECK_CREATED                           = "created"
-export const PROFILE_DECK_SUBSCRIBED                        = "subscribed"
+export const PROFILE_DECK_LIKED                             = "liked"
 
 // Test
 export const TEST_MCQ                                       = "mcq"

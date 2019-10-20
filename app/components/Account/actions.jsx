@@ -143,17 +143,17 @@ export const getAchievements = () =>{
   })
 }
 
-export const getSubscribedDecks = (userId, limit = 0) =>{
-  var subscribedDeck                    = database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).orderBy('createdOn', 'desc')
+export const getLikedDecks = (userId, limit = 0) =>{
+  var likedDeck                         = database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_LIKED_DECKS).orderBy('createdOn', 'desc')
 
   if(limit != 0){
-    subscribedDeck.limit(limit)
+    likedDeck.limit(limit)
   }
 
-  return subscribedDeck.get().then(snapshot => {
+  return likedDeck.get().then(snapshot => {
     return { success: true, data: snapshot.docs }
   }).catch(e => {
-    console.log("getSubscribedDecks", e)
+    console.log("getLikedDecks", e)
     return { success: false, ...e };
   })
 }
@@ -200,43 +200,43 @@ export const startAddOrEditCreatedDeckRef = (userId, deckId, deckDetails) => {
   })
 }
 
-export const startAddSubscribedDeckRef = (deckId, name, owner) => {
-  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).set({
+export const startAddLikedDeckRef = (deckId, name, owner) => {
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_LIKED_DECKS).doc(deckId).set({
     createdOn                           : firebase.firestore.FieldValue.serverTimestamp(),
     name,
     owner                               : database.doc(`/${dbConst.COL_USER}/${owner}`),
   }).then(ref => {
     var actions = []
-    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).update('count', firebase.firestore.FieldValue.increment(1)))
-    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).collection(dbConst.COL_DECKSUBCRIPTION_FOLLOWERS).doc(auth.currentUser.uid).set({ modified: firebase.firestore.FieldValue.serverTimestamp()}))
+    actions.push(database.collection(dbConst.COL_DECKS_LIKED).doc(deckId).update('count', firebase.firestore.FieldValue.increment(1)))
+    actions.push(database.collection(dbConst.COL_DECKS_LIKED).doc(deckId).collection(dbConst.COL_USER).doc(auth.currentUser.uid).set({ modified: firebase.firestore.FieldValue.serverTimestamp()}))
     return Promise.all(actions)
   }).then(() =>{
     return { success: true }
   }).catch(e => {
-    console.log("startAddSubscribedDeckRef", e)
+    console.log("startAddLikedDeckRef", e)
     return { success: false, ...e };
   })
 }
 
-export const startDeleteSubscribedDeckRef = deckId => {
-  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).delete().then(ref => {
+export const startDeleteLikedDeckRef = deckId => {
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_LIKED_DECKS).doc(deckId).delete().then(ref => {
     var actions = []
-    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).update('count', firebase.firestore.FieldValue.increment(-1)))
-    actions.push(database.collection(dbConst.COL_DECKSUBCRIPTION).doc(deckId).collection(dbConst.COL_DECKSUBCRIPTION_FOLLOWERS).doc(auth.currentUser.uid).delete())
+    actions.push(database.collection(dbConst.COL_DECKS_LIKED).doc(deckId).update('count', firebase.firestore.FieldValue.increment(-1)))
+    actions.push(database.collection(dbConst.COL_DECKS_LIKED).doc(deckId).collection(dbConst.COL_USER).doc(auth.currentUser.uid).delete())
     return Promise.all(actions)
   }).then(() =>{
     return { success: true }
   }).catch(e => {
-    console.log("startAddSubscribedDeckRef", e)
+    console.log("startDeleteLikedDeckRef", e)
     return { success: false, ...e };
   })
 }
 
-export const checkIfUserIsSubscribedToDeck = deckId => {
-  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_SUBSCRIBED_DECKS).doc(deckId).get().then(doc => {
+export const checkIfUserLikedDeck = deckId => {
+  return database.collection(dbConst.COL_USER).doc(auth.currentUser.uid).collection(dbConst.PROFILE_LIKED_DECKS).doc(deckId).get().then(doc => {
     return { success: true, data: doc }
   }).catch(e => {
-    console.log("checkIfUserIsSubscribedToDeck", e)
+    console.log("checkIfUserLikedDeck", e)
     return { success: false, ...e };
   })
 }
@@ -278,7 +278,7 @@ export const addPointToLeaderboard = point =>{
     }else{
       return database.collection(dbConst.COL_LEADERBOARD).doc(dbConst.LEADERBOARD_POINT).collection(dbConst.COL_USER).doc(auth.currentUser.uid).set({
         point,
-        user                                : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
+        user                            : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
       })
     }
   }).then(() =>{

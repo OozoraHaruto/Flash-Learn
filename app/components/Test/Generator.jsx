@@ -8,7 +8,7 @@ import * as comConst from 'componentConstants'
 import Fallback from 'Fallback'
 import { decks } from 'actions'
 
-import Flashcards from 'app/components/Deck/Flashcards'
+import Flashcards from 'app/components/Deck/subComponents/FlashcardCarousel'
 
 class Generator extends Component {
   constructor(props) {

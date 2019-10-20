@@ -20,7 +20,7 @@ class Profile extends Component {
         profilePic                      : "",
         verified                        : false
       },
-      subscribedDecks                   : undefined,
+      likedDecks                   : undefined,
       createdDecks                      : undefined,
     }
   }
@@ -64,7 +64,7 @@ class Profile extends Component {
     this.setState(state)
     this.getProfile(state)
     this.getCreatedDecks(state.id)
-    this.getSubscribedDecks(state.id)
+    this.getLikedDecks(state.id)
   }
 
   setReduxProfile = (id, name, pic, verified) =>{
@@ -114,16 +114,16 @@ class Profile extends Component {
     })
   }
 
-  getSubscribedDecks = id =>{
-    const { getSubscribedDecks }        = accounts
+  getLikedDecks = id =>{
+    const { getLikedDecks }             = accounts
 
-    getSubscribedDecks(id, 5).then(res => {
+    getLikedDecks(id, 5).then(res => {
       if (!res.success) {
         this.props.history.replace({ pathname: '/' });
       } else {
         this.setState({
           ...this.state,
-          subscribedDecks               : res.data
+          likedDecks                    : res.data
         })
       }
     })
@@ -134,10 +134,10 @@ class Profile extends Component {
       id,
       isMe, 
       profile, 
-      subscribedDecks, 
+      likedDecks, 
       createdDecks, 
     }                                   = this.state
-    const LoadingSubscribedDecks        = dataLoading(false, `The ${profile.name}'s subscribed decks should be loaded soon`)(DeckSummary)
+    const LoadingLikedDecks             = dataLoading(false, `The ${profile.name}'s liked decks should be loaded soon`)(DeckSummary)
     const LoadingCreatedDecks           = dataLoading(false, `The ${profile.name} created decks should be loaded soon`)(DeckSummary)
 
     return (
@@ -149,7 +149,7 @@ class Profile extends Component {
           </div>
         </div>
         {profile.name != "" && <LoadingCreatedDecks loading={createdDecks == undefined} title="Created Decks" cards={createdDecks} seeAllLink={comConst.PROFILE_DECK_CREATED} userId={id} />}
-        {profile.name != "" && <LoadingSubscribedDecks loading={subscribedDecks == undefined} title="Subscribed Decks" cards={subscribedDecks} seeAllLink={comConst.PROFILE_DECK_SUBSCRIBED} userId={id} hideFooter={true}/>}
+        {profile.name != "" && <LoadingLikedDecks loading={likedDecks == undefined} title="Liked Decks" cards={likedDecks} seeAllLink={comConst.PROFILE_DECK_LIKED} userId={id} hideFooter={true}/>}
       </DocumentMeta>
     )
   }

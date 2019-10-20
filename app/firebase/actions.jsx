@@ -10,9 +10,9 @@ export const deleteAtPath = path =>{
   })
 }
 
-export const deleteUsersSubscribedToDeck = (deckId, subscribersPaths) =>{
-  var deleteFn = functions.httpsCallable('deleteUsersSubscribedToDeck');
-  return deleteFn({ deckId, subscribersPaths }).then(result=>{
+export const deleteUsersLikedToDeck = (deckId, usersPaths) =>{
+  var deleteFn = functions.httpsCallable('deleteUsersLikedToDeck');
+  return deleteFn({ deckId, usersPaths }).then(result=>{
     console.log("result", result)
     return result
   }).catch(err =>{

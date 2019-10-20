@@ -80,8 +80,8 @@ export default class Header extends React.Component {
       switch (subpage) {
         case comConst.PROFILE_DECK_CREATED:
           return "Created Decks"
-        case comConst.PROFILE_DECK_SUBSCRIBED:
-          return "Subscribed Decks"
+        case comConst.PROFILE_DECK_LIKED:
+          return "Liked Decks"
       }
     }
 

@@ -16,7 +16,7 @@ const DeckSummary = ({
     switch(seeAllLink){
       case comConst.PROFILE_DECK_CREATED:
         return `User has not create any decks`
-      case comConst.PROFILE_DECK_SUBSCRIBED:
+      case comConst.PROFILE_DECK_LIKED:
         return `User has not liked any decks`
     }
   }

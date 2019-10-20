@@ -2,7 +2,7 @@ import React from 'react';
 
 import * as comConst from 'componentConstants'
 import { Alert, NormLink, dataLoading } from 'reuse'
-import Flashcards from 'app/components/Deck/Flashcards'
+import Flashcards from 'app/components/Deck/subComponents/FlashcardCarousel'
 
 export default class Header extends React.Component{
   constructor(){
@@ -19,9 +19,9 @@ export default class Header extends React.Component{
       name, 
       owner: { displayName, id, photoURL }, 
       cards,
-      followerCount,
-      following,
-      followDeck,
+      likeCount,
+      like,
+      likeDeck,
     }                                                     = this.props
     const LoadingFlashcards                               = dataLoading(false, "The flashcards should be loaded soon")(Flashcards)
 
@@ -29,17 +29,17 @@ export default class Header extends React.Component{
       const { submittingDelete }                          = this.state
       const setButtonText = () => {
         const formatSubriberNumber = () =>{
-          if(followerCount == undefined){
+          if(likeCount == undefined){
             return ""
           }else{
-            return followerCount
+            return likeCount
           }  
         }
 
-        switch (following) {
+        switch (like) {
           case "editing": return "Submitting"
-          case true: return `Cancel Follow (${formatSubriberNumber()})`
-          default: return `Follow Deck (${formatSubriberNumber()})`
+          case true: return `Unlike (${formatSubriberNumber()})`
+          default: return `Like (${formatSubriberNumber()})`
         }
       }
 
@@ -54,7 +54,7 @@ export default class Header extends React.Component{
         )
       } 
       return (
-          <button type="button" className={`btn btn-outline-danger btn-sm ml-3 ${(following == "editing") && 'disabled animated pulse infinite'}`} onClick={() => followDeck()} disabled={(following == "editing" || isMe || following == undefined)}>
+          <button type="button" className={`btn btn-outline-danger btn-sm ml-3 ${(like == "editing") && 'disabled animated pulse infinite'}`} onClick={() => likeDeck()} disabled={(like == "editing" || isMe || like == undefined)}>
             {setButtonText()}
           </button>
         )

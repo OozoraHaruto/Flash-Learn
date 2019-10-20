@@ -15,14 +15,14 @@ class DeckFull extends React.Component{
     super(props)
 
     this.state = {
-      isMe                              : false,
-      profile                           : {
-        name                            : "",
-        profilePic                      : "",
-        verified                        : false
+      isMe                            : false,
+      profile                         : {
+        name                          : "",
+        profilePic                    : "",
+        verified                      : false
       },
-      decks                             : [],
-      decksLoading                      : true,
+      decks                           : [],
+      decksLoading                    : true,
     }
     
   }
@@ -85,8 +85,8 @@ class DeckFull extends React.Component{
     switch (this.props.match.params.deckType) {
       case comConst.PROFILE_DECK_CREATED:
         this.getCreatedDecks(); break;
-      case comConst.PROFILE_DECK_SUBSCRIBED:
-        this.getSubscribedDecks(); break;
+      case comConst.PROFILE_DECK_LIKED:
+        this.getLikedDecks(); break;
     }
   }
 
@@ -106,10 +106,10 @@ class DeckFull extends React.Component{
     })
   }
 
-  getSubscribedDecks = () => {
-    const { getSubscribedDecks }      = accounts
+  getLikedDecks = () => {
+    const { getLikedDecks }      = accounts
 
-    getSubscribedDecks(this.props.match.params.id).then(res => {
+    getLikedDecks(this.props.match.params.id).then(res => {
       if (!res.success) {
         this.props.history.replace({ pathname: '/' });
       } else {
@@ -136,7 +136,7 @@ class DeckFull extends React.Component{
       switch (this.props.match.params.deckType) {
         case comConst.PROFILE_DECK_CREATED:
           return `User has not create any decks`
-        case comConst.PROFILE_DECK_SUBSCRIBED:
+        case comConst.PROFILE_DECK_LIKED:
           return `User has not liked any decks`
       }
     }

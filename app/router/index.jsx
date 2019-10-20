@@ -27,6 +27,7 @@ const AccDeck             = lazy(() => import(/* webpackChunkName: "cpo_DeckFull
 const DeckAdd             = lazy(() => import(/* webpackChunkName: "cpo_AddDeck" */ 'app/components/Deck/AddDeck'));
 const DeckEdit            = lazy(() => import(/* webpackChunkName: "cpo_EditDeck" */ 'app/components/Deck/EditDeck'));
 const DeckView            = lazy(() => import(/* webpackChunkName: "cpo_ViewDeck" */ 'app/components/Deck/View'));
+const DeckFlashcards      = lazy(() => import(/* webpackChunkName: "cpo_Flashcard" */ 'app/components/Deck/Flashcard'));
 
 const TestView            = lazy(() => import(/* webpackChunkName: "cpo_TestView" */ 'app/components/Test/StartTest'));
 const TestResult          = lazy(() => import(/* webpackChunkName: "cpo_TestResult" */ 'app/components/Test/TestResult'));
@@ -96,6 +97,9 @@ class ReactRouter extends Component{
 
               <AuthRoute exact path='/deck/add' component={DeckAdd} me={me} />
               <AuthRoute exact path='/deck/:id/edit' component={DeckEdit} me={me} />
+              <AuthRoute exact path='/deck/:id/flashcards' component={DeckFlashcards} me={me} />
+
+
               <AuthRoute exact path='/deck/:id/test' component={TestOptions} me={me} />
               <AuthRoute exact path='/deck/:id/test/start' component={TestView} me={me} />
               <AuthRoute exact path='/deck/:id/test/results' component={TestResult} me={me} />

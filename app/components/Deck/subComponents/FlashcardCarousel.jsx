@@ -1,13 +1,13 @@
 import React from 'react'
 
-import Card from 'app/components/Deck/subComponents/Flashcards/Card'
+import Card from 'app/components/Deck/subComponents/FlashcardCarousel/Card'
 
-export default class Flashcards extends React.Component{
+export default class FlashcardCarousel extends React.Component{
   constructor(props){
     super(props)
     this.state={
-      currentIndex: 0,
-      maxIndex: (props.cards.length - 1)
+      currentIndex                      : 0,
+      maxIndex                          : (props.cards.length - 1)
     }
   }
 
@@ -22,16 +22,16 @@ export default class Flashcards extends React.Component{
 
     this.setState({
       ...this.state,
-      currentIndex: newIndex
+      currentIndex                      : newIndex
     })
   }
 
   render(){
-    const { currentIndex } = this.state
-    const { cards } = this.props
+    const { currentIndex }              = this.state
+    const { cards }                     = this.props
     
     return (
-      <div className="d-flex flex-column h-100 w-100 overflow-hidden">
+      <div className="d-flex flex-column flex-grow-1 w-100 overflow-hidden">
         <div className="d-flex flex-grow-1">
           <Card index={currentIndex} card={cards[currentIndex].data()} />
         </div>

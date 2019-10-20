@@ -7,7 +7,7 @@ import Fallback from 'Fallback'
 import { TextField, NormLink } from 'reuse'
 import { decks } from 'actions'
 
-import Flashcards from 'app/components/Deck/Flashcards'
+import Flashcards from 'app/components/Deck/subComponents/FlashcardCarousel'
 
 class TestOptions extends Component {
   constructor(props){

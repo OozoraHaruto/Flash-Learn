@@ -24,8 +24,8 @@ export class View extends Component {
       leaderboards: {
         loading                             : true
       }, 
-      following                             : undefined,
-      followerCount                         : undefined,
+      like                                  : undefined,
+      likeCount                             : undefined,
     }
   }
   componentDidMount() {
@@ -44,9 +44,9 @@ export class View extends Component {
         }
         this.getCards(id)
         this.getLeaderboards(id)
-        this.getFollowerCount(id)
+        this.getLikeCount(id)
         if (!newState.isMe && auth.currentUser){
-          this.getFollowingDeck(id)
+          this.getLikesDeck(id)
         }
 
         this.setState(newState)
@@ -106,62 +106,65 @@ export class View extends Component {
     })
   }
 
-  getFollowerCount = id =>{
-    const { getFollowerCount }              = decks
+  getLikeCount = id =>{
+    const { getLikeCount }                  = decks
 
-    getFollowerCount(id).then(res =>{
+    getLikeCount(id).then(res =>{
       if(res.success){
         this.setState({
           ...this.state,
-          followerCount                     : res.data
+          likeCount                         : res.data
         })
       }else{
-        getFollowerCount(id)
+        getLikeCount(id)
       }
     }).catch( () =>{})
   }
 
-  getFollowingDeck = id => {
-    var { checkIfUserIsSubscribedToDeck }   = accounts
+  getLikesDeck = id => {
+    var { checkIfUserLikedDeck }            = accounts
 
-    checkIfUserIsSubscribedToDeck(id).then(res=>{
+    checkIfUserLikedDeck(id).then(res=>{
       this.setState({
         ...this.state,
-        following                           : res.data.exists
+        like                                : res.data.exists
       })
     }).catch(e => {
       console.log(e.message)
     })
   }
 
-  followDeck = () => {
-    var { startAddSubscribedDeckRef, startDeleteSubscribedDeckRef }     = accounts
-    const subscribe                       = !this.state.following
+  likeDeck = () => {
+    var { 
+      startAddLikedDeckRef, 
+      startDeleteLikedDeckRef 
+    }                                       = accounts
+    const like                              = !this.state.like
 
     this.setState({
       ...this.state,
-      following                           : "editing"
+      like                                  : "editing"
     })
 
-    const editFollowingState = (success) =>{
+    const editLikesState = (success) =>{
       var newState = {
         ...this.state,
-        following: success ? subscribe: !subscribe
+        like                                : success ? like: !like
       }
       if(success){
-        newState.followerCount = subscribe ? this.state.followerCount + 1 : this.state.followerCount - 1
+        newState.likeCount                  = like ? this.state.likeCount + 1 : this.state.likeCount - 1
       }
       this.setState(newState)
     }
 
-    if (subscribe){
-      const {name, owner} = this.state.details
-      startAddSubscribedDeckRef(this.props.match.params.id, name, owner.id).then(res => {
-        editFollowingState(res.success)
+    if (like){
+      const {name, owner}                   = this.state.details
+      startAddLikedDeckRef(this.props.match.params.id, name, owner.id).then(res => {
+        editLikesState(res.success)
       })
     }else{
-      startDeleteSubscribedDeckRef(this.props.match.params.id).then(res => {
-        editFollowingState(res.success)
+      startDeleteLikedDeckRef(this.props.match.params.id).then(res => {
+        editLikesState(res.success)
       })
     }
   }
@@ -188,8 +191,8 @@ export class View extends Component {
       details, 
       cards, 
       leaderboards,
-      followerCount,
-      following,
+      likeCount,
+      like,
     }                                       = this.state
     const { id }                            = this.props.match.params
 
@@ -198,7 +201,7 @@ export class View extends Component {
         {details.loading && <Fallback />}
         {!details.loading && 
           <React.Fragment>
-            <Header {...details} {...{cards, followerCount, following}} deckId={id} isMe={isMe} deleteDeck={this.deleteDeck} followDeck={this.followDeck}/>
+            <Header {...details} {...{cards, likeCount, like}} deckId={id} isMe={isMe} deleteDeck={this.deleteDeck} likeDeck={this.likeDeck}/>
             <DetailsWrapper cards={cards} leaderboards={leaderboards} />
           </React.Fragment>
         }
