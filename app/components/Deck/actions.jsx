@@ -1,17 +1,21 @@
 import firebase, { auth, database } from 'firebase';
+var XRegExp = require('xregexp');
+
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
 import * as comConst from 'componentConstants'
 
 import { accounts, firebaseFunctions } from 'actions';
+import { isRegExp } from 'util';
 // import { functionList } from 'firebase'
 
 export const startAddDeck = values =>{
-  const { startAddOrEditCreatedDeckRef }      = accounts
+  const {startAddOrEditCreatedDeckRef}  = accounts
   var deckId                            = ""
   var deckDetails = {
-    name: values.name.trim(),
-    public: !values.shownPublic ? false : values.shownPublic,
+    name                                : values.name.trim(),
+    public                              : !values.shownPublic ? false : values.shownPublic,
+    searchTerms                         : cleanNameAndConvertToArray(values.name),
   }
 
   return database.collection(dbConst.COL_DECKS).add({
@@ -54,8 +58,15 @@ const addEmptyDeckSubscription = deckId =>{
 }
 
 export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
-  var databaseActions = []
-  const { startAddOrEditCreatedDeckRef } = accounts
+  var databaseActions                   = []
+  const { startAddOrEditCreatedDeckRef }= accounts
+  let details = {
+    ...detailsEdited,
+    modified                            : firebase.firestore.FieldValue.serverTimestamp(),
+  }
+  if (detailsEdited.name){
+    details["searchTerms"]              = cleanNameAndConvertToArray(detailsEdited.name)
+  }
 
   toAdd.forEach(card =>{
     var tmpCard = {...cleanCardValues(card)}
@@ -69,10 +80,7 @@ export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
     databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).set(tmpCard))
   })
 
-  databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).set({
-    ...detailsEdited,
-    modified                            : firebase.firestore.FieldValue.serverTimestamp(),
-  }, { merge: true}))
+  databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).set(details, { merge: true}))
   databaseActions.push(startAddOrEditCreatedDeckRef(auth.currentUser.uid, deckId, detailsEdited))
 
   if (toAdd.length > 0 || toDelete.length > 0 || toEdit.length > 0){
@@ -215,6 +223,84 @@ const getLikes = id =>{
   })
 }
 
+export const searchForDeck = name =>{
+  const { getUserProfile }              = accounts
+  const searchTerms                     = cleanNameAndConvertToArray(name, false)
+  let resultSnapshots                   = []
+  let usersRedundantList                = []
+  let users                             = {}
+  let queries                           = []
+
+  const calculateRelevance = doc =>{
+    const formatDeck = (additionalData={}) =>{
+      return{
+        id                              : doc.id,
+        ...doc.data(),
+        modified                        : doc.data().modified.toMillis(),
+        ...additionalData,
+      }
+    }
+    if (name == ""){ return formatDeck() }
+    if (name == doc.data().name) { return formatDeck({ relevance: 99999}) }
+
+    let relevance                       = 0
+    let notIn                           = []
+
+    searchTerms.map(term =>{
+      if (doc.data().searchTerms.includes(term)){
+        relevance                      += 1
+      }else{
+        notIn.push(term)
+      }
+    })
+    return formatDeck({relevance, notIn})
+  }
+
+  if (name != ""){
+    queries = searchTerms.map(term =>{
+      return database.collection(dbConst.COL_DECKS).where("searchTerms", "array-contains", term).get()
+    })
+  }else{
+    queries.push(database.collection(dbConst.COL_DECKS).get())
+  }
+  
+
+  return Promise.all(queries).then(responses =>{
+    let snapshotRedundantList           = []
+    let getUserData                     = []
+
+    responses.map(snapshots =>{
+      snapshots.docs.map(doc =>{
+        if (!snapshotRedundantList.includes(doc.id)){
+          resultSnapshots.push(calculateRelevance(doc))
+          snapshotRedundantList.push(doc.id)
+
+          if (!usersRedundantList.includes(doc.data().owner.id)) {
+            getUserData.push(getUserProfile(doc.data().owner.id))
+            usersRedundantList.push(doc.data().owner.id)
+          }
+        }
+      })
+    })
+    return Promise.all(getUserData)
+  }).then(resUsers =>{
+    resUsers.forEach((user, index) =>{
+      users[usersRedundantList[index]] = {
+        displayName                     : user.data.displayName,
+        photoURL                        : user.data.photoURL
+      }
+    })
+    return {
+      success                           : true, 
+      decks                             : resultSnapshots,
+      users,
+    }
+  }).catch(e => {
+    console.log("searchForDeck", e)
+    return { success: false, ...e };
+  })
+}
+
 // Redux methods
 // - Current Deck
 
@@ -272,3 +358,17 @@ const cleanCardValues = card =>{
     index                               : card.index ? card.index : 0,
   }
 } 
+
+const cleanNameAndConvertToArray = (name, addFull=true) =>{
+  let search                            = XRegExp('([^?<first>\\pL ]+)');
+  let strKeywords                       = XRegExp.replace(name.trim().toLowerCase(), search, ' ', "all");
+  let arrKeywords                       = strKeywords.split(" ").reduce((result, keyword) =>{
+    if (keyword != " " && keyword != "" && !result.includes(keyword)){
+      result.push(keyword)
+    }
+    return result
+  }, [])
+  addFull && arrKeywords.push(name.trim().toLowerCase())
+
+  return arrKeywords
+}

@@ -1,5 +1,8 @@
 var moment = require('moment');
 
+// For Any
+export const BASIC_SORT                                     = { asc: "asc", desc: "desc" }
+
 // Profile Reauth
 export const PROFILE_RE_AUTH                                = "reauth"
 
@@ -14,23 +17,22 @@ export const TEST_TRUEFALSE                                 = "truefalse"
 export const TEST_ULTIMATE                                  = "ultimate"
 export const TEST_PROGRESS_TYPE_COMBO                       = "combo"
 export const TEST_PROGRESS_TYPE_INFO                        = "info"
-export const TEST_RESULT_SORT                               = { asc: "asc", desc: "desc" }
 export const TEST_RESULT_SORT_QUESTION_NUMBER               = {value: 'qn', label: 'Question Number'}
 export const TEST_RESULT_SORT_QUESTION_NUMBER_ASC = {
-  value                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.value}_${TEST_RESULT_SORT.asc}`, 
+  value                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.value}_${BASIC_SORT.asc}`, 
   label                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.label} ↑`
 }
 export const TEST_RESULT_SORT_QUESTION_NUMBER_DESC = {
-  value                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.value}_${TEST_RESULT_SORT.desc}`, 
+  value                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.value}_${BASIC_SORT.desc}`, 
   label                                                     : `${TEST_RESULT_SORT_QUESTION_NUMBER.label} ↓`
 }
 export const TEST_RESULT_SORT_TIME_TAKEN                    = {value: 'time', label: 'Time Taken'}
 export const TEST_RESULT_SORT_TIME_TAKEN_ASC = {
-  value                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.value}_${TEST_RESULT_SORT.asc}`, 
+  value                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.value}_${BASIC_SORT.asc}`, 
   label                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.label} ↑`
 }
 export const TEST_RESULT_SORT_TIME_TAKEN_DESC = {
-  value                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.value}_${TEST_RESULT_SORT.desc}`, 
+  value                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.value}_${BASIC_SORT.desc}`, 
   label                                                     : `${TEST_RESULT_SORT_TIME_TAKEN.label} ↓`
 }
 export const TEST_RESULT_FILTER_ALL                         = {value: 'all', label: 'View All'}
@@ -38,7 +40,30 @@ export const TEST_RESULT_FILTER_CORRECT                     = {value: 'correct',
 export const TEST_RESULT_FILTER_WRONG                       = {value: 'wrong', label: 'Wrong'}
 
 
-
+// Search Decks
+export const DECK_SEARCH_SORT_LAST_UPDATED                  = {value: 'modified', label: "Last Updated"}
+export const DECK_SEARCH_SORT_LAST_UPDATED_ASC = {
+  value                                                     : `${DECK_SEARCH_SORT_LAST_UPDATED.value}_${BASIC_SORT.asc}`, 
+  label                                                     : `${DECK_SEARCH_SORT_LAST_UPDATED.label} ↑`
+}
+export const DECK_SEARCH_SORT_LAST_UPDATED_DESC = {
+  value                                                     : `${DECK_SEARCH_SORT_LAST_UPDATED.value}_${BASIC_SORT.desc}`, 
+  label                                                     : `${DECK_SEARCH_SORT_LAST_UPDATED.label} ↓`
+}
+export const DECK_SEARCH_SORT_NAME                          = {value: 'name', label: "Name"}
+export const DECK_SEARCH_SORT_NAME_ASC = {
+  value                                                     : `${DECK_SEARCH_SORT_NAME.value}_${BASIC_SORT.asc}`, 
+  label                                                     : `${DECK_SEARCH_SORT_NAME.label} ↑`
+}
+export const DECK_SEARCH_SORT_NAME_DESC = {
+  value                                                     : `${DECK_SEARCH_SORT_NAME.value}_${BASIC_SORT.desc}`, 
+  label                                                     : `${DECK_SEARCH_SORT_NAME.label} ↓`
+}
+export const DECK_SEARCH_SORT_RELEVANCE                = {value: 'relevance', label: "Relevance"}
+export const DECK_SEARCH_SORT_RELEVANCE_DESC = {
+  value                                                     : `${DECK_SEARCH_SORT_RELEVANCE.value}_${BASIC_SORT.desc}`, 
+  label                                                     : `${DECK_SEARCH_SORT_RELEVANCE.label}`
+}
 
 
 

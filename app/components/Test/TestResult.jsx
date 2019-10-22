@@ -25,7 +25,6 @@ class TestResult extends Component {
     } else if (!this.props.location.state.answers) {
       return this.props.history.push(`/deck/${this.props.match.params.id}/test`)
     }
-    // TODO: Get leaderboard First and compare
 
     if (this.props.test.leaderboard && this.state.qualifyForLeaderboard){
       this.getDeckFastest()
@@ -138,7 +137,7 @@ class TestResult extends Component {
     })
     
     if (sortData.length == 2){
-      if (sortData[1] == comConst.TEST_RESULT_SORT.desc){
+      if (sortData[1] == comConst.BASIC_SORT.desc){
         tmpAnswers                      = tmpAnswers.reverse()
       }
     }
