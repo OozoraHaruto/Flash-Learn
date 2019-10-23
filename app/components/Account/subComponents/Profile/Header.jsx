@@ -38,7 +38,7 @@ export default class Header extends React.Component {
   }
 
   render(){
-    const { name, profilePic, verified, isMe, id, subpage = "" } = this.props
+    const { name, profilePic, verified, isMe, id, subpage = "", points } = this.props
 
     const renderVerified = () => {
       if (verified) {
@@ -97,15 +97,13 @@ export default class Header extends React.Component {
               <span className="align-middle">{isMe && renderVerified()}</span>
               <span className="align-middle">{isMe && !verified && renderEmailStatus()}</span>
             </div>
+            {points && <div>{points} point{points > 1 && "s"} earned this month</div>}
             {
               isMe &&
                 <div className="mt-1">
                   <NormLink className="btn btn-outline-warning btn-sm" title="Edit Profile" to={{ pathname: "/reauth", state: {to: '/profile/edit'}}} />
                 </div>
             }
-            <div>
-              {/* TODO: Add monthly points here */}
-            </div>
           </div>
         </div>
       </div>

@@ -43,23 +43,46 @@ export default class Tests extends Component {
               <div className="tab-pane fade show active" id="mcq" role="tabpanel" aria-labelledby="mcq-tab">
                 User will be given either the front or back of the flashcard and asked to pick from 4-6 choices.<br />
                 User can choose the number of words to be tested.
-                {/* TODO: Add screenshot when function is done */}
+                <div className="container-fluid mt-3">
+                  <div className="row  justify-content-md-center">
+                    <div className="col-4">
+                      <img src="/images/FAQ/MCQ_2.png" alt="screenshot of MCQ test with 2 options" className="w-100" />
+                    </div>
+                    <div className="col-4">
+                      <img src="/images/FAQ/MCQ_4.png" alt="screenshot of MCQ test with 4 options" className="w-100" />
+                    </div>
+                    <div className="col-4">
+                      <img src="/images/FAQ/MCQ_6.png" alt="screenshot of MCQ test with 6 options" className="w-100" />
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="tab-pane fade" id="openended" role="tabpanel" aria-labelledby="openended-tab">
                 User will be given either the front or back of the flashcard and asked type out the correct answer.<br />
                 User can choose the number of words to be tested.
-                {/* TODO: Add screenshot when function is done */}
+                <div className="container-fluid mt-3">
+                  <div className="row  justify-content-md-center">
+                    <div className="col-4">
+                      <img src="/images/FAQ/Openended.png" alt="screenshot of Open ended test" className="w-100" />
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="tab-pane fade" id="truefalse" role="tabpanel" aria-labelledby="truefalse-tab">
                 User will be given both the front and back of the flashcard and asked if it is correct.<br />
                 User can choose the number of words to be tested.
-                {/* TODO: Add screenshot when function is done */}
+                <div className="container-fluid mt-3">
+                  <div className="row  justify-content-md-center">
+                    <div className="col-4">
+                      <img src="/images/FAQ/True_False.png" alt="screenshot of True or false test" className="w-100" />
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="tab-pane fade" id="ultimate" role="tabpanel" aria-labelledby="truefalse-tab">
                 This is the ultimate test.<br />
                 User will be tested on all the flashcard.<br />
                 All three tests (<a href="#mcq">MCQ</a>, <a href="#openended">Open Ended</a> and <a href="#truefalse">true/false</a>) will be tested. Questions will be randomly assigned.
-                {/* TODO: Add screenshot when function is done */}
               </div>
             </div>
           </div>

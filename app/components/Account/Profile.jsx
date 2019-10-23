@@ -15,16 +15,36 @@ class Profile extends Component {
     super(props)
     this.state = {
       isMe                              : false,
-      profile                           : {
+      profile: {
         name                            : "",
         profilePic                      : "",
         verified                        : false
       },
-      likedDecks                   : undefined,
+      likedDecks                        : undefined,
       createdDecks                      : undefined,
+      leaderboardPoint                  : undefined,
     }
   }
-  componentDidMount(){
+
+  componentDidUpdate(prevProps){
+    if (prevProps.match.params.id != this.props.match.params.id){
+      this.setState({
+        isMe                            : false,
+        profile: {
+          name                          : "",
+          profilePic                    : "",
+          verified                      : false
+        },
+        likedDecks                      : undefined,
+        createdDecks                    : undefined,
+        leaderboardPoint                : undefined,
+      }, () => this.checkUserId())
+    }
+  }
+
+  componentDidMount = () => this.checkUserId()
+
+  checkUserId = () =>{
     var state                           = this.state
 
     if (!this.props.match.params.id) {
@@ -65,6 +85,7 @@ class Profile extends Component {
     this.getProfile(state)
     this.getCreatedDecks(state.id)
     this.getLikedDecks(state.id)
+    this.getLeaderboardPoints(state.id)
   }
 
   setReduxProfile = (id, name, pic, verified) =>{
@@ -129,6 +150,17 @@ class Profile extends Component {
     })
   }
 
+  getLeaderboardPoints = id =>{
+    const { getUserPointLeaderboard }   = accounts
+
+    getUserPointLeaderboard(id).then(res=>{
+      this.setState({
+        ...this.state,
+        leaderboardPoint                : (res.doc.exists ? res.doc.data().point : 0)
+      })
+    })
+  }
+
   render() {
     const { 
       id,
@@ -136,6 +168,7 @@ class Profile extends Component {
       profile, 
       likedDecks, 
       createdDecks, 
+      leaderboardPoint,
     }                                   = this.state
     const LoadingLikedDecks             = dataLoading(false, `The ${profile.name}'s liked decks should be loaded soon`)(DeckSummary)
     const LoadingCreatedDecks           = dataLoading(false, `The ${profile.name} created decks should be loaded soon`)(DeckSummary)
@@ -145,7 +178,7 @@ class Profile extends Component {
         {profile.name == "" && <Fallback />}
         <div className="container-fluid">
           <div className="row bg-light">
-            {profile.name != "" && <Header {...profile} isMe={isMe} />}
+            {profile.name != "" && <Header {...profile} isMe={isMe} points={leaderboardPoint}  />}
           </div>
         </div>
         {profile.name != "" && <LoadingCreatedDecks loading={createdDecks == undefined} title="Created Decks" cards={createdDecks} seeAllLink={comConst.PROFILE_DECK_CREATED} userId={id} />}

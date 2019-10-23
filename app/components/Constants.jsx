@@ -68,24 +68,20 @@ export const DECK_SEARCH_SORT_RELEVANCE_DESC = {
 
 
 // Additional Functions
-export const formatDateTime = (timeFormat, format="") =>{
+export const formatDateTime = (timeFormat, format="", prefix=false) =>{
   const dateTime                                            = moment(timeFormat)
-  console.log(`Formatted Date Time ${dateTime}`)
-
   const FMT_FULL                                            = "YYYY MM DD"
   const FMT_FULL_TEXT                                       = "Do MMMM YYYY"
-  
 
   switch(format){
     case 'ago':
       return dateTime.fromNow()
     case 'full':
-      return dateTime.format(FMT_FULL)
+      return `${prefix && "on "}${dateTime.format(FMT_FULL)}`
     case 'fullWithText':
-      return dateTime.format(FMT_FULL_TEXT)
+      return `${prefix && "on "}${dateTime.format(FMT_FULL_TEXT)}`
     default:
-      return (moment().diff(dateTime, 'hours') > 24) ? dateTime.format(FMT_FULL_TEXT) : dateTime.fromNow()
-
+      return (moment().diff(dateTime, 'hours') > 24) ? formatDateTime(timeFormat, "fullWithText", prefix) : formatDateTime(timeFormat, "ago", prefix)
   }
 }
 

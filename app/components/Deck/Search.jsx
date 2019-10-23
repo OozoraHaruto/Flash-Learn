@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import queryString from 'query-string';
+import DocumentMeta from 'react-document-meta';
 
 import SearchForm from 'app/components/Deck/forms/Search'
 import ResultsWrapper from 'app/components/Deck/subComponents/Search/ResultsWrapper'
@@ -38,7 +39,10 @@ export default class Search extends Component {
         sort                                : values.sort,
         results                             : this.sortResults(this.state.results, sortBy[0], sortBy[1] == comConst.BASIC_SORT.asc),
         loading                             : false
-      }, () => formikBag.setSubmitting(false))
+      }, () => {
+        formikBag.setSubmitting(false)
+        this.changeURL()
+      })
     }else{
       this.newSearch(values.query, values.sort).then(() => {
         formikBag.setSubmitting(false)
@@ -58,7 +62,7 @@ export default class Search extends Component {
           results                           : this.sortResults(res.decks, sortBy[0], sortBy[1] == comConst.BASIC_SORT.asc),
           users                             : res.users,
           loading                           : false
-        })
+        }, () => this.changeURL())
       }else{
         throw res
       }
@@ -92,6 +96,12 @@ export default class Search extends Component {
     return tmpResults
   }
 
+  changeURL = () =>{
+    const { query, sort }                   = this.state
+
+    window.history.pushState({}, `Results for ${query}`, `?${queryString.stringify({ query, sort })}`)
+  }
+
   render(){
     var { 
       query, 
@@ -104,14 +114,16 @@ export default class Search extends Component {
     const LoadingDecks                      = dataLoading(false, "Hold on while we search for the deck")(ResultsWrapper)
 
     return(
-      <div className="container">
-        <div className="row mt-4">
-          <div className="col">
-            <SearchForm handleFormSubmission={this.handleSearch} initialValues={{query, sort}} />
+      <DocumentMeta title={`Results for ${query}`}>
+        <div className="container">
+          <div className="row mt-4">
+            <div className="col">
+              <SearchForm handleFormSubmission={this.handleSearch} initialValues={{query, sort}} />
+            </div>
           </div>
+          <LoadingDecks loading={loading} decks={results} users={users} />
         </div>
-        <LoadingDecks loading={loading} decks={results} users={users} />
-      </div>
+      </DocumentMeta>
     )
   }
 }

@@ -85,8 +85,7 @@ class ReactRouter extends Component{
         <ZWrapper>
           <Suspense fallback={<Fallback />}>
             <Switch>
-              {/* <Route exact path='/' component={MainPage} /> */}
-              <Redirect exact from="/" to="/faq" />
+              <Route exact path='/' component={MainPage} />
 
               <AuthRoute exact path='/reauth' component={AccReAuth} me={me} />
               <NoAuthRoute exact path='/login' component={AccLogin} me={me} />
