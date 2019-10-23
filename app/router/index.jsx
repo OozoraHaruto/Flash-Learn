@@ -10,7 +10,7 @@ import { accounts } from 'actions'
 import { authenticatedRoute, unAuthenticatedRoute } from 'app/router/authenticationRoutes'
 
 //Components
-// import Error404 from 'app/components/Errors/Error404';
+import Error404 from 'app/components/Errors/Error404';
 import Fallback from 'Fallback'
 import ZWrapper from 'ZWrapper'
 const MainPage            = lazy(() => import(/* webpackChunkName: "cpo_MainPage" */ 'MainPage'));
@@ -113,7 +113,7 @@ class ReactRouter extends Component{
 
               <Route exact path='/credits' component={Credits} />
 
-              {/* <Route component={Error404} /> */}
+              <Route component={Error404} />
             </Switch>
           </Suspense>
         </ZWrapper>

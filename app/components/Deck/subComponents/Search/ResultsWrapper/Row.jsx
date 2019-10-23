@@ -11,13 +11,13 @@ const Row = ({
     <div className="col">
       <div className="card mt-3">
         <div className="card-body">
-          <NormLink title={deck.name} to={`/deck/${deck.id}`} className="h5 text-dark card-title d-block" />
+          <NormLink title={deck.name} to={`/deck/${deck.id}`} className="h5 text-dark card-title d-block text-center text-sm-left text-wrap" />
           <div className="d-flex">
             <div>
               <img src={`${owner.photoURL}?s=50`} alt="user's profile picture" className="rounded" />
             </div>
             <div className="ml-2 d-flex flex-column justify-content-center">
-                <div>by <NormLink title={owner.displayName} to={`/profile/${deck.owner.id}`} className="text-dark" /></div>
+              <div>by <NormLink title={owner.displayName} to={`/profile/${deck.owner.id}`} className="text-dark" /></div>
               <small className="text-muted">Last modified {formatDateTime(deck.modified, "", true)}</small>
             </div>
           </div>

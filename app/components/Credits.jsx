@@ -44,6 +44,10 @@ const Credits = () =>{
                       <td scope="row"><a href="/images/ProfileLeaderboard/third.png" target="_blank">3<sup>rd</sup> place picture in decks</a></td>
                       <td>Image by <a href="https://pixabay.com/users/qimono-1962238/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614844">Arek Socha</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1614844">Pixabay</a></td>
                     </tr>
+                    <tr>
+                      <td scope="row"><a href="/images/Error/404.jpg" target="_blank">Error 404</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/3D_Maennchen-1553824/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2314111">Peggy und Marco Lachmann-Anke</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2314111">Pixabay</a></td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
