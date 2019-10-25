@@ -3,11 +3,12 @@ import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
 
 import { auth } from 'firebase';
-import Fallback from 'Fallback'
-import * as comConst from 'componentConstants'
-import Header from 'app/components/Deck/subComponents/View/Header'
-import DetailsWrapper from 'app/components/Deck/subComponents/View/DetailsWrapper'
 import { decks, accounts } from 'actions'
+import { TEST_MCQ, TEST_OPENENDED, TEST_TRUEFALSE, TEST_ULTIMATE, pushToError } from 'componentConstants'
+
+import DetailsWrapper from 'app/components/Deck/subComponents/View/DetailsWrapper'
+import Fallback from 'Fallback'
+import Header from 'app/components/Deck/subComponents/View/Header'
 
 export class View extends Component {
   constructor(props) {
@@ -57,8 +58,7 @@ export class View extends Component {
       if (!this.props.history.location.state){
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}` })
       } else if (this.props.history.location.state.from == '/login') {
-        return this.props.history.push({ pathname: '/' }) // TODO: Error Page
-        // return this.props.history.push({ pathname: '/error', state: e })
+        return pushToError(this.props.history, this.props.location, e)
       }else{
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}` })
       }
@@ -76,33 +76,35 @@ export class View extends Component {
         })
         this.props.dispatch(addDeckToRedux(id, this.state.details.name, res.data))
       } else {
-        getCards(id);
+        throw res
       }
-    }).catch(() => {})
+    }).catch(() => {
+      this.getCards(id)
+    })
   }
 
   getLeaderboards = id =>{
     const { getDeckTopLeaderboard }         = decks
     const leaderboardRequests = [
-      getDeckTopLeaderboard(comConst.TEST_MCQ, id),
-      getDeckTopLeaderboard(comConst.TEST_OPENENDED, id),
-      getDeckTopLeaderboard(comConst.TEST_TRUEFALSE, id),
-      getDeckTopLeaderboard(comConst.TEST_ULTIMATE, id),
+      getDeckTopLeaderboard(TEST_MCQ, id),
+      getDeckTopLeaderboard(TEST_OPENENDED, id),
+      getDeckTopLeaderboard(TEST_TRUEFALSE, id),
+      getDeckTopLeaderboard(TEST_ULTIMATE, id),
     ]
 
     Promise.all(leaderboardRequests).then(res =>{
       var leaderboards                      = {}
-      leaderboards[comConst.TEST_MCQ]       = res[0].success ? res[0].data : undefined
-      leaderboards[comConst.TEST_OPENENDED] = res[1].success ? res[1].data : undefined
-      leaderboards[comConst.TEST_TRUEFALSE] = res[2].success ? res[2].data : undefined
-      leaderboards[comConst.TEST_ULTIMATE]  = res[3].success ? res[3].data : undefined
+      leaderboards[TEST_MCQ]                = res[0].success ? res[0].data : undefined
+      leaderboards[TEST_OPENENDED]          = res[1].success ? res[1].data : undefined
+      leaderboards[TEST_TRUEFALSE]          = res[2].success ? res[2].data : undefined
+      leaderboards[TEST_ULTIMATE]           = res[3].success ? res[3].data : undefined
       
       this.setState({
         ...this.state,
         leaderboards
       })
     }).catch(e =>{
-      console.log("error getting leaderboard", e)
+      this.getLeaderboards(id)
     })
   }
 
@@ -116,21 +118,27 @@ export class View extends Component {
           likeCount                         : res.data
         })
       }else{
-        getLikeCount(id)
+        throw res
       }
-    }).catch( () =>{})
+    }).catch( () =>{
+      this.getLikeCount(id)
+    })
   }
 
   getLikesDeck = id => {
     var { checkIfUserLikedDeck }            = accounts
 
     checkIfUserLikedDeck(id).then(res=>{
-      this.setState({
-        ...this.state,
-        like                                : res.data.exists
-      })
+      if(res.success){
+        this.setState({
+          ...this.state,
+          like                              : res.data.exists
+        })
+      }else{
+        throw res
+      }
     }).catch(e => {
-      console.log(e.message)
+      this.getLikesDeck(id)
     })
   }
 
@@ -140,11 +148,6 @@ export class View extends Component {
       startDeleteLikedDeckRef 
     }                                       = accounts
     const like                              = !this.state.like
-
-    this.setState({
-      ...this.state,
-      like                                  : "editing"
-    })
 
     const editLikesState = (success) =>{
       var newState = {
@@ -157,16 +160,21 @@ export class View extends Component {
       this.setState(newState)
     }
 
-    if (like){
-      const {name, owner}                   = this.state.details
-      startAddLikedDeckRef(this.props.match.params.id, name, owner.id).then(res => {
-        editLikesState(res.success)
-      })
-    }else{
-      startDeleteLikedDeckRef(this.props.match.params.id).then(res => {
-        editLikesState(res.success)
-      })
-    }
+    this.setState({
+      ...this.state,
+      like                                  : "editing"
+    }, () =>{
+      if (like) {
+        const { name, owner } = this.state.details
+        startAddLikedDeckRef(this.props.match.params.id, name, owner.id).then(res => {
+          editLikesState(res.success)
+        })
+      } else {
+        startDeleteLikedDeckRef(this.props.match.params.id).then(res => {
+          editLikesState(res.success)
+        })
+      }
+    })
   }
   
   deleteDeck = () =>{
@@ -177,11 +185,10 @@ export class View extends Component {
         this.props.dispatch(deleteReduxDeck())
         return this.props.history.push({ pathname: '/' })
       }else{
-        // return this.props.history.push({ pathname: '/' }) // TODO: Error Page
-        console.log("Failed to delete deck")
+        throw res
       }
     }).catch(e => {
-      console.log(e.message)
+      return pushToError(this.props.history, this.props.location, e)
     })
   }
   

@@ -1,9 +1,10 @@
 import React from 'react';
 import { FaFrown } from "react-icons/fa";
 
+import { PROFILE_DECK_CREATED, PROFILE_DECK_LIKED } from 'componentConstants'
+
 import { NormLink } from 'reuse'
 import Card from 'app/components/Account/subComponents/Profile/CardLink'
-import * as comConst from 'componentConstants'
 
 const DeckSummary = ({
   userId,
@@ -14,9 +15,9 @@ const DeckSummary = ({
 }) => {
   const generateEmptyArrayMessage = () =>{
     switch(seeAllLink){
-      case comConst.PROFILE_DECK_CREATED:
+      case PROFILE_DECK_CREATED:
         return `User has not create any decks`
-      case comConst.PROFILE_DECK_LIKED:
+      case PROFILE_DECK_LIKED:
         return `User has not liked any decks`
     }
   }

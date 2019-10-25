@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { formatDateTime } from 'componentConstants'
+
 import { NormLink } from 'reuse'
 
 const Row = ({

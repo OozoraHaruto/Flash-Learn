@@ -1,11 +1,12 @@
 import React from 'react';
 import DocumentMeta from 'react-document-meta';
 
-import { auth } from 'firebase'
-import * as comConst from 'componentConstants'
 import { accounts } from 'actions';
-import NameForm from 'app/components/Account/forms/ChangeName'
+import { auth } from 'firebase'
+import { PROFILE_RE_AUTH } from 'componentConstants'
+
 import EmailForm from 'app/components/Account/forms/ChangeEmail'
+import NameForm from 'app/components/Account/forms/ChangeName'
 import PasswordForm from 'app/components/Account/forms/ChangePassword'
 
 export default class ProfileEdit extends React.Component{
@@ -20,15 +21,15 @@ export default class ProfileEdit extends React.Component{
   }
 
   componentDidMount(){
-    if(this.props.location.state.from != comConst.PROFILE_RE_AUTH){
+    if(this.props.location.state.from != PROFILE_RE_AUTH){
       this.props.history.replace({ pathname: "/reauth", state: { to: '/profile/edit' }})
     }
   }
 
   render() {
     const { 
-      nameChanged,
       emailChanged, 
+      nameChanged,
       passwordChanged 
     }                                 = this.state
 
@@ -58,7 +59,7 @@ export default class ProfileEdit extends React.Component{
         status                        = res.success
         this.setState({
           ...this.state,
-          emailChanged                  : status
+          emailChanged                : status
         })
         if (!res.success){
           throw res
@@ -90,7 +91,10 @@ export default class ProfileEdit extends React.Component{
 
     const renderCardDetails = (type, status) =>{
       if (status == true){
-        return <p className="card-text">Your {type} has been update successfully.</p>
+        if (type == "email"){
+          window.pushState("for password mangers", "Edit Profile", "?passwordChanged=true")
+        }
+        return <p className="card-text">Your {type} has been updated successfully.</p>
       }else{
         switch (type) {
           case "name":

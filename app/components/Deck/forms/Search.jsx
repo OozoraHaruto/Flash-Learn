@@ -2,19 +2,21 @@ import React from 'react';
 import { Formik, Field } from 'formik';
 
 import { SubmitButton } from 'reuse'
-import * as comConst from 'componentConstants'
+import {
+  DECK_SEARCH_SORT_LAST_UPDATED_ASC,
+  DECK_SEARCH_SORT_LAST_UPDATED_DESC,
+  DECK_SEARCH_SORT_NAME_ASC,
+  DECK_SEARCH_SORT_NAME_DESC,
+  DECK_SEARCH_SORT_RELEVANCE_DESC,
+} from 'componentConstants'
 
-const Search = ({ initialValues, handleFormSubmission, dispatch = false }) => {
-  const validate = values => {
-    return {}
-  }
-
+const Search = ({ initialValues, handleFormSubmission }) => {
   const sortOptions = [
-    comConst.DECK_SEARCH_SORT_RELEVANCE_DESC,
-    comConst.DECK_SEARCH_SORT_NAME_ASC,
-    comConst.DECK_SEARCH_SORT_NAME_DESC,
-    comConst.DECK_SEARCH_SORT_LAST_UPDATED_ASC,
-    comConst.DECK_SEARCH_SORT_LAST_UPDATED_DESC,
+    DECK_SEARCH_SORT_LAST_UPDATED_ASC,
+    DECK_SEARCH_SORT_LAST_UPDATED_DESC,
+    DECK_SEARCH_SORT_NAME_ASC,
+    DECK_SEARCH_SORT_NAME_DESC,
+    DECK_SEARCH_SORT_RELEVANCE_DESC,
   ]
 
   return (
@@ -22,8 +24,7 @@ const Search = ({ initialValues, handleFormSubmission, dispatch = false }) => {
       <Formik
         enableReinitialize={true}
         initialValues={initialValues}
-        validate={validate}
-        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
+        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag)}
         render={({
           handleSubmit,
           isSubmitting,

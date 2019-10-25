@@ -1,23 +1,19 @@
 import React, { Component } from 'react'
 import { renderToString } from 'react-dom/server'
 import { connect } from 'react-redux'
-import DocumentMeta from 'react-document-meta';
 
-import * as comConst from 'componentConstants'
-import { NormLink } from 'reuse'
-import { decks } from 'actions'
+import { TEST_RESULT_SORT_QUESTION_NUMBER_ASC, TEST_RESULT_FILTER_ALL } from 'componentConstants'
 
 import Card from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList/Card'
-// import ResultFull from 'app/components/Test/subComponents/TestResult/ResultFull'
 
 class ResultFull extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      sortBy                            : comConst.TEST_RESULT_SORT_QUESTION_NUMBER_ASC.value,
-      filter                            : comConst.TEST_RESULT_FILTER_ALL.value,
-      answers                           : props.getAnswerSortedBy(comConst.TEST_RESULT_SORT_QUESTION_NUMBER_ASC.value, comConst.TEST_RESULT_FILTER_ALL.value)
+      sortBy                            : TEST_RESULT_SORT_QUESTION_NUMBER_ASC.value,
+      filter                            : TEST_RESULT_FILTER_ALL.value,
+      answers                           : props.getAnswerSortedBy(TEST_RESULT_SORT_QUESTION_NUMBER_ASC.value, TEST_RESULT_FILTER_ALL.value)
     }
   }
   componentDidMount(){
@@ -43,7 +39,6 @@ class ResultFull extends Component {
       ...this.state,
       answers                           : getAnswerSortedBy(sortBy, filter),
     })
-
   }
   render() {
     var { sortBy, filter, answers }     = this.state

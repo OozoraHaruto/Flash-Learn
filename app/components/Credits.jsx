@@ -48,6 +48,14 @@ const Credits = () =>{
                       <td scope="row"><a href="/images/Error/404.jpg" target="_blank">Error 404</a></td>
                       <td>Image by <a href="https://pixabay.com/users/3D_Maennchen-1553824/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2314111">Peggy und Marco Lachmann-Anke</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2314111">Pixabay</a></td>
                     </tr>
+                    <tr>
+                      <td scope="row"><a href="/images/Error/others.png" target="_blank">Other errors</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/manfredsteger-1848497/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3974187">Manfred Steger</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3974187">Pixabay</a></td>
+                    </tr>
+                    <tr>
+                      <td scope="row"><a href="/images/Error/hi.png" target="_blank">Hidden Message</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/GDJ-1086657/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3791381">Gordon Johnson</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3791381">Pixabay</a></td>
+                    </tr>
                   </tbody>
                 </table>
               </div>

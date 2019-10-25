@@ -1,14 +1,18 @@
 import React from 'react';
 import { Formik, Field, FieldArray } from 'formik';
-import { SortableContainer, SortableHandle, SortableElement } from 'react-sortable-hoc';
+import { 
+  SortableContainer, 
+  SortableElement,
+  SortableHandle, 
+} from 'react-sortable-hoc';
 import { FaBars } from "react-icons/fa";
 
-import { TextField, CheckBox, SubmitButton } from 'reuse'
+import { TextField, SubmitButton } from 'reuse'
 
 const CardForm = SortableElement(({
-  id: index, 
   arrayHelpers: {remove, insert},
-  createEmptyCard
+  createEmptyCard,
+  id: index, 
 }) =>(
   <div className="form-group mb-3" >
     <div className="card w-100">
@@ -94,8 +98,8 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
   }
 
   const DeckList = SortableContainer(({
+    arrayHelpers,
     cards,
-    arrayHelpers
   }) => (
     <div>
       {

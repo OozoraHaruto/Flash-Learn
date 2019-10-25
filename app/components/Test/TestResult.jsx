@@ -2,11 +2,23 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
 
-import * as comConst from 'componentConstants'
-import { NormLink } from 'reuse'
+import {
+  BASIC_SORT,
+  formatTime,
+  TEST_RESULT_FILTER_ALL,
+  TEST_RESULT_FILTER_CORRECT,
+  TEST_RESULT_FILTER_WRONG,
+  TEST_RESULT_SORT_QUESTION_NUMBER_ASC,
+  TEST_RESULT_SORT_QUESTION_NUMBER_DESC,
+  TEST_RESULT_SORT_QUESTION_NUMBER,
+  TEST_RESULT_SORT_TIME_TAKEN_ASC,
+  TEST_RESULT_SORT_TIME_TAKEN_DESC,
+  TEST_RESULT_SORT_TIME_TAKEN,
+} from 'componentConstants'
 import { accounts } from 'actions'
-import Fallback from 'Fallback'
 
+import { NormLink } from 'reuse'
+import Fallback from 'Fallback'
 import ResultFull from 'app/components/Test/subComponents/TestResult/ResultFull'
 
 class TestResult extends Component {
@@ -119,25 +131,25 @@ class TestResult extends Component {
     }
     var tmpAnswers = this.props.location.state.answers.filter(answer =>{
       switch(filter){
-        case comConst.TEST_RESULT_FILTER_ALL.value:
+        case TEST_RESULT_FILTER_ALL.value:
           return true
-        case comConst.TEST_RESULT_FILTER_CORRECT.value:
+        case TEST_RESULT_FILTER_CORRECT.value:
           return answer.userCorrect == true
-        case comConst.TEST_RESULT_FILTER_WRONG.value:
+        case TEST_RESULT_FILTER_WRONG.value:
           return answer.userCorrect == false
       }
     })
     tmpAnswers = tmpAnswers.sort((a, b) =>{
       switch (sortData[0]) {
-        case comConst.TEST_RESULT_SORT_QUESTION_NUMBER.value:
+        case TEST_RESULT_SORT_QUESTION_NUMBER.value:
           return sortBy("questionIndex", a, b)
-        case comConst.TEST_RESULT_SORT_TIME_TAKEN.value:
+        case TEST_RESULT_SORT_TIME_TAKEN.value:
           return sortBy("timeTaken", a, b)
       }
     })
     
     if (sortData.length == 2){
-      if (sortData[1] == comConst.BASIC_SORT.desc){
+      if (sortData[1] == BASIC_SORT.desc){
         tmpAnswers                      = tmpAnswers.reverse()
       }
     }
@@ -157,15 +169,15 @@ class TestResult extends Component {
     }                                   = this.props.test
     const { id }                        = this.props.match.params
     const sortOptions                   = [
-      comConst.TEST_RESULT_SORT_QUESTION_NUMBER_ASC,
-      comConst.TEST_RESULT_SORT_QUESTION_NUMBER_DESC,
-      comConst.TEST_RESULT_SORT_TIME_TAKEN_ASC,
-      comConst.TEST_RESULT_SORT_TIME_TAKEN_DESC,
+      TEST_RESULT_SORT_QUESTION_NUMBER_ASC,
+      TEST_RESULT_SORT_QUESTION_NUMBER_DESC,
+      TEST_RESULT_SORT_TIME_TAKEN_ASC,
+      TEST_RESULT_SORT_TIME_TAKEN_DESC,
     ]
     const filterOptions                 = [
-      comConst.TEST_RESULT_FILTER_ALL,
-      comConst.TEST_RESULT_FILTER_CORRECT,
-      comConst.TEST_RESULT_FILTER_WRONG,
+      TEST_RESULT_FILTER_ALL,
+      TEST_RESULT_FILTER_CORRECT,
+      TEST_RESULT_FILTER_WRONG,
     ]
 
     const renderTopMessage = () =>{
@@ -211,9 +223,9 @@ class TestResult extends Component {
         const { userFastestTime }       = this.state
         if (userFastestTime != false){
           if (userFastestTime > totalTime){
-            return <div>You broke your own record by {comConst.formatTime((userFastestTime - totalTime))}</div>
+            return <div>You broke your own record by {formatTime((userFastestTime - totalTime))}</div>
           } else if (userFastestTime < totalTime) {
-            return <div>You behind your own record by {comConst.formatTime((totalTime - userFastestTime))}</div>
+            return <div>You behind your own record by {formatTime((totalTime - userFastestTime))}</div>
           }
         }
       }
@@ -230,7 +242,7 @@ class TestResult extends Component {
           }else if (deckFastestTime > totalTime){
             return <div>You broke the record! You now hold the 1<sup>st</sup> place for the leaderboard! Congratulations!!! ٩(๑′∀ ‵๑)۶•*¨*•.¸¸♪</div>
           } else if (deckFastestTime < totalTime) {
-            return <div>You behind the person that holds the first place by {comConst.formatTime((totalTime - deckFastestTime))}</div>
+            return <div>You behind the person that holds the first place by {formatTime((totalTime - deckFastestTime))}</div>
           }
         }else{
           return <div>You broke the record! You now hold the 1<sup>st</sup> place for the leaderboard! Congratulations!!! ٩(๑′∀ ‵๑)۶•*¨*•.¸¸♪</div>
@@ -242,7 +254,7 @@ class TestResult extends Component {
           <div className="display-4">
             Here is a short summary
           </div>
-          <div>You answered {noOfQn} questions in {comConst.formatTime(totalTime)}</div>
+          <div>You answered {noOfQn} questions in {formatTime(totalTime)}</div>
           {qualifyForLeaderboard && renderOwnComparison()}
           {qualifyForLeaderboard && renderFastestUserComparison()}
           {renderAnsweredCorrectlyText()}

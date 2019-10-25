@@ -2,8 +2,13 @@ import React from 'react'
 import { GoUnverified, GoVerified } from 'react-icons/go'
 
 import { accounts } from 'actions'
+import { 
+  PROFILE_DECK_CREATED, 
+  PROFILE_DECK_LIKED, 
+  pushToError,
+} from 'componentConstants'
+
 import { NormLink } from 'reuse'
-import * as comConst from 'componentConstants'
 
 export default class Header extends React.Component {
   constructor(){
@@ -27,12 +32,17 @@ export default class Header extends React.Component {
     const { sendVerificationEmail } = accounts
     this.setState({
       verificationEmailStatus: "sending"
-    })
-
-    sendVerificationEmail().then(res => {
-      console.log("email sent", res)
-      this.setState({
-        verificationEmailStatus: "sent"
+    }, () =>{
+      sendVerificationEmail().then(res => {
+        if(res.success){
+          this.setState({
+            verificationEmailStatus: "sent"
+          })
+        }else{
+          throw res
+        }
+      }).catch(e => {
+        return pushToError(this.props.history, this.props.location, e)
       })
     })
   }
@@ -78,9 +88,9 @@ export default class Header extends React.Component {
     }
     const getAdditionalTextForName = () =>{
       switch (subpage) {
-        case comConst.PROFILE_DECK_CREATED:
+        case PROFILE_DECK_CREATED:
           return "Created Decks"
-        case comConst.PROFILE_DECK_LIKED:
+        case PROFILE_DECK_LIKED:
           return "Liked Decks"
       }
     }
@@ -97,7 +107,7 @@ export default class Header extends React.Component {
               <span className="align-middle">{isMe && renderVerified()}</span>
               <span className="align-middle">{isMe && !verified && renderEmailStatus()}</span>
             </div>
-            {points && <div>{points} point{points > 1 && "s"} earned this month</div>}
+            {points != undefined && <div>{points} point{points > 1 && "s"} earned this month</div>}
             {
               isMe &&
                 <div className="mt-1">

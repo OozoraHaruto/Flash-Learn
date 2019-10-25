@@ -3,10 +3,10 @@ import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 const NavBarLink = ({
-  title,
-  className,
-  to,
   activeClassName,
+  className,
+  title,
+  to,
 }) => {
   return(
     <li className="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
@@ -16,15 +16,15 @@ const NavBarLink = ({
 }
 
 NavBarLink.propTypes ={
-  title               : PropTypes.string,
-  className           : PropTypes.string,
-  to                  : PropTypes.string.isRequired,
   activeClassName     : PropTypes.string,
+  className           : PropTypes.string,
+  title               : PropTypes.string,
+  to                  : PropTypes.string.isRequired,
 }
 
 NavBarLink.defaultProps = {
-  className           : "nav-link",
   activeClassName     : "active",
+  className           : "nav-link",
 }
 
 export default NavBarLink

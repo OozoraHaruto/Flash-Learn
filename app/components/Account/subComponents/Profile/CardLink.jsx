@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { formatDateTime } from 'componentConstants'
+
 import { NormLink } from 'reuse'
-import * as comConst from 'componentConstants'
 
 const CardLink = ({
   card,
@@ -23,7 +24,7 @@ const CardLink = ({
   const checkDetailsToRender = () =>{
     if(card.data().modified){
       return { 
-        text                : `last updated on ${comConst.formatDateTime(card.data().modified.toMillis())}`,
+        text                : `last updated ${formatDateTime(card.data().modified.toMillis(), "", true)}`,
         className           : 'small'
       }
     }

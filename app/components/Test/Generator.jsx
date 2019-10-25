@@ -4,10 +4,10 @@ import DocumentMeta from 'react-document-meta';
 const { Random, MersenneTwister19937 } = require("random-js");
 const random = new Random(MersenneTwister19937.autoSeed());
 
-import * as comConst from 'componentConstants'
-import Fallback from 'Fallback'
 import { decks } from 'actions'
+import { TEST_MCQ, TEST_OPENENDED, TEST_TRUEFALSE, TEST_ULTIMATE, pushToError } from 'componentConstants'
 
+import Fallback from 'Fallback'
 import Flashcards from 'app/components/Deck/subComponents/FlashcardCarousel'
 
 class Generator extends Component {
@@ -46,14 +46,14 @@ class Generator extends Component {
       if (res.success) {
         this.props.dispatch(addDeckToRedux(id, name, res.data))
         this.generateQuestions()
+      } else {
+        throw res
       }
     }).catch(e => {
-      console.log("error", e)
       if (!this.props.history.location.state) {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}`})
       } else if (this.props.history.location.state.from == '/login') {
-        return this.props.history.push({ pathname: '/' }) // TODO: Error Page
-        // return this.props.history.push({ pathname: '/error', state: e })
+        return pushToError(this.props.history, this.props.location, e)
       } else {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}`})
       }
@@ -63,9 +63,9 @@ class Generator extends Component {
   generateQuestions = () =>{
     var deck                            = this.props.deck.cards.slice(0)
     const noOfQn                        = !this.props.match.params.noOfQn ? deck.length : this.props.match.params.noOfQn
-    const typesOfQn                     = [comConst.TEST_MCQ, comConst.TEST_OPENENDED, comConst.TEST_TRUEFALSE]
+    const typesOfQn                     = [TEST_MCQ, TEST_OPENENDED, TEST_TRUEFALSE]
     const testType                      = this.props.match.params.testType
-    const isTestUltimate                = comConst.TEST_ULTIMATE == testType
+    const isTestUltimate                = TEST_ULTIMATE == testType
     const { addTestToRedux }            = decks
     var cardDataList                    = []
     var questions                       = []
@@ -96,13 +96,13 @@ class Generator extends Component {
         }
       }while(choices.length != numberOfOptions)
 
-      addToQuestionArray(front ? card.data().front : card.data().back, choices[0], random.shuffle(choices), comConst.TEST_MCQ, card)
+      addToQuestionArray(front ? card.data().front : card.data().back, choices[0], random.shuffle(choices), TEST_MCQ, card)
     }
     const createOpenEndedQuestion = card =>{
       if (random.bool()){
-        addToQuestionArray(card.data().front, card.data().back.toLowerCase(), [], comConst.TEST_OPENENDED, card)
+        addToQuestionArray(card.data().front, card.data().back.toLowerCase(), [], TEST_OPENENDED, card)
       }else{
-        addToQuestionArray(card.data().back, card.data().front.toLowerCase(), [], comConst.TEST_OPENENDED, card)
+        addToQuestionArray(card.data().back, card.data().front.toLowerCase(), [], TEST_OPENENDED, card)
       }
     }
     const createTrueFalseQuestion = card =>{
@@ -116,15 +116,15 @@ class Generator extends Component {
         dataB                           = front ? random.pick(cardDataList).back : random.pick(cardDataList).front
       }
 
-      addToQuestionArray(`Is ${dataA} = ${dataB}?`, dataB == dataACorrectAns ? "True" : "False", ["True", "False"], comConst.TEST_TRUEFALSE, card)
+      addToQuestionArray(`Is ${dataA} = ${dataB}?`, dataB == dataACorrectAns ? "True" : "False", ["True", "False"], TEST_TRUEFALSE, card)
     }
     const createQuestion = () => {
       var card                          = deck.splice(generateRandomNumber(deck.length), 1)[0]
 
       switch (typeOfQn()){
-        case comConst.TEST_MCQ: createMCQQuestion(card); break;
-        case comConst.TEST_OPENENDED: createOpenEndedQuestion(card); break;
-        case comConst.TEST_TRUEFALSE: createTrueFalseQuestion(card); break;
+        case TEST_MCQ: createMCQQuestion(card); break;
+        case TEST_OPENENDED: createOpenEndedQuestion(card); break;
+        case TEST_TRUEFALSE: createTrueFalseQuestion(card); break;
       }
     }
 
@@ -133,7 +133,7 @@ class Generator extends Component {
       loadingMessage                    : "Hold on just a little longer, we are generating the questions now.",
     })
 
-    if (comConst.TEST_OPENENDED != testType){
+    if (TEST_OPENENDED != testType){
       cardDataList                      = deck.map(card=> {return {front: card.data().front, back: card.data().back}})
     }
     

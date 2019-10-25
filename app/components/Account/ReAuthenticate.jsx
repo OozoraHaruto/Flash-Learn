@@ -1,11 +1,12 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
-import LoginForm from 'app/components/Account/forms/Auth'
-import { firebase, auth } from 'firebase'
 import { accounts } from 'actions'
+import { auth } from 'firebase'
+import { PROFILE_RE_AUTH, pushToError } from 'componentConstants'
+
 import { MiddleWrapper } from 'reuse'
-import * as comConst from 'componentConstants'
+import LoginForm from 'app/components/Account/forms/Auth'
 
 
 const ReAuthenticate = ({
@@ -21,12 +22,13 @@ const ReAuthenticate = ({
           formikBag.setErrors({ password: res.message })
           formikBag.setSubmitting(false)
         } else {
-          formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
-          formikBag.setSubmitting(false)
+          throw res
         }
       }else{
-        history.replace({ pathname: !location.state.to ? "/profile/edit" : location.state.to, state: { from: comConst.PROFILE_RE_AUTH}})
+        history.replace({ pathname: !location.state.to ? "/profile/edit" : location.state.to, state: { from: PROFILE_RE_AUTH}})
       }
+    }).catch(e => {
+      return pushToError(history, location, e)
     })
   }
 

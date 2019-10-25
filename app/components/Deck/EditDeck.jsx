@@ -4,9 +4,10 @@ import DocumentMeta from 'react-document-meta';
 
 import { auth } from 'firebase';
 import { decks } from 'actions'
+import { pushToError } from 'componentConstants'
 
-import DeckForm from 'app/components/Deck/forms/Deck'
 import { dataLoading } from 'reuse'
+import DeckForm from 'app/components/Deck/forms/Deck'
 
 class EditDeck extends Component {
   constructor(props) {
@@ -46,7 +47,7 @@ class EditDeck extends Component {
         throw (res)
       }
     }).catch(e => {
-      return this.props.history.push({ pathname: '/' }) // TODO: Error Page
+      return pushToError(this.props.history, this.props.location, e)
     })
   }
 
@@ -65,10 +66,12 @@ class EditDeck extends Component {
           ...this.state,
           cards
         })
-      } else {
-        getCards(id);
+      } else { 
+        throw res
       }
-    }).catch(() => { })
+    }).catch((e) => {
+      getCards(id)
+    })
   }
 
   render() {

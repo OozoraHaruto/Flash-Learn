@@ -4,7 +4,7 @@ const crypto = require('crypto');
 import firebase, { auth, database } from 'firebase';
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
-import * as comConst from 'componentConstants'
+import { formatTime } from 'componentConstants'
 
 // Auth
 export const startAddUser = (email, password) =>{
@@ -51,10 +51,10 @@ const writeToUserProfileDatabase = (id, data) =>{
 
 export const sendVerificationEmail = () =>{
   return auth.currentUser.sendEmailVerification().then(() =>{
-    return true
+    return {success: true}
   }).catch(e =>{
     console.log("sendVerificationEmail", e);
-    return false
+    return { success: false, ...e };
   })
 }
 
@@ -123,8 +123,8 @@ export const startLogoutUser = () =>{
 export const getUserProfile = id =>{
   return database.collection(dbConst.COL_USER).doc(id).get().then(doc =>{
     if(!doc.exists){
-      console.log("getUserProfile", "no such file")
-      return {success: false, message: "No such file"}
+      console.log("getUserProfile", `No user with the account id ${id} can be found`)
+      return {success: false, message: `No user with the account id ${id} can be found`}
     }else{
       return {success: true, data: doc.data()}
     }
@@ -248,7 +248,7 @@ export const getUserPointLeaderboard = id => {
   return database.collection(dbConst.COL_LEADERBOARD).doc(dbConst.LEADERBOARD_POINT).collection(dbConst.COL_USER).doc(id).get().then(doc => {
     return { success: true, doc};
   }).catch(e => {
-    console.log("getFastestUserTiming", e)
+    console.log("getUserPointLeaderboard", e)
     return { success: false, ...e };
   })
 }
@@ -292,7 +292,7 @@ export const addPointToLeaderboard = point =>{
 export const updateUserTimingLeaderboard = (testType, deckId, timing) =>{
   return database.collection(dbConst.COL_LEADERBOARD).doc(testType).collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.COL_USER).doc(auth.currentUser.uid).set({
     timeMillis                          : timing,
-    timeString                          : comConst.formatTime(timing),
+    timeString                          : formatTime(timing),
     name                                : auth.currentUser.displayName,
     user                                : database.doc(`/${dbConst.COL_USER}/${auth.currentUser.uid}`),
     achievedOn                          : firebase.firestore.FieldValue.serverTimestamp(),

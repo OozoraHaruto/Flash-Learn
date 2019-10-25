@@ -5,8 +5,8 @@ import { getIn } from 'formik'
 const TextField = ({
   field, 
   form: { touched, errors },
-  type,
   placeholder,
+  type,
   ...props
 }) => {
   const checkValid = () => {
@@ -18,7 +18,7 @@ const TextField = ({
   }
 
   return(
-    <div className={`mb-3 ${type == 'hidden' ? 'd-none' : ''}`}>
+    <div className={`mb-3 pt-2 ${type == 'hidden' ? 'd-none' : ''}`}>
       <div className="form-group">
         <input className={`form-control-borderless ${checkValid()}`} id={field.name} {...field} {...props} placeholder={placeholder} type={type}/>
         <label className={checkValid()} htmlFor={field.name}>{placeholder}</label>

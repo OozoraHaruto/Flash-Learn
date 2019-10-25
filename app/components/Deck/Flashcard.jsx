@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
 
-import Fallback from 'Fallback'
-import { NormLink } from 'reuse'
 import { decks } from 'actions'
+import { NormLink } from 'reuse'
+import { pushToError } from 'componentConstants'
 
+import Fallback from 'Fallback'
 import Flashcards from 'app/components/Deck/subComponents/FlashcardCarousel'
 
 class Flashcard extends Component {
@@ -40,8 +41,7 @@ class Flashcard extends Component {
       if (!this.props.history.location.state) {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}`})
       } else if (this.props.history.location.state.from == '/login') {
-        return this.props.history.push({ pathname: '/' }) // TODO: Error Page
-        // return this.props.history.push({ pathname: '/error', state: e })
+        return pushToError(this.props.history, this.props.location, e)
       } else {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}`})
       }

@@ -1,14 +1,19 @@
 import React from 'react';
-import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
+import { connect } from 'react-redux'
 import { FaFrown } from "react-icons/fa";
 
-import { auth } from 'firebase';
 import { accounts } from 'actions'
+import { auth } from 'firebase';
+import { 
+  PROFILE_DECK_CREATED, 
+  PROFILE_DECK_LIKED,
+  pushToError,
+ } from 'componentConstants'
+
+import Card from 'app/components/Account/subComponents/Profile/CardLink'
 import Fallback from 'Fallback'
 import Header from 'app/components/Account/subComponents/Profile/Header'
-import Card from 'app/components/Account/subComponents/Profile/CardLink'
-import * as comConst from 'componentConstants'
 
 class DeckFull extends React.Component{
   constructor(props){
@@ -24,7 +29,6 @@ class DeckFull extends React.Component{
       decks                           : [],
       decksLoading                    : true,
     }
-    
   }
 
   componentDidMount(){
@@ -65,7 +69,7 @@ class DeckFull extends React.Component{
 
     getUserProfile(id).then(res => {
       if (!res.success) {
-        this.props.history.replace({ pathname: '/' });
+        throw res
       } else {
         this.setReduxProfile(id, res.data.displayName, res.data.photoURL, res.data.emailVerified)
         this.setState({
@@ -78,14 +82,16 @@ class DeckFull extends React.Component{
         })
         this.loadDecksData()
       }
+    }).catch(e => {
+      return pushToError(this.props.history, this.props.location, e)
     })
   }
 
   loadDecksData = () => {
     switch (this.props.match.params.deckType) {
-      case comConst.PROFILE_DECK_CREATED:
+      case PROFILE_DECK_CREATED:
         this.getCreatedDecks(); break;
-      case comConst.PROFILE_DECK_LIKED:
+      case PROFILE_DECK_LIKED:
         this.getLikedDecks(); break;
     }
   }
@@ -95,7 +101,7 @@ class DeckFull extends React.Component{
 
     getCreatedDecks(this.props.match.params.id).then(res => {
       if (!res.success) {
-        this.props.history.replace({ pathname: '/' });
+        throw res
       } else {
         this.setState({
           ...this.state,
@@ -103,6 +109,8 @@ class DeckFull extends React.Component{
           decksLoading                : false
         })
       }
+    }).catch(e => {
+      this.getCreatedDecks()
     })
   }
 
@@ -111,7 +119,7 @@ class DeckFull extends React.Component{
 
     getLikedDecks(this.props.match.params.id).then(res => {
       if (!res.success) {
-        this.props.history.replace({ pathname: '/' });
+        throw res
       } else {
         this.setState({
           ...this.state,
@@ -119,6 +127,8 @@ class DeckFull extends React.Component{
           decksLoading                : false
         })
       }
+    }).catch(e => {
+      this.getLikedDecks()
     })
   }
 
@@ -130,13 +140,11 @@ class DeckFull extends React.Component{
       decksLoading, 
     }                                 = this.state
 
-    console.log(profile)
-
     const generateEmptyArrayMessage = () =>{
       switch (this.props.match.params.deckType) {
-        case comConst.PROFILE_DECK_CREATED:
+        case PROFILE_DECK_CREATED:
           return `User has not create any decks`
-        case comConst.PROFILE_DECK_LIKED:
+        case PROFILE_DECK_LIKED:
           return `User has not liked any decks`
       }
     }
@@ -153,7 +161,7 @@ class DeckFull extends React.Component{
         </div>
         {
           profile.name != "" && decksLoading &&
-           <Fallback message="The decks will be loaded soon" wholePage={false} />
+            <Fallback message="The decks will be loaded soon" wholePage={false} />
         }
         {
           !decksLoading && decks.length == 0 &&

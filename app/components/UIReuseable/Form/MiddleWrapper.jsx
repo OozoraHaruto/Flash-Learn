@@ -5,14 +5,6 @@ const MiddleWrapper = ({
   boxSizing,
   children,
 }) => {
-  var checkValid = () => {
-    if (touched[field.name] && errors[field.name]) {
-      return "is-invalid"
-    } else if (touched[field.name]) {
-      return "is-valid"
-    }
-  }
-
   return (
     <div className="d-flex wholePageWithNav justify-content-center align-items-center">
       <div className={`form-wrapper ${boxSizing} border rounded shadow-sm p-4`}>

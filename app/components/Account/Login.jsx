@@ -1,11 +1,15 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
-import LoginForm from 'app/components/Account/forms/Auth'
 import { accounts } from 'actions'
+
+import LoginForm from 'app/components/Account/forms/Auth'
 import { MiddleWrapper } from 'reuse'
 
-const Login = () =>{
+const Login = ({
+  history,
+  location,
+}) =>{
   const handleUserLogin = (values, formikBag) => {
     var { email, password } = values
     const { startLoginUser } = accounts
@@ -21,10 +25,11 @@ const Login = () =>{
             formikBag.setSubmitting(false)
           }
         } else {
-          formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
-          formikBag.setSubmitting(false)
+          throw res
         }
       }
+    }).catch(e => {
+      return pushToError(history, location, e)
     })
   }
 

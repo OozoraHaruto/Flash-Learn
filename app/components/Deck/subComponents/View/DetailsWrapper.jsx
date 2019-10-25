@@ -1,7 +1,12 @@
 import React from 'react';
 
 import { dataLoading } from 'reuse'
-import * as comConst from 'componentConstants'
+import {
+  TEST_MCQ,
+  TEST_OPENENDED,
+  TEST_TRUEFALSE,
+  TEST_ULTIMATE,
+} from 'componentConstants'
 
 import WordList from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList'
 import Leaderboard from 'app/components/Deck/subComponents/View/DetailsWrapper/Leaderboard'
@@ -30,10 +35,10 @@ const DetailsWrapper = ({
           <LoadingWordList loading={cards.loading} cards={cards} />
         </div>
         <div className="tab-pane fade" id="leaderboards" role="tabpanel" aria-labelledby="leaderboards-tab">
-          <LoadingLeaderboard loading={leaderboards.loading} name="MCQ" rankings={leaderboards[comConst.TEST_MCQ]} />
-          <LoadingLeaderboard loading={leaderboards.loading} name="Open ended" rankings={leaderboards[comConst.TEST_OPENENDED]} />
-          <LoadingLeaderboard loading={leaderboards.loading} name="True or False" rankings={leaderboards[comConst.TEST_TRUEFALSE]} />
-          <LoadingLeaderboard loading={leaderboards.loading} name="Ultimate" rankings={leaderboards[comConst.TEST_ULTIMATE]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="MCQ" rankings={leaderboards[TEST_MCQ]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="Open ended" rankings={leaderboards[TEST_OPENENDED]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="True or False" rankings={leaderboards[TEST_TRUEFALSE]} />
+          <LoadingLeaderboard loading={leaderboards.loading} name="Ultimate" rankings={leaderboards[TEST_ULTIMATE]} />
         </div>
       </div>
     </React.Fragment>

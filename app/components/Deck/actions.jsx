@@ -3,11 +3,14 @@ var XRegExp = require('xregexp');
 
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
-import * as comConst from 'componentConstants'
+import {
+  TEST_MCQ,
+  TEST_OPENENDED,
+  TEST_TRUEFALSE,
+  TEST_ULTIMATE,
+} from 'componentConstants'
 
 import { accounts, firebaseFunctions } from 'actions';
-import { isRegExp } from 'util';
-// import { functionList } from 'firebase'
 
 export const startAddDeck = values =>{
   const {startAddOrEditCreatedDeckRef}  = accounts
@@ -84,10 +87,10 @@ export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
   databaseActions.push(startAddOrEditCreatedDeckRef(auth.currentUser.uid, deckId, detailsEdited))
 
   if (toAdd.length > 0 || toDelete.length > 0 || toEdit.length > 0){
-    databaseActions.push(deleteLeaderboard(comConst.TEST_MCQ, deckId))
-    databaseActions.push(deleteLeaderboard(comConst.TEST_OPENENDED, deckId))
-    databaseActions.push(deleteLeaderboard(comConst.TEST_TRUEFALSE, deckId))
-    databaseActions.push(deleteLeaderboard(comConst.TEST_ULTIMATE, deckId))
+    databaseActions.push(deleteLeaderboard(TEST_MCQ, deckId))
+    databaseActions.push(deleteLeaderboard(TEST_OPENENDED, deckId))
+    databaseActions.push(deleteLeaderboard(TEST_TRUEFALSE, deckId))
+    databaseActions.push(deleteLeaderboard(TEST_ULTIMATE, deckId))
   }
 
   return Promise.all(databaseActions).then(()=>{
@@ -121,10 +124,10 @@ export const deleteDeck = deckId =>{
     }
     serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKS_LIKED}/${deckId}`))
     serverActions.splice(0, 0, deleteAtPath(`${dbConst.COL_DECKS}/${deckId}`))
-    serverActions.push(deleteLeaderboard(comConst.TEST_MCQ, deckId))
-    serverActions.push(deleteLeaderboard(comConst.TEST_OPENENDED, deckId))
-    serverActions.push(deleteLeaderboard(comConst.TEST_TRUEFALSE, deckId))
-    serverActions.push(deleteLeaderboard(comConst.TEST_ULTIMATE, deckId))
+    serverActions.push(deleteLeaderboard(TEST_MCQ, deckId))
+    serverActions.push(deleteLeaderboard(TEST_OPENENDED, deckId))
+    serverActions.push(deleteLeaderboard(TEST_TRUEFALSE, deckId))
+    serverActions.push(deleteLeaderboard(TEST_ULTIMATE, deckId))
     return Promise.all(serverActions)
   }).then(() =>{
     return {success: true}

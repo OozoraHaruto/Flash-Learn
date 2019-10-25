@@ -12,8 +12,8 @@ export default class Card extends React.Component {
   }
 
   componentDidUpdate(nextProps) {
-    const { index } = this.props;
-    const { index: nextIndex } = nextProps;
+    const { index }                                   = this.props;
+    const { index: nextIndex }                        = nextProps;
     if (index == nextIndex) {
       this.animateCard('flipInX') 
     }else{
@@ -37,7 +37,7 @@ export default class Card extends React.Component {
   }
 
   animateCard = animation => {
-    const eleCard = document.getElementById('flashcard_card')
+    const eleCard                                       = document.getElementById('flashcard_card')
     eleCard.classList.add('animated', animation)
 
     const handleAnimationEnd = () => {
@@ -50,8 +50,8 @@ export default class Card extends React.Component {
 
   render() {
     const renderCardDetails = () =>{
-      const { front } = this.state
-      const { card } = this.props
+      const { front }                                   = this.state
+      const { card }                                    = this.props
 
       
       if (front){

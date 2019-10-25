@@ -4,7 +4,12 @@ import DocumentMeta from 'react-document-meta';
 var moment = require('moment');
 import queryString from 'query-string';
 
-import * as comConst from 'componentConstants'
+import {
+  formatTime,
+  TEST_OPENENDED,
+  TEST_PROGRESS_TYPE_COMBO,
+  TEST_PROGRESS_TYPE_INFO,
+} from 'componentConstants'
 import { decks } from 'actions'
 
 import OpenEndedAnswer from 'app/components/Test/subComponents/StartTest/OpenEndedAnswer'
@@ -46,7 +51,7 @@ class StartTest extends Component {
       currentStreak                     : 0,
       longestStreak                     : false,
       answerDetails                     : [],
-      progressType                      : comConst.TEST_PROGRESS_TYPE_COMBO
+      progressType                      : TEST_PROGRESS_TYPE_COMBO
     })
   }
 
@@ -75,7 +80,7 @@ class StartTest extends Component {
       userCorrect,
       questionIndex                     : currentQuestion,
       timeTaken,
-      timeTakenFormatted                : comConst.formatTime(timeTaken)
+      timeTakenFormatted                : formatTime(timeTaken)
     })
     if (currentQuestionObject.answer == userAnswer) {
       newState.gotCorrect               = gotCorrect + 1
@@ -124,11 +129,11 @@ class StartTest extends Component {
   changeProgressBar = () =>{
     var newState                        = ""
     switch(this.state.progressType){
-      case comConst.TEST_PROGRESS_TYPE_COMBO: 
-        newState                        = comConst.TEST_PROGRESS_TYPE_INFO
+      case TEST_PROGRESS_TYPE_COMBO: 
+        newState                        = TEST_PROGRESS_TYPE_INFO
         break
-      case comConst.TEST_PROGRESS_TYPE_INFO: 
-        newState                        = comConst.TEST_PROGRESS_TYPE_COMBO
+      case TEST_PROGRESS_TYPE_INFO: 
+        newState                        = TEST_PROGRESS_TYPE_COMBO
         break
     }
 
@@ -146,7 +151,7 @@ class StartTest extends Component {
     var { name, questions }             = this.props.test
 
     const renderTestOptions = question => {
-      var AnswerComponent = question.type == comConst.TEST_OPENENDED ? OpenEndedAnswer : SelectAnswer
+      var AnswerComponent = question.type == TEST_OPENENDED ? OpenEndedAnswer : SelectAnswer
 
       return <AnswerComponent options={question.options} userAnswered={this.processAnswer} />
     }
@@ -155,7 +160,7 @@ class StartTest extends Component {
       const { progressType }            = this.state
       const currentQuestionPercentage   = (currentQuestion / noOfQn) * 100
 
-      if(progressType == comConst.TEST_PROGRESS_TYPE_COMBO){
+      if(progressType == TEST_PROGRESS_TYPE_COMBO){
         const { currentStreak }          = this.state
         const getComboColor = percentage =>{
           if (percentage >= 80){
@@ -174,7 +179,7 @@ class StartTest extends Component {
         return(
           <div className={`progress-bar ${getComboColor((currentStreak / currentQuestion) * 100)}`} style={{ width: `${currentQuestionPercentage}%` }} role="progressbar" aria-valuenow={currentQuestion + 1} aria-valuemin="1" aria-valuemax={noOfQn}></div>
         )
-      }else if(progressType == comConst.TEST_PROGRESS_TYPE_INFO){
+      }else if(progressType == TEST_PROGRESS_TYPE_INFO){
         const { gotCorrect, gotWrong }  = this.state
         const calculatePercentage = amount => (amount / currentQuestion) * currentQuestionPercentage
 

@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 
 const Alert = ({
-  id,
-  title,
-  message,
   center,
   closeButtonText,
   extraButtons,
+  id,
+  message,
+  title,
 }) =>(
   <div className="modal fade" id={id}>
     <div className={`modal-dialog modal-dialog-scrollable ${center ? "modal-dialog-centered" : ""}`} role="document">
@@ -35,17 +35,17 @@ const Alert = ({
 )
 
 Alert.propTypes ={
-  id                        : PropTypes.string.isRequired,
-  title                     : PropTypes.string.isRequired,
-  message                   : PropTypes.string.isRequired,
   center                    : PropTypes.bool.isRequired,
   closeButtonText           : PropTypes.string.isRequired,
   extraButtons              : PropTypes.array,
+  id                        : PropTypes.string.isRequired,
+  message                   : PropTypes.string.isRequired,
+  title                     : PropTypes.string.isRequired,
 }
 
 Alert.defaultProps ={
-  closeButtonText           : "Close",
   center                    : true,
+  closeButtonText           : "Close",
   extraButtons              : [],
 }
 

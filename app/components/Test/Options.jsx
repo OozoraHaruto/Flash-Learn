@@ -2,11 +2,17 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
 
-import * as comConst from 'componentConstants'
-import Fallback from 'Fallback'
-import { TextField, NormLink } from 'reuse'
+import { 
+  pushToError,
+  TEST_MCQ, 
+  TEST_OPENENDED, 
+  TEST_TRUEFALSE, 
+  TEST_ULTIMATE, 
+} from 'componentConstants'
 import { decks } from 'actions'
 
+import { TextField, NormLink } from 'reuse'
+import Fallback from 'Fallback'
 import Flashcards from 'app/components/Deck/subComponents/FlashcardCarousel'
 
 class TestOptions extends Component {
@@ -14,7 +20,7 @@ class TestOptions extends Component {
     super(props)
     this.state = {
       id                                    : props.match.params.id,
-      test                                  : comConst.TEST_ULTIMATE,
+      test                                  : TEST_ULTIMATE,
       numberOfQuestions                     : ""
     }
   }
@@ -44,13 +50,14 @@ class TestOptions extends Component {
     }).then(res=>{
       if(res.success){
         this.props.dispatch(addDeckToRedux(id, name, res.data))
+      }else{
+        throw res
       }
     }).catch(e => {
       if (!this.props.history.location.state) {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}` })
       } else if (this.props.history.location.state.from == '/login') {
-        return this.props.history.push({ pathname: '/' }) // TODO: Error Page
-        // return this.props.history.push({ pathname: '/error', state: e })
+        return pushToError(this.props.history, this.props.location, e)
       } else {
         return this.props.history.push({ pathname: '/login', search: `?from=${encodeURI(this.props.location.pathname)}` })
       }
@@ -122,17 +129,17 @@ class TestOptions extends Component {
                 </div>
                 <div className="row">
                   <div className="col-md-6 col-lg-4 col-xl-3">
-                  <div className={`card ${colorOption(comConst.TEST_MCQ)} mt-4`} onClick={() => changeOption(comConst.TEST_MCQ)} style={clickStyle}>
+                    <div className={`card ${colorOption(TEST_MCQ)} mt-4`} onClick={() => changeOption(TEST_MCQ)} style={clickStyle}>
                       <div className="card-body">
                         <h5 className="card-title">MCQ</h5>
                         <p className="card-text">
                           You will be given either the front or back of the flashcard and asked to pick from 4-6 choices.
-                      </p>
+                        </p>
                       </div>
                     </div>
                   </div>
                   <div className="col-md-6 col-lg-4 col-xl-3">
-                    <div className={`card ${colorOption(comConst.TEST_OPENENDED)} mt-4`} onClick={() => changeOption(comConst.TEST_OPENENDED)} style={clickStyle}>
+                    <div className={`card ${colorOption(TEST_OPENENDED)} mt-4`} onClick={() => changeOption(TEST_OPENENDED)} style={clickStyle}>
                       <div className="card-body">
                         <h5 className="card-title">Open Ended</h5>
                         <p className="card-text">
@@ -142,7 +149,7 @@ class TestOptions extends Component {
                     </div>
                   </div>
                   <div className="col-md-6 col-lg-4 col-xl-3">
-                    <div className={`card ${colorOption(comConst.TEST_TRUEFALSE)} mt-4`} onClick={()=>changeOption(comConst.TEST_TRUEFALSE)} style={clickStyle}>
+                    <div className={`card ${colorOption(TEST_TRUEFALSE)} mt-4`} onClick={()=>changeOption(TEST_TRUEFALSE)} style={clickStyle}>
                       <div className="card-body">
                         <h5 className="card-title">True or False</h5>
                         <p className="card-text">
@@ -152,7 +159,7 @@ class TestOptions extends Component {
                     </div>
                   </div>
                   <div className="col-md-6 col-lg-12 col-xl-3">
-                    <div className={`card ${colorOption(comConst.TEST_ULTIMATE)} mt-4`} onClick={()=>changeOption(comConst.TEST_ULTIMATE)} style={clickStyle}>
+                    <div className={`card ${colorOption(TEST_ULTIMATE)} mt-4`} onClick={()=>changeOption(TEST_ULTIMATE)} style={clickStyle}>
                       <div className="card-body">
                         <h5 className="card-title">Ultimate</h5>
                         <p className="card-text">
@@ -164,23 +171,23 @@ class TestOptions extends Component {
                     </div>
                   </div>
                 </div>
-            </div>
-            <div className="modal fade" id="ReviewCards">
-              <div className={"modal-dialog modal-dialog-scrollable modal-dialog-centered"} role="document">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title" id="ReviewCardsModalLabel">Cards</h5>
-                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div className="modal-body"><Flashcards cards={cards} /></div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-dismiss="modal">I'm ready</button>
+              </div>
+              <div className="modal fade" id="ReviewCards">
+                <div className={"modal-dialog modal-dialog-scrollable modal-dialog-centered"} role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="ReviewCardsModalLabel">Cards</h5>
+                      <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div className="modal-body"><Flashcards cards={cards} /></div>
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-secondary" data-dismiss="modal">I'm ready</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             </React.Fragment>
         }
       </DocumentMeta>

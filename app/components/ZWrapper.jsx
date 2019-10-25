@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import { NavBarLink, NormLink, NavDropdown } from 'reuse';
 import { auth } from 'firebase'

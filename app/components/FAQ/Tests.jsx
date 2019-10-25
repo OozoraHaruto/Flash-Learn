@@ -15,12 +15,8 @@ export default class Tests extends Component {
   }
 
   render() {
-    var meta = {
-      title: "FAQ - Tests"
-    }
-
     return (
-      <DocumentMeta {...meta}>
+      <DocumentMeta title="FAQ - Tests">
         <div className='container mt-3'>
           <div className="card">
             <div className="card-header">

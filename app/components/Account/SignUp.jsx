@@ -1,12 +1,17 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
-import SignUpForm from 'app/components/Account/forms/Auth'
 import { accounts } from 'actions'
-import { MiddleWrapper } from 'reuse'
+import { pushToError } from 'componentConstants'
 
-const SignUp = ({ dispatch }) => {
-  const handleUserRegistration = (values, formikBag, dispatch) => {
+import { MiddleWrapper } from 'reuse'
+import SignUpForm from 'app/components/Account/forms/Auth'
+
+const SignUp = ({ 
+  history, 
+  location,
+ }) => {
+  const handleUserRegistration = (values, formikBag) => {
     var { email, password } = values
     const { startAddUser } = accounts
 
@@ -21,10 +26,11 @@ const SignUp = ({ dispatch }) => {
             formikBag.setSubmitting(false)
           }
         } else {
-          formikBag.setErrors({ password: "Failed to sign up. Please try again later" })
-          formikBag.setSubmitting(false)
+          throw res
         }
       }
+    }).catch(e => {
+      return pushToError(history, location, e)
     })
   }
   
@@ -32,7 +38,7 @@ const SignUp = ({ dispatch }) => {
     <DocumentMeta title="SignUp">
       <div className="container-fluid p-0">
         <MiddleWrapper boxSizing="col-xl-3 col-lg-5 col-md-7 col-9">
-          <SignUpForm login={false} handleFormSubmission={handleUserRegistration} dispatch={dispatch} />
+          <SignUpForm login={false} handleFormSubmission={handleUserRegistration} />
         </MiddleWrapper>
       </div>
     </DocumentMeta>

@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const SubmitButton = ({
-  title,
   className,
-  submitting,
   dirty,
+  submitting,
+  title,
 }) =>(
   <button type="submit" className={`btn btn-primary ${className} ${(submitting || !dirty) && 'disabled'} ${(submitting) && 'animated pulse infinite'}`}  disabled={(submitting || !dirty)}>
     {submitting ? 'Submitting' : title}
@@ -15,8 +15,8 @@ const SubmitButton = ({
 SubmitButton.propTypes ={
   title                     : PropTypes.string.isRequired,
   className                 : PropTypes.string.isRequired,
-  submitting                : PropTypes.bool.isRequired,
   dirty                     : PropTypes.bool.isRequired,
+  submitting                : PropTypes.bool.isRequired,
 }
 
 SubmitButton.defaultProps = {

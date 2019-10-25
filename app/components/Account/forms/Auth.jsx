@@ -3,7 +3,7 @@ import { Formik, Field } from 'formik';
 
 import { TextField, SubmitButton } from 'reuse'
 
-const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmission, dispatch=false }) => {
+const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmission }) => {
   const validate = values => {
     const errors              = {};
 
@@ -31,7 +31,7 @@ const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmissi
       <Formik
         initialValues={initialValues}
         validate={validate}
-        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
+        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag)}
         render={({
           handleSubmit, 
           isSubmitting,

@@ -3,12 +3,17 @@ import { connect } from 'react-redux'
 import DocumentMeta from 'react-document-meta';
 
 import { auth } from 'firebase';
-import Fallback from 'Fallback'
-import { dataLoading } from 'reuse'
-import Header from 'app/components/Account/subComponents/Profile/Header'
-import DeckSummary from 'app/components/Account/subComponents/Profile/DeckSummary'
 import { accounts } from 'actions'
-import * as comConst from 'componentConstants'
+import { 
+  PROFILE_DECK_CREATED, 
+  PROFILE_DECK_LIKED, 
+  pushToError,
+} from 'componentConstants'
+
+import { dataLoading } from 'reuse'
+import DeckSummary from 'app/components/Account/subComponents/Profile/DeckSummary'
+import Fallback from 'Fallback'
+import Header from 'app/components/Account/subComponents/Profile/Header'
 
 class Profile extends Component {
   constructor(props){
@@ -58,7 +63,7 @@ class Profile extends Component {
     }
 
     if (this.props.profile.id == state.id) {
-      var reduxProfile = this.props.profile
+      var reduxProfile                  = this.props.profile
       state.profile = {
         name                            : reduxProfile.name,
         profilePic                      : reduxProfile.profilePic,
@@ -83,9 +88,6 @@ class Profile extends Component {
 
     this.setState(state)
     this.getProfile(state)
-    this.getCreatedDecks(state.id)
-    this.getLikedDecks(state.id)
-    this.getLeaderboardPoints(state.id)
   }
 
   setReduxProfile = (id, name, pic, verified) =>{
@@ -98,15 +100,22 @@ class Profile extends Component {
     }))
   }
 
-  getProfile = state =>{
+  getUserRelatedDetails = id =>{
+    this.getCreatedDecks(id)
+    this.getLikedDecks(id)
+    this.getLeaderboardPoints(id)
+  }
+
+  getProfile = state => {
     const { getUserProfile }            = accounts
-    const {id, profile} = state
-    if(profile.name != ""){ return }
+    const {id, profile}                 = state
+    if (profile.name != "") { return this.getUserRelatedDetails(id) }
 
     getUserProfile(id).then(res =>{
       if(!res.success){
-        this.props.history.replace({ pathname: '/' });
-      }else{
+        throw res
+      } else {
+        this.getUserRelatedDetails(id)
         this.setReduxProfile(id, res.data.displayName, res.data.photoURL, res.data.emailVerified)
         this.setState({
           ...this.state,
@@ -117,6 +126,8 @@ class Profile extends Component {
           }
         })
       }
+    }).catch(e => {
+      return pushToError(this.props.history, this.props.location, e)
     })
   }
 
@@ -125,13 +136,15 @@ class Profile extends Component {
 
     getCreatedDecks(id, 5).then(res =>{
       if(!res.success){
-        this.props.history.replace({ pathname: '/' });
+        throw res
       }else{
         this.setState({
           ...this.state,
           createdDecks                  : res.data
         })
       }
+    }).catch(e => {
+      this.getCreatedDecks(id)
     })
   }
 
@@ -140,13 +153,15 @@ class Profile extends Component {
 
     getLikedDecks(id, 5).then(res => {
       if (!res.success) {
-        this.props.history.replace({ pathname: '/' });
+        throw res
       } else {
         this.setState({
           ...this.state,
           likedDecks                    : res.data
         })
       }
+    }).catch(e => {
+      this.getLikedDecks(id)
     })
   }
 
@@ -154,21 +169,27 @@ class Profile extends Component {
     const { getUserPointLeaderboard }   = accounts
 
     getUserPointLeaderboard(id).then(res=>{
-      this.setState({
-        ...this.state,
-        leaderboardPoint                : (res.doc.exists ? res.doc.data().point : 0)
-      })
+      if (!res.success) {
+        throw res
+      } else {
+        this.setState({
+          ...this.state,
+          leaderboardPoint: (res.doc.exists ? res.doc.data().point : 0)
+        })
+      }
+    }).catch(e => {
+      this.getLeaderboardPoints(id)
     })
   }
 
   render() {
     const { 
+      createdDecks, 
       id,
       isMe, 
-      profile, 
-      likedDecks, 
-      createdDecks, 
       leaderboardPoint,
+      likedDecks, 
+      profile, 
     }                                   = this.state
     const LoadingLikedDecks             = dataLoading(false, `The ${profile.name}'s liked decks should be loaded soon`)(DeckSummary)
     const LoadingCreatedDecks           = dataLoading(false, `The ${profile.name} created decks should be loaded soon`)(DeckSummary)
@@ -181,8 +202,8 @@ class Profile extends Component {
             {profile.name != "" && <Header {...profile} isMe={isMe} points={leaderboardPoint}  />}
           </div>
         </div>
-        {profile.name != "" && <LoadingCreatedDecks loading={createdDecks == undefined} title="Created Decks" cards={createdDecks} seeAllLink={comConst.PROFILE_DECK_CREATED} userId={id} />}
-        {profile.name != "" && <LoadingLikedDecks loading={likedDecks == undefined} title="Liked Decks" cards={likedDecks} seeAllLink={comConst.PROFILE_DECK_LIKED} userId={id} hideFooter={true}/>}
+        {profile.name != "" && <LoadingCreatedDecks loading={createdDecks == undefined} title="Created Decks" cards={createdDecks} seeAllLink={PROFILE_DECK_CREATED} userId={id} />}
+        {profile.name != "" && <LoadingLikedDecks loading={likedDecks == undefined} title="Liked Decks" cards={likedDecks} seeAllLink={PROFILE_DECK_LIKED} userId={id} hideFooter={true}/>}
       </DocumentMeta>
     )
   }

@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
 import { NormLink } from 'reuse'
 
-const index = (props) =>{
+const index = () =>{
   return (
     <DocumentMeta title="FAQ">
       <div className="container">

@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import queryString from 'query-string';
 import DocumentMeta from 'react-document-meta';
 
-import SearchForm from 'app/components/Deck/forms/Search'
-import ResultsWrapper from 'app/components/Deck/subComponents/Search/ResultsWrapper'
-import * as comConst from 'componentConstants'
+import { BASIC_SORT, DECK_SEARCH_SORT_NAME_ASC, DECK_SEARCH_SORT_NAME } from 'componentConstants'
 import { decks } from 'actions'
 
 import { dataLoading } from 'reuse'
+import ResultsWrapper from 'app/components/Deck/subComponents/Search/ResultsWrapper'
+import SearchForm from 'app/components/Deck/forms/Search'
 
 export default class Search extends Component {
   constructor(props){
@@ -17,7 +17,7 @@ export default class Search extends Component {
 
     this.state = {
       query                                 : checkForQueryString("query"),
-      sort                                  : checkForQueryString("sort", comConst.DECK_SEARCH_SORT_NAME_ASC.value),
+      sort                                  : checkForQueryString("sort", DECK_SEARCH_SORT_NAME_ASC.value),
       results                               : [],
       users                                 : {},
       loading                               : true,
@@ -37,7 +37,7 @@ export default class Search extends Component {
       this.setState({
         ...this.state,
         sort                                : values.sort,
-        results                             : this.sortResults(this.state.results, sortBy[0], sortBy[1] == comConst.BASIC_SORT.asc),
+        results                             : this.sortResults(this.state.results, sortBy[0], sortBy[1] == BASIC_SORT.asc),
         loading                             : false
       }, () => {
         formikBag.setSubmitting(false)
@@ -59,7 +59,7 @@ export default class Search extends Component {
         this.setState({
           query,
           sort,
-          results                           : this.sortResults(res.decks, sortBy[0], sortBy[1] == comConst.BASIC_SORT.asc),
+          results                           : this.sortResults(res.decks, sortBy[0], sortBy[1] == BASIC_SORT.asc),
           users                             : res.users,
           loading                           : false
         }, () => this.changeURL())
@@ -78,8 +78,8 @@ export default class Search extends Component {
     if (results.length == 0) { return [] }
     let tmpResults                          = results.slice(0)
 
-    if (by != comConst.DECK_SEARCH_SORT_NAME.value) {
-      tmpResults                            = this.sortResults(tmpResults, comConst.DECK_SEARCH_SORT_NAME.value, asc)
+    if (by != DECK_SEARCH_SORT_NAME.value) {
+      tmpResults                            = this.sortResults(tmpResults, DECK_SEARCH_SORT_NAME.value, asc)
     }
     tmpResults = tmpResults.sort(((a, b) => {
       if (a[by] < b[by]) {

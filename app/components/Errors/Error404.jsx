@@ -18,7 +18,6 @@ const Error404 = ({
           </div>
           <div className="col-sm-3">
             <div><img src="/images/Error/404.jpg" className="w-100" /></div>
-            
           </div>
         </div>
       </div>

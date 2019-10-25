@@ -73,13 +73,15 @@ export const formatDateTime = (timeFormat, format="", prefix=false) =>{
   const FMT_FULL                                            = "YYYY MM DD"
   const FMT_FULL_TEXT                                       = "Do MMMM YYYY"
 
+  const setPrefix = () => prefix ? "on " : ""
+
   switch(format){
     case 'ago':
       return dateTime.fromNow()
     case 'full':
-      return `${prefix && "on "}${dateTime.format(FMT_FULL)}`
+      return `${setPrefix()}${dateTime.format(FMT_FULL)}`
     case 'fullWithText':
-      return `${prefix && "on "}${dateTime.format(FMT_FULL_TEXT)}`
+      return `${setPrefix()}${dateTime.format(FMT_FULL_TEXT)}`
     default:
       return (moment().diff(dateTime, 'hours') > 24) ? formatDateTime(timeFormat, "fullWithText", prefix) : formatDateTime(timeFormat, "ago", prefix)
   }
@@ -106,4 +108,12 @@ export const formatTime = ms => {
     textForm = `${textForm} ${ms} ms `
   }
   return textForm.trim()
+}
+
+export const pushToError = (history, location, error) =>{
+  let state = {
+    from: `${location.pathname}${location.search}${location.hash}`,
+    ...error,
+  }
+  return history.push({pathname: "/error", state})
 }

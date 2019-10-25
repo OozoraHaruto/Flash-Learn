@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 const NormLink = ({
-  title,
-  className,
-  to,
   children,
+  className,
+  title,
+  to,
 }) => {
   return(
     <Link className={className} to={to}>{title || children}</Link>
@@ -14,8 +14,8 @@ const NormLink = ({
 }
 
 NormLink.propTypes ={
-  title               : PropTypes.string,
   className           : PropTypes.string.isRequired,
+  title               : PropTypes.string,
   to                  : PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 }
 

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import DocumentMeta from 'react-document-meta';
-import { connect } from 'react-redux';
 
 import { accounts } from 'actions'
 import { auth } from 'firebase'
+import { pushToError } from 'componentConstants'
 
 export default class Logout extends Component {
   constructor(props) {
@@ -16,11 +16,17 @@ export default class Logout extends Component {
     }
 
     startLogoutUser().then(res => {
-      this.setState({
-        loggedOut                 : res.success,
-        error                     : res.message
-      })
-      props.history.replace({ pathname: '/' });
+      if(res.success){
+        this.setState({
+          loggedOut               : res.success,
+          error                   : res.message
+        })
+        props.history.replace({ pathname: '/' });
+      }else{
+        throw res
+      }
+    }).catch(e => {
+      return pushToError(this.props.history, this.props.location, e)
     })
   }
 

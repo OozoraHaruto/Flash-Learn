@@ -3,6 +3,7 @@ import DocumentMeta from 'react-document-meta';
 var Latex = require('react-latex');
 
 import { accounts } from 'actions'
+import { pushToError } from 'componentConstants'
 
 export default class Gamification extends Component {
   constructor(props){
@@ -21,7 +22,11 @@ export default class Gamification extends Component {
     getAchievements().then(res => {
       if(res.success){
         this.setState({ achievements: res.data})
+      }else{
+        throw res
       }
+    }).catch(e => {
+      return pushToError(this.props.history, this.props.location, e)
     })
   }
 

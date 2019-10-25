@@ -1,11 +1,14 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
-import DeckForm from 'app/components/Deck/forms/Deck'
 import { decks } from 'actions'
+import { pushToError } from 'componentConstants'
+
+import DeckForm from 'app/components/Deck/forms/Deck'
 
 const AddDeck = ({
-  history
+  history,
+  location,
 }) =>{
   const handleAddDeck = (values, formikBag) => {
     const { startAddDeck }                = decks
@@ -16,12 +19,13 @@ const AddDeck = ({
           formikBag.setErrors({ cards: res.message })
           formikBag.setSubmitting(false)
         } else {
-          formikBag.setErrors({ cards: "Failed to add to database. Contact administrator is this problem persist" })
-          formikBag.setSubmitting(false)
+          throw res
         }
       }else{
         return history.push({ pathname: `/deck/${res.deckId}` })
       }
+    }).catch(e => {
+      return pushToError(history, location, e)
     })
   }
 
