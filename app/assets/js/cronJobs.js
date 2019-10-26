@@ -3,7 +3,7 @@ var moment = require('moment');
 
 // Daily Jobs
 function calculatePointAchievement() {
-  axios.post('https://us-central1-flashlearn-534b5.cloudfunctions.net/calculatePointLeaderboardAchievements', {
+  return axios.post('https://us-central1-flashlearn-534b5.cloudfunctions.net/calculatePointLeaderboardAchievements', {
     password: process.env.FIREBASE_FUNCTION_PASSWORD
   }).then(function (response) {
     console.log("やった!ポイントの", response.data)
@@ -12,7 +12,7 @@ function calculatePointAchievement() {
   })
 }
 function calculateTestAchievement() {
-  axios.post('https://us-central1-flashlearn-534b5.cloudfunctions.net/calculateTestLeaderboardsAchievements', {
+  return axios.post('https://us-central1-flashlearn-534b5.cloudfunctions.net/calculateTestLeaderboardsAchievements', {
     password: process.env.FIREBASE_FUNCTION_PASSWORD
   }).then(function (response) {
     console.log("やった!テストの", response.data)
@@ -24,7 +24,7 @@ function calculateTestAchievement() {
 
 // Monthly Jobs
 function resetLeaderboard() {
-  axios.post('https://us-central1-flashlearn-534b5.cloudfunctions.net/resetLeaderboards', {
+  return axios.post('https://us-central1-flashlearn-534b5.cloudfunctions.net/resetLeaderboards', {
     password: process.env.FIREBASE_FUNCTION_PASSWORD
   }).then(function (response) {
     console.log("やった!", response.data)
