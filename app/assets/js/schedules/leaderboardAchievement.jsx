@@ -1,14 +1,15 @@
-const path = require('path');
-var envFile = require('node-env-file');
+const axios = require('axios');
 
 function sayHello() {
-  process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-  
-  try {
-    envFile(path.join(__dirname, 'config/' + process.env.NODE_ENV + '.env'))
-  } catch (e) { console.log("大変だ", e) }
-
   console.log('こんにちは！');
-  console.log('秘密は', process.env.FIREBASE_API_KEY);
+  axios.get('https://us-central1-flashlearn-534b5.cloudfunctions.net/calculateLeaderboardAchievements', {
+    params: {
+      password: process.env.FIREBASE_FUNCTION_PASSWORD
+    }
+  }).then(function (response) {
+    console.log("やった", response);
+  }).catch(function (error) {
+    console.log("ダメだ", error);
+  })
 }
 sayHello();
