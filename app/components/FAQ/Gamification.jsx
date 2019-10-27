@@ -9,7 +9,7 @@ export default class Gamification extends Component {
   constructor(props){
     super(props)
 
-    this.state = { achievements: false }
+    this.state                    = { achievements: false }
   }
 
   componentDidMount(){
@@ -35,12 +35,11 @@ export default class Gamification extends Component {
       title: "FAQ - Gamification"
     }
 
-    var { achievements } = this.state
+    var { achievements }          = this.state
 
     const renderAchievement = achievement =>{
-      const data  = achievement.data()
-      const id    = achievement.id
-
+      const data                  = achievement.data()
+      const id                    = achievement.id
       return (
         <tr key={id}>
           <td scope="row">{data.badges[data.badges.length - 1]}</td>
@@ -52,7 +51,10 @@ export default class Gamification extends Component {
                 })
               }
             </ul>
-            {data.extraMessage && <small>{data.extraMessage}</small>}
+            {data.extraMessage && 
+              data.extraMessage.split(",").map((message, i) => 
+                <small key={`${id}_extraMessage_${i}`} className="d-block">{message}</small>
+            )}
           </td>
         </tr>
       )
@@ -109,7 +111,7 @@ export default class Gamification extends Component {
                 Following are the achievements that you can get<br />
                 <br />
                 {!achievements && <div>Loading..</div>}
-                {achievements && !achievements.empty &&
+                {achievements && achievements.length != 0 &&
                   <table className="table table-striped table-inverse">
                     <thead className="thead-inverse">
                       <tr>
@@ -118,7 +120,7 @@ export default class Gamification extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                    {achievements.docs.map((doc) => renderAchievement(doc))}
+                    {achievements.map(doc => renderAchievement(doc))}
                     </tbody>
                   </table>
                 }

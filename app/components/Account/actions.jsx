@@ -16,17 +16,25 @@ export const startAddUser = (email, password) =>{
     newUser                             = user.user
     
     if(user.additionalUserInfo.isNewUser){
-      return getUserGravatar(hash)
+      return Promise.all([
+        getUserGravatar(hash),
+        getAchievements()
+      ])
     }
   }).then(function (res) {
-    profile.displayName                 = res.success ? res.entry[0].name.formatted : "君の名は？"
+    profile.displayName                 = res[0].success ? res[0].entry[0].name.formatted : "君の名は？"
     profile.photoURL                    = `https://secure.gravatar.com/avatar/${hash}`
-    profile.username                    = res.success ? res.entry[0].preferredUsername : newUser.uid
+    profile.username                    = res[0].success ? res[0].entry[0].preferredUsername : newUser.uid
     var actions                         = [
       newUser.updateProfile(profile),
       writeToUserProfileDatabase(newUser.uid, profile),
       sendVerificationEmail()
     ]
+    res[1].data.forEach(achievement =>{
+      actions.push(database.collection(dbConst.COL_ACHIEVEMENTS).doc(achievement.id).collection(dbConst.COL_USER).doc(newUser.uid).set({
+        current                         : 0
+      }))
+    })
     return Promise.all(actions)
   }).then(res => {
     return { success: true }
@@ -60,7 +68,6 @@ export const sendVerificationEmail = () =>{
 
 export const startLoginUser = (email, password) => {
   const cleanEmail = email.trim().toLowerCase()
-  console.log(cleanEmail)
 
   return auth.signInWithEmailAndPassword(cleanEmail, password).then(()=>{
     return {success: true}
@@ -134,9 +141,20 @@ export const getUserProfile = id =>{
   })
 }
 
-export const getAchievements = () =>{
-  return database.collection(dbConst.COL_ACHIEVEMENTS).get().then(snapshot =>{
-    return {success: true, data: snapshot}
+export const getUserAchievements = id => {
+  let achievement                     = []
+  return getAchievements().then(res =>{
+    if (!res.success){
+      throw res
+    }
+    let actions = []
+    achievement                       = res.data
+    res.data.forEach(achievement =>{
+      actions.push(database.collection(dbConst.COL_ACHIEVEMENTS).doc(achievement.id).collection(dbConst.COL_USER).doc(id).get())
+    })
+    return Promise.all(actions)
+  }).then(snapshots => {
+    return { success: true, user: snapshots, achievement }
   }).catch(e => {
     console.log("getAchievements", e)
     return { success: false, ...e };
@@ -300,6 +318,17 @@ export const updateUserTimingLeaderboard = (testType, deckId, timing) =>{
     return { success: true }
   }).catch(e => {
     console.log("updateUserTimingLeaderboard", e)
+    return { success: false, ...e };
+  })
+}
+
+// Achievements related
+
+export const getAchievements = () => {
+  return database.collection(dbConst.COL_ACHIEVEMENTS).get().then(snapshot => {
+    return { success: true, data: snapshot.docs }
+  }).catch(e => {
+    console.log("getAchievements", e)
     return { success: false, ...e };
   })
 }

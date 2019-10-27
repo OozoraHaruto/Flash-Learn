@@ -11,6 +11,7 @@ import {
 } from 'componentConstants'
 
 import { dataLoading } from 'reuse'
+import Achievements from 'app/components/Account/subComponents/Profile/Achievements'
 import DeckSummary from 'app/components/Account/subComponents/Profile/DeckSummary'
 import Fallback from 'Fallback'
 import Header from 'app/components/Account/subComponents/Profile/Header'
@@ -28,9 +29,10 @@ class Profile extends Component {
       likedDecks                        : undefined,
       createdDecks                      : undefined,
       leaderboardPoint                  : undefined,
+      achievements                      : undefined,
     }
   }
-
+  
   componentDidUpdate(prevProps){
     if (prevProps.match.params.id != this.props.match.params.id){
       this.setState({
@@ -43,6 +45,7 @@ class Profile extends Component {
         likedDecks                      : undefined,
         createdDecks                    : undefined,
         leaderboardPoint                : undefined,
+        achievements                    : undefined,
       }, () => this.checkUserId())
     }
   }
@@ -104,6 +107,7 @@ class Profile extends Component {
     this.getCreatedDecks(id)
     this.getLikedDecks(id)
     this.getLeaderboardPoints(id)
+    this.getAchievements(id)
   }
 
   getProfile = state => {
@@ -174,7 +178,7 @@ class Profile extends Component {
       } else {
         this.setState({
           ...this.state,
-          leaderboardPoint: (res.doc.exists ? res.doc.data().point : 0)
+          leaderboardPoint              : (res.doc.exists ? res.doc.data().point : 0)
         })
       }
     }).catch(e => {
@@ -182,8 +186,26 @@ class Profile extends Component {
     })
   }
 
+  getAchievements = id =>{
+    const { getUserAchievements }       = accounts
+
+    getUserAchievements(id).then(res=>{
+      if (!res.success) {
+        throw res
+      } else {
+        this.setState({
+          ...this.state,
+          achievements                  : [res.user, res.achievement]
+        })
+      }
+    }).catch(e => {
+      this.getAchievements(id)
+    })
+  }
+
   render() {
     const { 
+      achievements,
       createdDecks, 
       id,
       isMe, 
@@ -193,6 +215,7 @@ class Profile extends Component {
     }                                   = this.state
     const LoadingLikedDecks             = dataLoading(false, `The ${profile.name}'s liked decks should be loaded soon`)(DeckSummary)
     const LoadingCreatedDecks           = dataLoading(false, `The ${profile.name} created decks should be loaded soon`)(DeckSummary)
+    const LoadingAchievements           = dataLoading(false, `The ${profile.name} achievements should be loaded soon`)(Achievements)
 
     return (
       <DocumentMeta title={(!profile.name ? "Loading profile" : `${profile.name}'s profile`)}>
@@ -204,6 +227,7 @@ class Profile extends Component {
         </div>
         {profile.name != "" && <LoadingCreatedDecks loading={createdDecks == undefined} title="Created Decks" cards={createdDecks} seeAllLink={PROFILE_DECK_CREATED} userId={id} />}
         {profile.name != "" && <LoadingLikedDecks loading={likedDecks == undefined} title="Liked Decks" cards={likedDecks} seeAllLink={PROFILE_DECK_LIKED} userId={id} hideFooter={true}/>}
+        {profile.name != "" && <LoadingAchievements loading={achievements == undefined} lists={achievements} />}
       </DocumentMeta>
     )
   }
