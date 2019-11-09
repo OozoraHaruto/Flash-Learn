@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import DocumentMeta from 'react-document-meta';
 
 
@@ -26,10 +26,9 @@ const Other = ({
       return '<span class="' + cls + '">' + match + '</span>';
     });
   }
-  if (state){
+  useEffect(() => {
     jQuery("#jsonFormat").html(syntaxHighlight(state))
-  }
-
+  }, [])
 
   return (
     <DocumentMeta title={state ? `Error${state.message && `, ${state.message}`}` : "(о´ I `)y━~~~.oO(ｺﾝﾇﾂﾞﾜ★)"}>

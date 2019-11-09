@@ -20,7 +20,7 @@ class TestOptions extends Component {
     super(props)
     this.state = {
       id                                    : props.match.params.id,
-      test                                  : TEST_ULTIMATE,
+      test                                  : [TEST_ULTIMATE],
       numberOfQuestions                     : ""
     }
   }
@@ -73,11 +73,21 @@ class TestOptions extends Component {
 
   goToTest = () =>{
     var { id, test, numberOfQuestions }     = this.state
+
+    const formatURLQuery = () =>{
+      if (test.length == 1){
+        return test[0]
+      }else if (test.length == 3){
+        return TEST_ULTIMATE
+      }else{
+        return test.join("-")
+      }
+    }
     
     if(numberOfQuestions == "" && !Number.isInteger(Number(numberOfQuestions))){
-      return this.props.history.push(`/deck/${id}/test/${test}`)
+      return this.props.history.push(`/deck/${id}/test/${formatURLQuery()}`)
     }else{
-      return this.props.history.push(`/deck/${id}/test/${test}/${numberOfQuestions}`)
+      return this.props.history.push(`/deck/${id}/test/${formatURLQuery()}/${numberOfQuestions}`)
     }
   }
 
@@ -88,13 +98,31 @@ class TestOptions extends Component {
     const clickStyle                        = {cursor: "pointer"}
 
     const colorOption = option =>{
-      return option == this.state.test ? "border-primary" : ""
+      return this.state.test.includes(option) ? "border-primary" : ""
     }
 
     const changeOption = option =>{
+      let test                              = this.state.test
+      if (option == TEST_ULTIMATE){
+        test                                = [TEST_ULTIMATE]
+      }else{
+        if(test.includes(TEST_ULTIMATE)){
+          test                              = [option]
+        }else{
+          let index                         = test.indexOf(option)
+          if(index == -1){
+            test.push(option)
+          }else{
+            test.splice(index, 1)
+            if(test.length == 0){
+              test                          = [TEST_ULTIMATE]
+            }
+          }
+        }
+      }
       this.setState({
         ...this.state,
-        test                                : option,
+        test
       })
     }
 

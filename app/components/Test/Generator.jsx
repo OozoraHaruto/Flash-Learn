@@ -60,15 +60,50 @@ class Generator extends Component {
     })
   }
 
+  getNoOfQuestions = deckLength =>{
+    let length                          = Number(!this.props.match.params.noOfQn ? deckLength : this.props.match.params.noOfQn)
+    if(Number.isInteger(length)){
+      return length
+    }else{
+      return "Number of questions is not a number"
+    }
+  }
+
+  getTypeOfQuestions = () =>{
+    let testType                        = this.props.match.params.testType.split("-")
+    let questionTypes                   = [TEST_MCQ, TEST_OPENENDED, TEST_TRUEFALSE]
+
+    if (testType[0] == TEST_ULTIMATE){
+      return questionTypes
+    }else{
+      testType                          = testType.reduce((result, type) =>{
+        if (questionTypes.includes(type)){
+          result.push(type)
+        }
+        return result
+      }, [])
+
+      console.log(testType)
+
+      if (testType.length == 0){
+        return "List of question types are incorrect"
+      }else{
+        return testType
+      }
+    }
+  }
+
   generateQuestions = () =>{
     var deck                            = this.props.deck.cards.slice(0)
-    const noOfQn                        = !this.props.match.params.noOfQn ? deck.length : this.props.match.params.noOfQn
-    const typesOfQn                     = [TEST_MCQ, TEST_OPENENDED, TEST_TRUEFALSE]
-    const testType                      = this.props.match.params.testType
-    const isTestUltimate                = TEST_ULTIMATE == testType
+    const noOfQn                        = this.getNoOfQuestions(deck.length)
+    const typesOfQn                     = this.getTypeOfQuestions()
     const { addTestToRedux }            = decks
     var cardDataList                    = []
     var questions                       = []
+
+    if (isNaN(noOfQn) || !Array.isArray(typesOfQn)){
+      return pushToError(this.props.history, this.props.location, {message : typeof noOfQn == 'string' ? noOfQn : typesOfQn})
+    }
 
     const generateRandomNumber = max => random.integer(0, (max - 1))
     const addToQuestionArray = (question, answer, options, type, card) => {
@@ -80,7 +115,6 @@ class Generator extends Component {
         card                            : card.data().index
       })
     }
-    const typeOfQn = () => isTestUltimate ? typesOfQn[generateRandomNumber(typesOfQn.length)] : testType
     const createMCQQuestion = card =>{
       const numberOfOptionsChoices      = [2, 4, 6]
       const numberOfOptions             = random.pick(numberOfOptionsChoices)
@@ -121,7 +155,7 @@ class Generator extends Component {
     const createQuestion = () => {
       var card                          = deck.splice(generateRandomNumber(deck.length), 1)[0]
 
-      switch (typeOfQn()){
+      switch (typesOfQn[generateRandomNumber(typesOfQn.length)]){
         case TEST_MCQ: createMCQQuestion(card); break;
         case TEST_OPENENDED: createOpenEndedQuestion(card); break;
         case TEST_TRUEFALSE: createTrueFalseQuestion(card); break;
@@ -133,7 +167,7 @@ class Generator extends Component {
       loadingMessage                    : "Hold on just a little longer, we are generating the questions now.",
     })
 
-    if (TEST_OPENENDED != testType){
+    if (!(typesOfQn.length == 1 && typesOfQn[0] == TEST_OPENENDED)){
       cardDataList                      = deck.map(card=> {return {front: card.data().front, back: card.data().back}})
     }
     
@@ -144,7 +178,7 @@ class Generator extends Component {
       createQuestion()
     }while (noOfQn != questions.length)
 
-    this.props.dispatch(addTestToRedux(this.props.deck.id, testType, this.props.deck.name, questions, this.props.deck.cards.length == questions.length))
+    this.props.dispatch(addTestToRedux(this.props.deck.id, typesOfQn.length == 3 ? TEST_ULTIMATE : typesOfQn.join("-"), this.props.deck.name, questions, ((typesOfQn.length == 1 || typesOfQn.length == 3) && (this.props.deck.cards.length == questions.length))))
 
     this.setState({
       ...this.state,
