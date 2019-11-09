@@ -141,9 +141,6 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
                     </div>
                     <div className="col-xl-3">
                       <SubmitButton title={editingDeck ? "Save Deck" : "Add Deck"} className="w-100" submitting={isSubmitting} dirty={dirty} />
-                      {/* UPDATE: Use when formik upgrade to v2 */}
-                      {/* <Field type="checkbox" placeholder="Public" name="shownPublic" component={CheckBox} /> */}
-                      <Field type="hidden" placeholder="Public" name="shownPublic" component={TextField} />
                       <small className="text-danger">{errors.cardParent}</small>
                     </div>
                   </div>

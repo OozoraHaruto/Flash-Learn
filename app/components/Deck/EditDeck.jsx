@@ -144,7 +144,7 @@ class EditDeck extends Component {
 
     return (
       <DocumentMeta title={(!details.name ? "Loading deck" : details.name)}>
-        <LoadingDeckForm loading={!(!details.loading && !cards.loading)} initialValues={{ name: details.name, shownPublic: details.public, cards }} handleFormSubmission={handleEditDeck} createEmptyCard={createEmptyCard} editingDeck={true}/>
+        <LoadingDeckForm loading={!(!details.loading && !cards.loading)} initialValues={{ name: details.name, cards }} handleFormSubmission={handleEditDeck} createEmptyCard={createEmptyCard} editingDeck={true}/>
       </DocumentMeta>
     )
   }

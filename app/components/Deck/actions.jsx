@@ -17,7 +17,7 @@ export const startAddDeck = values =>{
   var deckId                            = ""
   var deckDetails = {
     name                                : values.name.trim(),
-    public                              : !values.shownPublic ? false : values.shownPublic,
+    public                              : true,
     searchTerms                         : cleanNameAndConvertToArray(values.name),
   }
 
