@@ -65,22 +65,20 @@ ul.list-unstyled{
 
 
 // Format JSON - https://stackoverflow.com/a/7220510/1092339
-code#jsonFormat .string {
-  color: green;
-}
-
-code#jsonFormat .number {
-  color: darkorange;
-}
-
-code#jsonFormat .boolean {
-  color: blue;
-}
-
-code#jsonFormat .null {
-  color: magenta;
-}
-
-code#jsonFormat .key {
-  color: red;
+code.jsonFormat {
+  &.string {
+    color: green;
+  }
+  &.number {
+    color: darkorange;
+  }
+  &.boolean {
+    color: blue;
+  }
+  &.null {
+    color: magenta;
+  }
+  &.key {
+    color: red;
+  }
 }

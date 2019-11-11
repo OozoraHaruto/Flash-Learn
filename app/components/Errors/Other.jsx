@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import DocumentMeta from 'react-document-meta';
+var HtmlToReactParser = require('html-to-react').Parser;
 
 
 const Other = ({
@@ -26,9 +27,12 @@ const Other = ({
       return '<span class="' + cls + '">' + match + '</span>';
     });
   }
-  useEffect(() => {
-    jQuery("#jsonFormat").html(syntaxHighlight(state))
-  }, [])
+  const renderJSON = () => {
+    var htmlToReactParser = new HtmlToReactParser();
+    var reactElement = htmlToReactParser.parse(syntaxHighlight(state));
+
+    return reactElement;
+  }
 
   return (
     <DocumentMeta title={state ? `Error${state.message && `, ${state.message}`}` : "(о´ I `)y━~~~.oO(ｺﾝﾇﾂﾞﾜ★)"}>
@@ -48,7 +52,7 @@ const Other = ({
                 <div className="mb-3">
                   <details>
                     <summary>Error Details</summary>
-                    <pre className="pre-scrollable"><code id="jsonFormat"></code></pre>
+                    <pre className="pre-scrollable"><code class="jsonFormat">{renderJSON()}</code></pre>
                   </details>
                 </div>
                 <div>
