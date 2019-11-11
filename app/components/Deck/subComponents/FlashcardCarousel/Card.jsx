@@ -1,4 +1,8 @@
 import React from 'react'
+var HtmlToReactParser = require('html-to-react').Parser;
+
+import { decks } from 'actions'
+const { formatAsHTMLElement } = decks
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -56,13 +60,13 @@ export default class Card extends React.Component {
       
       if (front){
         return (
-          <div className="h3 m-0">{card.front}</div>
+          <div className="h3 m-0">{formatAsHTMLElement(card.front)}</div>
         )
       }
       return(
         <React.Fragment>
-          <div className="h3 m-0">{card.back}</div>
-          <div className="text-muted text-small">{card.backSub}</div>
+          <div className="h3 m-0">{formatAsHTMLElement(card.back)}</div>
+          <div className="text-muted text-small">{formatAsHTMLElement(card.backSub)}</div>
         </React.Fragment>
       )
     }

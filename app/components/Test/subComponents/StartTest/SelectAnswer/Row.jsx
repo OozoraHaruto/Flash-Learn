@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { decks } from 'actions'
+const { formatAsHTMLElement } = decks
+
 import Option from 'app/components/Test/subComponents/StartTest/SelectAnswer/Option'
 
 const Row = ({
@@ -8,8 +11,8 @@ const Row = ({
 }) => {
   return (
     <div className="flex-fill d-flex">
-      <Option data={options[0]} userAnswered={userAnswered} className="mr-1"/>
-      <Option data={options[1]} userAnswered={userAnswered} className="ml-1" />
+      <Option data={formatAsHTMLElement(options[0])} userAnswered={userAnswered} className="mr-1"/>
+      <Option data={formatAsHTMLElement(options[1])} userAnswered={userAnswered} className="ml-1" />
     </div>
   )
 }

@@ -11,6 +11,7 @@ import {
   TEST_PROGRESS_TYPE_INFO,
 } from 'componentConstants'
 import { decks } from 'actions'
+const { formatAsHTMLElement } = decks
 
 import OpenEndedAnswer from 'app/components/Test/subComponents/StartTest/OpenEndedAnswer'
 import SelectAnswer from 'app/components/Test/subComponents/StartTest/SelectAnswer'
@@ -203,7 +204,7 @@ class StartTest extends Component {
                 </div>
               </div>
               <div className="text-center mt-2">
-                <h2>{questions[currentQuestion].question}</h2>
+              <h2>{formatAsHTMLElement(questions[currentQuestion].question)}</h2>
               </div>
               {renderTestOptions(questions[currentQuestion])}
             </div>

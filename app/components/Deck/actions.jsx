@@ -1,5 +1,6 @@
 import firebase, { auth, database } from 'firebase';
 var XRegExp = require('xregexp');
+var HtmlToReactParser = require('html-to-react').Parser;
 
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
@@ -374,4 +375,176 @@ const cleanNameAndConvertToArray = (name, addFull=true) =>{
   addFull && arrKeywords.push(name.trim().toLowerCase())
 
   return arrKeywords
+}
+
+//- WYSIWYG functions
+
+const WYSIWYG_ALLOWED_TAGS_STYLE        = ["b", "s", "u", "sup", "sub"]
+const WYSIWYG_ALLOWED_TAGS_FORMAT       = ["rby"]
+const getIndexListOfString = (text, item) => {
+  let indexes                           = []
+
+  do {
+    let tmpIndex = text.indexOf(item, indexes.length == 0 ? 0 : indexes[indexes.length - 1] + 1)
+    if (tmpIndex == -1) {
+      break
+    }
+    indexes.push(tmpIndex)
+  } while (true)
+  return indexes
+}
+
+const getTag = (text, frontIndex, endIndex, styles, format) => {
+  let bracketContent                    = text.substring(frontIndex + 1, endIndex)
+  let bracketData                       = {}
+  const validateTag = data => {
+    if (styles.includes(data.tag) || format.includes(data.tag)) {
+      return data
+    } else {
+      return false
+    }
+  }
+
+  bracketData["front"]                  = bracketContent.indexOf("/") == -1
+
+  if (bracketData.front) {
+    bracketContent                      = bracketContent.split("=")
+    bracketData["tag"]                  = bracketContent[0]
+
+    if (bracketContent.length > 1) {
+      bracketData["extraData"]          = bracketContent[1]
+    }
+  } else {
+    bracketData["tag"]                  = bracketContent.substring(1)
+  }
+
+  return validateTag(bracketData)
+}
+
+export const validateWYSIWYG = text => {
+  let frontIndex                        = getIndexListOfString(text, "[")
+  let backIndex                         = getIndexListOfString(text, "]")
+
+  try {
+    let currentList                     = []
+    let toRemoveIndexList               = []
+    if (frontIndex.length != backIndex.length) {
+      throw new Error("There is an '[' without  the ']' ")
+    }
+
+    let tags = frontIndex.reduce((result, front, i) => {
+      let data = getTag(text, frontIndex[i], backIndex[i], WYSIWYG_ALLOWED_TAGS_STYLE, WYSIWYG_ALLOWED_TAGS_FORMAT)
+      if (data != false) {
+        result.push(data)
+      }else{
+        toRemoveIndexList.push(i)
+      }
+      return result
+    }, [])
+
+    for(let i = toRemoveIndexList.length-1; i>=0; i--){
+      let index                           = toRemoveIndexList[i]
+      frontIndex.splice(index, 1)
+      backIndex.splice(index, 1)
+    }
+
+    if (frontIndex.length % 2 != 0 || backIndex.length % 2 != 0) {
+      throw new Error("Missing close/open tag")
+    }
+
+    tags.forEach((tag, index) => {
+      if (tag.front) {
+        currentList.push({
+          tag,
+          backIndex                     : backIndex[index]
+        })
+      } else {
+        let listLastItem                = currentList[currentList.length - 1]
+
+        if (tag.tag == listLastItem.tag.tag) {
+          currentList.splice(currentList.length - 1, 1)
+        }
+      }
+    })
+
+    if (currentList.length != 0) {
+      throw new Error("There is missing close tag for tag at index:" + currentList[0].backIndex)
+    }
+
+    return {
+      front                             : frontIndex,
+      back                              : backIndex,
+      tags                              : tags
+    }
+  } catch (e) {
+    console.log(e)
+    return e
+  }
+}
+
+export const formatAsHTML = text => {
+  let stringHTML                        = ""
+  let lastStringIndex                   = 0
+  let currentList                       = []
+  let innerHTML                         = {}
+  let textData                          = validateWYSIWYG(text)
+  
+  if (textData.tags.length == 0){
+    return text
+  }
+
+  const checkIfInnerHTMLOrString = (html, fullString) => {
+    let newHTML                         = innerHTML.html ? html.replace(innerHTML.fullString, innerHTML.html) : html
+    if (currentList.length == 0) {
+      stringHTML                        = stringHTML + newHTML
+      innerHTML                         = {}
+    } else {
+      innerHTML = {
+        html                            : newHTML,
+        fullString,
+      }
+    }
+  }
+
+  textData.tags.forEach((tag, index) => {
+    if (tag.front) {
+      if (currentList.length == 0) {
+        stringHTML                      = stringHTML + text.substring(lastStringIndex, textData.front[index])
+        lastStringIndex                 = textData.front[index]
+      }
+      currentList.push({
+        tag,
+        frontIndex: textData.front[index],
+        backIndex: textData.back[index]
+      })
+    } else {
+      let listLastItem                  = currentList[currentList.length - 1]
+
+      if (listLastItem.tag.tag == tag.tag) {
+        let dataInBetweenTags           = text.substring(listLastItem.backIndex + 1, textData.front[index])
+        currentList.splice(currentList.length - 1, 1)
+
+        if (listLastItem.tag.extraData) {
+          switch (tag.tag) {
+            case "rby":
+              checkIfInnerHTMLOrString("<ruby>" + dataInBetweenTags + "<rt>" + listLastItem.tag.extraData + "</rt></ruby>", text.substring(listLastItem.frontIndex, textData.back[index] + 1))
+              break
+          }
+        } else {
+          checkIfInnerHTMLOrString("<" + tag.tag + ">" + dataInBetweenTags + "</" + tag.tag + ">", text.substring(listLastItem.frontIndex, textData.back[index] + 1))
+
+        }
+      }
+      if (currentList.length == 0) {
+        lastStringIndex                 = textData.back[index] + 1
+      }
+    }
+  })
+  stringHTML                            = stringHTML + text.substring(lastStringIndex)
+  return stringHTML
+}
+
+export const formatAsHTMLElement = text =>{
+  var htmlToReactParser                 = new HtmlToReactParser();
+  return htmlToReactParser.parse(formatAsHTML(text))
 }

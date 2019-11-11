@@ -7,7 +7,9 @@ import {
 } from 'react-sortable-hoc';
 import { FaBars } from "react-icons/fa";
 
+import { decks } from 'actions'
 import { TextField, SubmitButton } from 'reuse'
+
 
 const CardForm = SortableElement(({
   arrayHelpers: {remove, insert},
@@ -54,6 +56,7 @@ const DragHandle = SortableHandle (() =>(
 const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmptyCard, editingDeck }) => {
   const validate = values => {
     const errors                          = {};
+    const { validateWYSIWYG }             = decks
 
     if(!values.name){
       errors['name']                      = 'Required';
@@ -82,9 +85,28 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
         }else{
           if(!card.front){
             cardError['front']            = 'Required';
+          } else {
+            let validation = validateWYSIWYG(card.front)
+            if (validation instanceof Error){
+              console.log(`${card.front} validation`, validation.message)
+              cardError['front']          = validation.message;
+            }
           }
           if(!card.back){
             cardError['back']             = 'Required';
+          } else {
+            let validation = validateWYSIWYG(card.back)
+            if (validation instanceof Error) {
+              console.log(`${card.back} validation`, validation.message)
+              cardError['back'] = validation.message;
+            }
+          }
+          if(card.backSub){
+            let validation = validateWYSIWYG(card.backSub)
+            if (validation instanceof Error) {
+              console.log(`${card.backSub} validation`, validation.message)
+              cardError['backSub'] = validation.message;
+            }
           }
         }
         if (!jQuery.isEmptyObject(cardError)) 
@@ -124,13 +146,13 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
         initialValues={initialValues}
         validate={validate}
         onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
-        render={({
-          handleSubmit, 
-          values, 
-          errors,
-          isSubmitting,
-          dirty,
-        }) => (
+      >{({
+        handleSubmit,
+        values,
+        errors,
+        isSubmitting,
+        dirty,
+      }) => (
           <form onSubmit={handleSubmit}>
             <div className="container-fluid bg-light sticky-top">
               <div className="row">
@@ -149,7 +171,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
             </div>
             <FieldArray name="cards" render={arrayHelpers => (
               <div className="container mt-2">
-                  <DeckList cards={values.cards} useDragHandle={true} arrayHelpers={arrayHelpers} onSortEnd={sortEnd(arrayHelpers)} />
+                <DeckList cards={values.cards} useDragHandle={true} arrayHelpers={arrayHelpers} onSortEnd={sortEnd(arrayHelpers)} />
                 <div className="text-center">
                   <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
                 </div>
@@ -157,7 +179,7 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
             )} />
           </form>
         )}
-      />
+        </Formik>
     </React.Fragment>
   )
 };

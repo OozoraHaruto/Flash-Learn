@@ -52,7 +52,7 @@ const Other = ({
                 <div className="mb-3">
                   <details>
                     <summary>Error Details</summary>
-                    <pre className="pre-scrollable"><code class="jsonFormat">{renderJSON()}</code></pre>
+                    <pre className="pre-scrollable"><code className="jsonFormat">{renderJSON()}</code></pre>
                   </details>
                 </div>
                 <div>

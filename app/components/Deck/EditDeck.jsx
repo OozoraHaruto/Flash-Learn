@@ -92,7 +92,6 @@ class EditDeck extends Component {
       if(details.name != values.name.trim()){
         detailsEdited.name              = values.name.trim()
       }
-      // UPDATE: if formik updates add check for public
 
       const findCard = cardId =>{
         for(var i=0; i<tmpCards.length; i++){
