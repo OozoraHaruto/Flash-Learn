@@ -10,10 +10,26 @@ const index = () =>{
         <div className="text-center display-4">FAQs</div>
         <div className="card-columns">
           <div className="card">
+            <img className="card-img-top" src="/images/FAQ/Decks-card.jpg" alt="" />
+            <div className="card-body">
+              <h4 className="card-title">Decks</h4>
+              <p className="card-text">Decks refers to a stack of flashcards for this website</p>
+            </div>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <NormLink to="/faq/decks#how-to-create" title="How do I to create?" />
+              </li>
+              <li className="list-group-item">
+                <NormLink to="/faq/decks#how-to-format" title="Card text formats" />
+              </li>
+            </ul>
+          </div>
+
+          <div className="card">
             <img className="card-img-top" src="/images/FAQ/Test-card.jpg" alt="" />
             <div className="card-body">
               <h4 className="card-title">Tests</h4>
-              <p className="card-text">Different tests that will be offered in the future</p>
+              <p className="card-text">Different tests that is offered to users</p>
             </div>
             <ul className="list-group list-group-flush">
               <li className="list-group-item">

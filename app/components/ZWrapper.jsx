@@ -48,17 +48,13 @@ const ZWrapper = ({
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
             <NavDropdown title="Decks" id="navDeck" topBar>
-            {
-              (!jQuery.isEmptyObject(auth.currentUser)) &&
-                <React.Fragment>
-                  <NormLink to="/deck/add" title="Add Decks" className="dropdown-item" />
-                  <div className="dropdown-divider" />
-                </React.Fragment>
-            }
+              <NormLink to="/deck/add" title="Add Decks" className="dropdown-item" />
+              <div className="dropdown-divider" />
               <NormLink to="/deck" title="View All" className="dropdown-item" />
             </NavDropdown>
             {(!jQuery.isEmptyObject(auth.currentUser)) && renderLeftSideBarLoggedIn()}
             <NavDropdown title="FAQ" id="navFAQ" topBar>
+              <NormLink to="/faq/decks" title="Decks" className="dropdown-item" />
               <NormLink to="/faq/tests" title="Tests" className="dropdown-item" />
               <NormLink to="/faq/gamification" title="Gamification" className="dropdown-item" />
               <div className="dropdown-divider" />

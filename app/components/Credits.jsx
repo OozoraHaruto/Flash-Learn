@@ -25,6 +25,10 @@ const Credits = () =>{
                   </thead>
                   <tbody>
                     <tr>
+                      <td scope="row"><a href="/images/FAQ/Decks-card.jpg" target="_blank">Flashcard picture in FAQ</a></td>
+                      <td>Image by <a href="https://pixabay.com/users/AnnasPhotography-2657111/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1591812">AnnasPhotography</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1591812">Pixabay</a></td>
+                    </tr>
+                    <tr>
                       <td scope="row"><a href="/images/FAQ/Test-card.jpg" target="_blank">Test picture in FAQ</a></td>
                       <td>Image by <a href="https://pixabay.com/users/Pixapopz-2873171/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1500720">Chuk Yong</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1500720">Pixabay</a></td>
                     </tr>

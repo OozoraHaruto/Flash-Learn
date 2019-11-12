@@ -1,0 +1,31 @@
+$faq-bg-color: #f8f9fa;
+
+div.exampleAndcode{
+  @extend .mb-5;
+
+  &:last-of-type {
+    @extend .mb-3;
+  }
+
+  div.example{
+    @extend .p-3;
+    @extend .border;
+    @extend .border-bottom-0;
+    @extend .rounded-top;
+    @extend .rounded-sm;
+
+    border-width: .2rem !important;
+    border-color: $faq-bg-color !important;
+  }
+  pre {
+    @extend .p-3;
+    @extend .border;
+    @extend .border-top-0;
+    @extend .rounded-bottom;
+    @extend .rounded-sm;
+
+    border-width: .2rem !important;
+    border-color: $faq-bg-color !important;
+    background-color: $faq-bg-color;
+  }
+}

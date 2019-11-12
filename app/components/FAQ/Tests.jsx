@@ -40,14 +40,18 @@ export default class Tests extends Component {
                 User will be given either the front or back of the flashcard and asked to pick from 4-6 choices.<br />
                 User can choose the number of words to be tested.
                 <div className="container-fluid mt-3">
-                  <div className="row  justify-content-md-center">
-                    <div className="col-4">
+                  <div className="row justify-content-md-center">
+                    <div className="col-10">
                       <img src="/images/FAQ/MCQ_2.png" alt="screenshot of MCQ test with 2 options" className="w-100" />
                     </div>
-                    <div className="col-4">
+                  </div>
+                  <div className="row justify-content-md-center">
+                    <div className="col-10">
                       <img src="/images/FAQ/MCQ_4.png" alt="screenshot of MCQ test with 4 options" className="w-100" />
                     </div>
-                    <div className="col-4">
+                  </div>
+                  <div className="row justify-content-md-center">
+                    <div className="col-10">
                       <img src="/images/FAQ/MCQ_6.png" alt="screenshot of MCQ test with 6 options" className="w-100" />
                     </div>
                   </div>
@@ -58,7 +62,7 @@ export default class Tests extends Component {
                 User can choose the number of words to be tested.
                 <div className="container-fluid mt-3">
                   <div className="row  justify-content-md-center">
-                    <div className="col-4">
+                    <div className="col-10">
                       <img src="/images/FAQ/Openended.png" alt="screenshot of Open ended test" className="w-100" />
                     </div>
                   </div>
@@ -69,7 +73,7 @@ export default class Tests extends Component {
                 User can choose the number of words to be tested.
                 <div className="container-fluid mt-3">
                   <div className="row  justify-content-md-center">
-                    <div className="col-4">
+                    <div className="col-10">
                       <img src="/images/FAQ/True_False.png" alt="screenshot of True or false test" className="w-100" />
                     </div>
                   </div>

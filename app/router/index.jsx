@@ -37,6 +37,7 @@ const TestGenerator       = lazy(() => import(/* webpackChunkName: "cpo_TestGene
 const TestOptions         = lazy(() => import(/* webpackChunkName: "cpo_TestOption" */ 'app/components/Test/Options'));
 
 const FAQMenu             = lazy(() => import(/* webpackChunkName: "cpo_FAQMenu" */ 'app/components/FAQ/index'));
+const FAQDecks            = lazy(() => import(/* webpackChunkName: "cpo_FAQDecks" */ 'app/components/FAQ/Decks'));
 const FAQTests            = lazy(() => import(/* webpackChunkName: "cpo_FAQTests" */ 'app/components/FAQ/Tests'));
 const FAQGamification     = lazy(() => import(/* webpackChunkName: "cpo_FAQGamification" */ 'app/components/FAQ/Gamification'));
 
@@ -109,6 +110,7 @@ class ReactRouter extends Component{
               <Route exact path='/deck' component={DeckSearch} me={me} />
 
               <Route exact path='/faq' component={FAQMenu} />
+              <Route exact path='/faq/decks' component={FAQDecks} />
               <Route exact path='/faq/tests' component={FAQTests} />
               <Route exact path='/faq/gamification' component={FAQGamification} />
 
