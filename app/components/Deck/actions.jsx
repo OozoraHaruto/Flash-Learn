@@ -1,6 +1,7 @@
 import firebase, { auth, database } from 'firebase';
 var XRegExp = require('xregexp');
 var HtmlToReactParser = require('html-to-react').Parser;
+var sanitizeHtml = require('sanitize-html');
 
 import * as dbConst from 'databaseConstants'
 import * as rConst from "reduxConstants";
@@ -424,10 +425,14 @@ const getTag = (text, frontIndex, endIndex, styles, format) => {
 export const validateWYSIWYG = text => {
   let frontIndex                        = getIndexListOfString(text, "[")
   let backIndex                         = getIndexListOfString(text, "]")
+  if (frontIndex.length == 0 && backIndex.length == 0){
+    return true
+  }
 
   try {
     let currentList                     = []
     let toRemoveIndexList               = []
+
     if (frontIndex.length != backIndex.length) {
       throw new Error("There is an '[' without  the ']' ")
     }
@@ -442,7 +447,7 @@ export const validateWYSIWYG = text => {
       return result
     }, [])
 
-    for(let i = toRemoveIndexList.length-1; i>=0; i--){
+    for (let i=toRemoveIndexList.length-1; i>=0; i--){
       let index                           = toRemoveIndexList[i]
       frontIndex.splice(index, 1)
       backIndex.splice(index, 1)
@@ -488,9 +493,21 @@ export const formatAsHTML = text => {
   let currentList                       = []
   let innerHTML                         = {}
   let textData                          = validateWYSIWYG(text)
-  
-  if (textData.tags.length == 0){
-    return text
+
+  const sanitize = html => {
+    let newHTML                         = sanitizeHtml(html, {
+      allowedTags                       : WYSIWYG_ALLOWED_TAGS_STYLE.concat(["ruby", "rt", "br"]),
+      allowedAttributes                 : {}
+    })
+    newHTML                             = newHTML.replace("\\n", "<br />")
+
+    return newHTML
+  }
+
+  if(textData === true){
+    return sanitize(text)
+  }else if (textData.tags.length == 0){
+    return sanitize(text)
   }
 
   const checkIfInnerHTMLOrString = (html, fullString) => {
@@ -505,7 +522,6 @@ export const formatAsHTML = text => {
       }
     }
   }
-
   textData.tags.forEach((tag, index) => {
     if (tag.front) {
       if (currentList.length == 0) {
@@ -541,6 +557,7 @@ export const formatAsHTML = text => {
     }
   })
   stringHTML                            = stringHTML + text.substring(lastStringIndex)
+  stringHTML                            = sanitize(stringHTML)
   return stringHTML
 }
 
