@@ -42,7 +42,7 @@ export default class Gamification extends Component {
       const id                    = achievement.id
       return (
         <tr key={id}>
-          <td scope="row">{data.badges[data.badges.length - 1]}</td>
+          <td scope="row">{<img src={data.badges[data.badges.length - 1]} alt="achievement badge" />}</td>
           <td>
             <ul>
               {
