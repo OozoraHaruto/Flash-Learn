@@ -3,7 +3,7 @@ import { Formik, Field } from 'formik';
 
 import { TextField, SubmitButton } from 'reuse'
 
-const ChangePassword = ({ initialValues, handleFormSubmission, dispatch = false }) => {
+const ChangePassword = ({ initialValues, handleFormSubmission }) => {
   const validate = values => {
     const errors = {};
     if (values.password) {
@@ -21,7 +21,7 @@ const ChangePassword = ({ initialValues, handleFormSubmission, dispatch = false 
     <Formik
       initialValues={initialValues}
       validate={validate}
-      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
+      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag).then(() => formikBag.setSubmitting(false))}
     >
     {({
       handleSubmit,

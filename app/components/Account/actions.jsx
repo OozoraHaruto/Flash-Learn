@@ -116,6 +116,15 @@ export const startEditUserPassword = password =>{
   })
 }
 
+export const startSendPasswordResetEmail = email => {
+  return auth.sendPasswordResetEmail(email).then(function () {
+    return { success: true }
+  }).catch(e => {
+    console.log('startSendPasswordResetEmail', e);
+    return { success: false, ...e };
+  })
+}
+
 export const startLogoutUser = () =>{
   return auth.signOut().then( () =>{
     return { success: true };

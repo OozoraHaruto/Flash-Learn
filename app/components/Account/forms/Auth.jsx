@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Field } from 'formik';
 
-import { TextField, SubmitButton } from 'reuse'
+import { TextField, SubmitButton, NormLink } from 'reuse'
 
 const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmission }) => {
   const validate = values => {
@@ -43,6 +43,13 @@ const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmissi
         <div className="text-center">
           <SubmitButton title={login ? "Login" : "Sign Up"} {...{isSubmitting, dirty}} />
         </div>
+        {
+          login && initialValues.email == "" &&
+            <React.Fragment>
+              <hr />
+              <NormLink to="/forgetpassword" title="Forgot your password?" />
+            </React.Fragment>
+        }
       </form>
     )}
     </Formik>

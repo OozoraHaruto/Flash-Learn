@@ -3,7 +3,7 @@ import { Formik, Field } from 'formik';
 
 import { TextField, SubmitButton } from 'reuse'
 
-const ChangeEmail = ({ initialValues, handleFormSubmission, dispatch = false }) => {
+const ChangeEmail = ({ initialValues, handleFormSubmission, title }) => {
   const validate = values => {
     const errors = {};
 
@@ -32,7 +32,7 @@ const ChangeEmail = ({ initialValues, handleFormSubmission, dispatch = false }) 
       <form onSubmit={handleSubmit}>
         <Field type="email" placeholder="E-mail" name="email" component={TextField} autoComplete="username" />
         <div className="text-center">
-          <SubmitButton title="Update" {...{isSubmitting, dirty}} />
+          <SubmitButton title={title} {...{isSubmitting, dirty}} />
         </div>
       </form>
     )}

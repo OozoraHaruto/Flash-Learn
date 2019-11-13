@@ -5,7 +5,7 @@ import { accounts } from 'actions';
 import { auth } from 'firebase'
 import { PROFILE_RE_AUTH } from 'componentConstants'
 
-import EmailForm from 'app/components/Account/forms/ChangeEmail'
+import EmailForm from 'app/components/Account/forms/EmailOnly'
 import NameForm from 'app/components/Account/forms/ChangeName'
 import PasswordForm from 'app/components/Account/forms/ChangePassword'
 
@@ -97,7 +97,7 @@ export default class ProfileEdit extends React.Component{
           case "name":
             return <NameForm initialValues={{ name: auth.currentUser.displayName }} handleFormSubmission={handleChangeName} />
           case "email":
-            return <EmailForm initialValues={{ email: auth.currentUser.email }} handleFormSubmission={handleChangeEmail} />
+            return <EmailForm initialValues={{ email: auth.currentUser.email }} handleFormSubmission={handleChangeEmail} title="Update" />
           case "password":
             return <PasswordForm initialValues={{ username: auth.currentUser.email, password: ""}} handleFormSubmission={handleChangePassword} />
         }

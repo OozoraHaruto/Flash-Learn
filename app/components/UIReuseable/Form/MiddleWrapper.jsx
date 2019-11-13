@@ -16,7 +16,7 @@ const MiddleWrapper = ({
 
 MiddleWrapper.propTypes = {
   boxSizing       : PropTypes.string.isRequired,
-  children        : PropTypes.object.isRequired,
+  children        : PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
 }
 
 export default MiddleWrapper;

@@ -17,6 +17,7 @@ import ZWrapper from 'ZWrapper'
 const MainPage            = lazy(() => import(/* webpackChunkName: "cpo_MainPage" */ 'MainPage'));
 const Credits             = lazy(() => import(/* webpackChunkName: "cpo_Credits" */ 'Credits'));
 
+const AccForgetPassword   = lazy(() => import(/* webpackChunkName: "cpo_ForgetPassword" */ 'app/components/Account/ForgetPassword'));
 const AccReAuth           = lazy(() => import(/* webpackChunkName: "cpo_ReAuthenticate" */ 'app/components/Account/ReAuthenticate'));
 const AccLogin            = lazy(() => import(/* webpackChunkName: "cpo_Login" */ 'app/components/Account/Login'));
 const AccSignUp           = lazy(() => import(/* webpackChunkName: "cpo_SignUp" */ 'app/components/Account/SignUp'));
@@ -92,6 +93,7 @@ class ReactRouter extends Component{
               <AuthRoute exact path='/reauth' component={AccReAuth} me={me} />
               <NoAuthRoute exact path='/login' component={AccLogin} me={me} />
               <NoAuthRoute exact path='/signup' component={AccSignUp} me={me} />
+              <NoAuthRoute exact path='/forgetpassword' component={AccForgetPassword} me={me} />
               <AuthRoute exact path='/logout' component={AccLogout} me={me} />
               <AuthRoute exact path='/profile/edit' component={AccProfileEdit} me={me} />
               <Route exact path={['/profile/:id', '/profile']} component={AccProfile} me={me} />

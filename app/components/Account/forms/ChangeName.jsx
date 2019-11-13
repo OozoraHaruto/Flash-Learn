@@ -3,7 +3,7 @@ import { Formik, Field } from 'formik';
 
 import { TextField, SubmitButton } from 'reuse'
 
-const ChangeName = ({ initialValues, handleFormSubmission, dispatch = false }) => {
+const ChangeName = ({ initialValues, handleFormSubmission }) => {
   const validate = values => {
     const errors = {};
 
@@ -18,7 +18,7 @@ const ChangeName = ({ initialValues, handleFormSubmission, dispatch = false }) =
     <Formik
       initialValues={initialValues}
       validate={validate}
-      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
+      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag).then(() => formikBag.setSubmitting(false))}
     >
     {({
       handleSubmit,
