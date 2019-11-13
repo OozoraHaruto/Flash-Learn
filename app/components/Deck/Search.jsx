@@ -44,7 +44,7 @@ export default class Search extends Component {
         this.changeURL()
       })
     }else{
-      this.newSearch(values.query, values.sort).then(() => {
+      return this.newSearch(values.query, values.sort).then(() => {
         formikBag.setSubmitting(false)
       })
     }

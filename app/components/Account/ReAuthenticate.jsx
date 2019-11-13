@@ -16,11 +16,10 @@ const ReAuthenticate = ({
   const handleReAuthentication = (values, formikBag) => {
     const { startReAuthentication }          = accounts
 
-    startReAuthentication(values.email, values.password).then(res => {
+    return startReAuthentication(values.email, values.password).then(res => {
       if (!res.success) {
         if (res.code) {
           formikBag.setErrors({ password: res.message })
-          formikBag.setSubmitting(false)
         } else {
           throw res
         }

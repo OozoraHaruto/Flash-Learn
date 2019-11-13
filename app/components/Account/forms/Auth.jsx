@@ -27,26 +27,25 @@ const Auth = ({ initialValues={email:"", password:""}, login, handleFormSubmissi
   }
 
   return (
-    <React.Fragment>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag)}
-        render={({
-          handleSubmit, 
-          isSubmitting,
-          dirty,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <Field type={initialValues.email=="" ? 'email' : 'hidden'} placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
-            <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete={login ? 'current-password' : 'new-password'}/>
-            <div className="text-center">
-              <SubmitButton title={login ? "Login" : "Sign Up"} submitting={isSubmitting}  dirty={dirty}/>
-            </div>
-          </form>
-        )}
-      />
-    </React.Fragment>
+    <Formik
+      initialValues={initialValues}
+      validate={validate}
+      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag).then(() => formikBag.setSubmitting(false))}
+    >
+    {({
+      handleSubmit, 
+      isSubmitting,
+      dirty,
+    }) => (
+      <form onSubmit={handleSubmit}>
+        <Field type={initialValues.email=="" ? 'email' : 'hidden'} placeholder="E-mail" name="email" component={TextField} autoComplete="username"/>
+        <Field type="password" placeholder="Password" name="password" component={TextField} autoComplete={login ? 'current-password' : 'new-password'}/>
+        <div className="text-center">
+          <SubmitButton title={login ? "Login" : "Sign Up"} {...{isSubmitting, dirty}} />
+        </div>
+      </form>
+    )}
+    </Formik>
   )
 };
 

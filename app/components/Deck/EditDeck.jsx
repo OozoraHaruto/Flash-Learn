@@ -122,14 +122,12 @@ class EditDeck extends Component {
         }
       })
 
-      editDeck(id, detailsEdited, cardsAdded, tmpCards, cardsEdited).then(res => {
+      return editDeck(id, detailsEdited, cardsAdded, tmpCards, cardsEdited).then(res => {
         if (!res.success) {
           if (res.code) {
             formikBag.setErrors({ cards: res.message })
-            formikBag.setSubmitting(false)
           } else {
             formikBag.setErrors({ cards: "Failed to add to database. Contact administrator is this problem persist" })
-            formikBag.setSubmitting(false)
           }
         }else{
           return this.props.history.push({ pathname: `/deck/${this.props.match.params.id}` })

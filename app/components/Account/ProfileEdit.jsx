@@ -37,7 +37,7 @@ export default class ProfileEdit extends React.Component{
       var status                      = false
       const { startEditUserName }     = accounts
 
-      startEditUserName(values.name).then(res =>{
+      return startEditUserName(values.name).then(res =>{
         status                        = res.success
         this.setState({
           ...this.state,
@@ -48,14 +48,13 @@ export default class ProfileEdit extends React.Component{
         }
       }).catch(e =>{
         formikBag.setErrors({ name: e.message ? e.message : "Failed to change your name. Please try again later" })
-        formikBag.setSubmitting(false)
       })
     }
     const handleChangeEmail = (values, formikBag) => {
       var status                      = false
       const { startEditUserEmail }    = accounts
 
-      startEditUserEmail(values.email).then(res =>{
+      return startEditUserEmail(values.email).then(res =>{
         status                        = res.success
         this.setState({
           ...this.state,
@@ -66,7 +65,6 @@ export default class ProfileEdit extends React.Component{
         }
       }).catch(e =>{
         formikBag.setErrors({ email: e.message ? e.message : "Failed to change your email. Please try again later" })
-        formikBag.setSubmitting(false)
       })
     }
 
@@ -74,7 +72,7 @@ export default class ProfileEdit extends React.Component{
       var status                      = false
       const { startEditUserPassword } = accounts
 
-      startEditUserPassword(values.password).then(res =>{
+      return startEditUserPassword(values.password).then(res =>{
         status                        = res.success
         this.setState({
           ...this.state,
@@ -85,7 +83,6 @@ export default class ProfileEdit extends React.Component{
         }
       }).catch(e =>{
         formikBag.setErrors({ password: e.message ? e.message : "Failed to change your password. Please try again later" })
-        formikBag.setSubmitting(false)
       })
     }
 

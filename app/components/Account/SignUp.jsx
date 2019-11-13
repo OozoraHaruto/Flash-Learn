@@ -15,15 +15,13 @@ const SignUp = ({
     var { email, password } = values
     const { startAddUser } = accounts
 
-    startAddUser(email, password).then(res => {
+    return startAddUser(email, password).then(res => {
       if (!res.success) {
         if (res.code) {
           if (res.code == 'auth/email-already-in-use') {
             formikBag.setErrors({ email: res.message })
-            formikBag.setSubmitting(false)
           } else {
             formikBag.setErrors({ password: res.message })
-            formikBag.setSubmitting(false)
           }
         } else {
           throw res

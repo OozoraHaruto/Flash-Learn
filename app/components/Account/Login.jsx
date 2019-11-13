@@ -14,15 +14,13 @@ const Login = ({
     var { email, password } = values
     const { startLoginUser } = accounts
 
-    startLoginUser(email, password).then(res => {
+    return startLoginUser(email, password).then(res => {
       if (!res.success) {
         if (res.code) {
           if (res.code == 'auth/user-not-found') {
             formikBag.setErrors({ email: res.message })
-            formikBag.setSubmitting(false)
           } else {
             formikBag.setErrors({ password: res.message })
-            formikBag.setSubmitting(false)
           }
         } else {
           throw res

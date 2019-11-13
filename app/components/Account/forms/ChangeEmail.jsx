@@ -19,25 +19,24 @@ const ChangeEmail = ({ initialValues, handleFormSubmission, dispatch = false }) 
   }
 
   return (
-    <React.Fragment>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
-        render={({
-          handleSubmit,
-          isSubmitting,
-          dirty,
-        }) => (
-            <form onSubmit={handleSubmit}>
-              <Field type="email" placeholder="E-mail" name="email" component={TextField} autoComplete="username" />
-              <div className="text-center">
-                <SubmitButton title="Update" submitting={isSubmitting} dirty={dirty} />
-              </div>
-            </form>
-          )}
-      />
-    </React.Fragment>
+    <Formik
+      initialValues={initialValues}
+      validate={validate}
+      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag).then(() => formikBag.setSubmitting(false))}
+    >
+    {({
+      handleSubmit,
+      isSubmitting,
+      dirty,
+    }) => (
+      <form onSubmit={handleSubmit}>
+        <Field type="email" placeholder="E-mail" name="email" component={TextField} autoComplete="username" />
+        <div className="text-center">
+          <SubmitButton title="Update" {...{isSubmitting, dirty}} />
+        </div>
+      </form>
+    )}
+    </Formik>
   )
 };
 

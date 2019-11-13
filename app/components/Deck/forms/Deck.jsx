@@ -53,7 +53,7 @@ const DragHandle = SortableHandle (() =>(
   <FaBars style={{ cursor: "move" }} />
 ))
 
-const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmptyCard, editingDeck }) => {
+const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDeck }) => {
   const validate = values => {
     const errors                          = {};
     const { validateWYSIWYG }             = decks
@@ -141,46 +141,44 @@ const Deck = ({ initialValues, handleFormSubmission, dispatch = false, createEmp
   }
 
   return (
-    <React.Fragment>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag, dispatch)}
-      >{({
-        handleSubmit,
-        values,
-        errors,
-        isSubmitting,
-        dirty,
-      }) => (
-          <form onSubmit={handleSubmit}>
-            <div className="container-fluid bg-light sticky-top">
-              <div className="row">
-                <div className="container mt-3">
-                  <div className="form-group row py-2">
-                    <div className="col-xl-9">
-                      <Field type="text" placeholder="Deck Name" name="name" component={TextField} />
-                    </div>
-                    <div className="col-xl-3">
-                      <SubmitButton title={editingDeck ? "Save Deck" : "Add Deck"} className="w-100" submitting={isSubmitting} dirty={dirty} />
-                      <small className="text-danger">{errors.cardParent}</small>
-                    </div>
-                  </div>
+    <Formik
+      initialValues={initialValues}
+      validate={validate}
+      onSubmit={(values, formikBag) => handleFormSubmission(values, formikBag).then(() => formikBag.setSubmitting(false))}
+    >{({
+      handleSubmit,
+      values,
+      errors,
+      isSubmitting,
+      dirty,
+    }) => (
+      <form onSubmit={handleSubmit}>
+        <div className="container-fluid bg-light sticky-top">
+          <div className="row">
+            <div className="container mt-3">
+              <div className="form-group row py-2">
+                <div className="col-xl-9">
+                  <Field type="text" placeholder="Deck Name" name="name" component={TextField} />
+                </div>
+                <div className="col-xl-3">
+                  <SubmitButton title={editingDeck ? "Save Deck" : "Add Deck"} className="w-100" {...{isSubmitting, dirty}} />
+                  <small className="text-danger">{errors.cardParent}</small>
                 </div>
               </div>
             </div>
-            <FieldArray name="cards" render={arrayHelpers => (
-              <div className="container mt-2">
-                <DeckList cards={values.cards} useDragHandle={true} arrayHelpers={arrayHelpers} onSortEnd={sortEnd(arrayHelpers)} />
-                <div className="text-center">
-                  <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
-                </div>
-              </div>
-            )} />
-          </form>
-        )}
-        </Formik>
-    </React.Fragment>
+          </div>
+        </div>
+        <FieldArray name="cards" render={arrayHelpers => (
+          <div className="container mt-2">
+            <DeckList cards={values.cards} useDragHandle={true} arrayHelpers={arrayHelpers} onSortEnd={sortEnd(arrayHelpers)} />
+            <div className="text-center">
+              <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
+            </div>
+          </div>
+        )} />
+      </form>
+    )}
+    </Formik>
   )
 };
 

@@ -13,7 +13,7 @@ const AddDeck = ({
   const handleAddDeck = (values, formikBag) => {
     const { startAddDeck }                = decks
 
-    startAddDeck(values).then(res => {
+    return startAddDeck(values).then(res => {
       if (!res.success) {
         if (res.code) {
           formikBag.setErrors({ cards: res.message })
