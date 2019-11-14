@@ -82,6 +82,15 @@ Object.defineProperty(exports, 'NavDropdown', {
   }
 });
 
+var CloudinaryImage = require('./CloudinaryImage.jsx');
+
+Object.defineProperty(exports, 'CloudinaryImage', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(CloudinaryImage).default;
+  }
+});
+
 
 // Others
 var dataLoading = require('./dataLoading.jsx');

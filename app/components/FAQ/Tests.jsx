@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import DocumentMeta from 'react-document-meta';
 
+import { CloudinaryImage } from 'reuse'
+
 export default class Tests extends Component {
   componentDidMount(){
     this.changeTab()
@@ -42,17 +44,17 @@ export default class Tests extends Component {
                 <div className="container-fluid mt-3">
                   <div className="row justify-content-md-center">
                     <div className="col-10">
-                      <img src="/images/FAQ/MCQ_2.png" alt="screenshot of MCQ test with 2 options" className="w-100" />
+                      <CloudinaryImage img="FAQ/MCQ_2_wwgscf" className="w-100" />
                     </div>
                   </div>
                   <div className="row justify-content-md-center">
                     <div className="col-10">
-                      <img src="/images/FAQ/MCQ_4.png" alt="screenshot of MCQ test with 4 options" className="w-100" />
+                      <CloudinaryImage img="FAQ/MCQ_4_titvbr" className="w-100" />
                     </div>
                   </div>
                   <div className="row justify-content-md-center">
                     <div className="col-10">
-                      <img src="/images/FAQ/MCQ_6.png" alt="screenshot of MCQ test with 6 options" className="w-100" />
+                      <CloudinaryImage img="FAQ/MCQ_6_aofg4z" className="w-100" />
                     </div>
                   </div>
                 </div>
@@ -63,7 +65,7 @@ export default class Tests extends Component {
                 <div className="container-fluid mt-3">
                   <div className="row  justify-content-md-center">
                     <div className="col-10">
-                      <img src="/images/FAQ/Openended.png" alt="screenshot of Open ended test" className="w-100" />
+                      <CloudinaryImage img="FAQ/Openended_o2ime9" className="w-100" />
                     </div>
                   </div>
                 </div>
@@ -74,7 +76,7 @@ export default class Tests extends Component {
                 <div className="container-fluid mt-3">
                   <div className="row  justify-content-md-center">
                     <div className="col-10">
-                      <img src="/images/FAQ/True_False.png" alt="screenshot of True or false test" className="w-100" />
+                      <CloudinaryImage img="FAQ/True_False_ib0w1j"  className="w-100" />
                     </div>
                   </div>
                 </div>

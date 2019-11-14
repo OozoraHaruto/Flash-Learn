@@ -11,6 +11,7 @@ export { default as Alert } from './Alert';
 export { default as NavBarLink } from './NavBarLink';
 export { default as NormLink } from './NormLink';
 export { default as NavDropdown } from './NavDropdown';
+export { default as CloudinaryImage } from './CloudinaryImage';
 
 // Others
 export { default as dataLoading } from './dataLoading';

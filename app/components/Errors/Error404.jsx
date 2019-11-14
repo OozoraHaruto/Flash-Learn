@@ -1,6 +1,8 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
+import { CloudinaryImage } from 'reuse'
+
 const Error404 = ({
   location: {hash, pathname, search},
 }) => {
@@ -17,7 +19,7 @@ const Error404 = ({
             </div>
           </div>
           <div className="col-sm-3">
-            <div><img src="/images/Error/404.jpg" className="w-100" /></div>
+            <div><CloudinaryImage img="Error/404_qyc4js" className="w-100" /></div>
           </div>
         </div>
       </div>

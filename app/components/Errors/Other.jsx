@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import DocumentMeta from 'react-document-meta';
 var HtmlToReactParser = require('html-to-react').Parser;
 
+import { CloudinaryImage } from 'reuse'
 
 const Other = ({
   location: { state },
@@ -42,7 +43,7 @@ const Other = ({
             state &&
             <React.Fragment>
               <div className="col-sm-3">
-                <div><img src="/images/Error/others.png" className="w-100" /></div>
+                <div><CloudinaryImage img="Error/others_fcyqvt" className="w-100" /></div>
               </div>
               <div className="col-sm-4">
                 <div className="mb-3">
@@ -71,7 +72,7 @@ const Other = ({
                 <div>Have a nice day. ´ ³`)ﾉ ～♡じゃあね〜</div>
               </div>
               <div className="col-sm-3">
-                <div><img src="/images/Error/hi.png" className="w-100" /></div>
+                <div><CloudinaryImage img="Error/hi_tzo8k1" className="w-100" /></div>
               </div>
             </React.Fragment>
           }

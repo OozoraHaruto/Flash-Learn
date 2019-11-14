@@ -1,7 +1,7 @@
 import React from 'react'
 import DocumentMeta from 'react-document-meta';
 
-import { NormLink } from 'reuse'
+import { CloudinaryImage, NormLink } from 'reuse'
 
 const index = () =>{
   return (
@@ -10,7 +10,7 @@ const index = () =>{
         <div className="text-center display-4">FAQs</div>
         <div className="card-columns">
           <div className="card">
-            <img className="card-img-top" src="/images/FAQ/Decks-card.jpg" alt="" />
+            <CloudinaryImage className="card-img-top" img="FAQ/Decks-card_loyfwz" alt="" />
             <div className="card-body">
               <h4 className="card-title">Decks</h4>
               <p className="card-text">Decks refers to a stack of flashcards for this website</p>
@@ -26,7 +26,7 @@ const index = () =>{
           </div>
 
           <div className="card">
-            <img className="card-img-top" src="/images/FAQ/Test-card.jpg" alt="" />
+            <CloudinaryImage className="card-img-top" img="FAQ/Test-card_idhhg4" alt="" />
             <div className="card-body">
               <h4 className="card-title">Tests</h4>
               <p className="card-text">Different tests that is offered to users</p>
@@ -48,7 +48,7 @@ const index = () =>{
           </div>
 
           <div className="card">
-            <img className="card-img-top" src="/images/FAQ/Gamification-card.jpg" alt="" />
+            <CloudinaryImage className="card-img-top" img="FAQ/Gamification-card_mnlnvs" alt="" />
             <div className="card-body">
               <h4 className="card-title">Gamification</h4>
               <p className="card-text">Gamification refers to the use of game elements and mechanics in non-game contexts</p>

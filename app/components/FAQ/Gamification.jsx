@@ -3,6 +3,7 @@ import DocumentMeta from 'react-document-meta';
 var Latex = require('react-latex');
 
 import { accounts } from 'actions'
+import { CloudinaryImage } from 'reuse'
 import { pushToError } from 'componentConstants'
 
 export default class Gamification extends Component {
@@ -42,7 +43,7 @@ export default class Gamification extends Component {
       const id                    = achievement.id
       return (
         <tr key={id}>
-          <td scope="row">{<img src={data.badges[data.badges.length - 1]} alt="achievement badge" />}</td>
+          <td scope="row">{<CloudinaryImage img={data.badges[data.badges.length - 1]} className="w-100" />}</td>
           <td>
             <ul>
               {
