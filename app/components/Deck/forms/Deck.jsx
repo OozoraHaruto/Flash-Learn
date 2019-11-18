@@ -171,7 +171,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
         <FieldArray name="cards" render={arrayHelpers => (
           <div className="container mt-2">
             <DeckList cards={values.cards} useDragHandle={true} arrayHelpers={arrayHelpers} onSortEnd={sortEnd(arrayHelpers)} />
-            <div className="text-center">
+            <div className="text-center mb-2">
               <button type="button" className="btn btn-success" onClick={() => arrayHelpers.push(createEmptyCard())}>Add a Card</button>
             </div>
           </div>
