@@ -18,7 +18,7 @@ const Leaderboard = ({
           <div className="col text-center">
             <div className="jumbotron">
               <h1 className="display-4"><FaFrown /></h1>
-              <p className="lead">One one took the test</p>
+              <p className="lead">No one took the test</p>
             </div>
           </div>
         </div>
