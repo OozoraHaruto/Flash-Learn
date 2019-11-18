@@ -6,6 +6,7 @@ const CloudinaryImage = ({
   img,
   className,
   quality,
+  alt,
   width,
   height,
   gravity,
@@ -24,7 +25,7 @@ const CloudinaryImage = ({
   }
 
   return (
-    <Image cloudName={process.env.CLOUDINARY_NAME} publicId={img} className={className}>
+    <Image cloudName={process.env.CLOUDINARY_NAME} publicId={img} {...{className, alt}}>
       <Transformation {...additionalDetails} quality={quality} />
     </Image>
   )
@@ -34,6 +35,7 @@ CloudinaryImage.propTypes = {
   img                                   : PropTypes.string.isRequired,
   className                             : PropTypes.string.isRequired,
   quality                               : PropTypes.number.isRequired,
+  alt                                   : PropTypes.string.isRequired,
   width                                 : PropTypes.number,
   height                                : PropTypes.number,
   gravity                               : PropTypes.number,
@@ -42,7 +44,8 @@ CloudinaryImage.propTypes = {
 
 CloudinaryImage.defaultProps = {
   className                             : "",
-  quality                               : 70
+  quality                               : 70,
+  alt                                   : ""
 }
 
 export default CloudinaryImage

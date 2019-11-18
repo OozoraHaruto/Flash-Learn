@@ -1,6 +1,8 @@
 import React from 'react';
 var Latex = require('react-latex');
 
+import { CloudinaryImage } from 'reuse'
+
 const AchievementCard = ({
   user,
   achievement,
@@ -13,7 +15,7 @@ const AchievementCard = ({
 
   return (
     <div className="card">
-      <img src={userLevel < 0 ? achievement.data().emptyBadge : achievement.data().badges[userLevel]} className="card-img-top" alt={`Leaderboard level ${userLevel} badge`} />
+      <CloudinaryImage img={userLevel < 0 ? achievement.data().emptyBadge : achievement.data().badges[userLevel]} className="card-img-top" alt={`Leaderboard level ${userLevel} badge`}/>
       <div className="card-body">
         <h5 className="card-title text-center">{name[0]}<Latex>{'$x$'}</Latex>{name[1]}</h5>
         <div className="card-text">
