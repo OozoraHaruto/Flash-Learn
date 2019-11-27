@@ -134,9 +134,9 @@ class Generator extends Component {
     }
     const createOpenEndedQuestion = card =>{
       if (random.bool()){
-        addToQuestionArray(card.data().front, card.data().back.toLowerCase(), [], TEST_OPENENDED, card)
+        addToQuestionArray(card.data().front, card.data().backAnswers, [], TEST_OPENENDED, card)
       }else{
-        addToQuestionArray(card.data().back, card.data().front.toLowerCase(), [], TEST_OPENENDED, card)
+        addToQuestionArray(card.data().back, card.data().frontAnswers, [], TEST_OPENENDED, card)
       }
     }
     const createTrueFalseQuestion = card =>{

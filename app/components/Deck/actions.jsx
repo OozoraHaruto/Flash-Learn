@@ -75,14 +75,18 @@ export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
 
   toAdd.forEach(card =>{
     var tmpCard = {...cleanCardValues(card)}
-    databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).add(tmpCard))
+    if (tmpCard.front != "" && tmpCard.back != "") {
+      databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).add(tmpCard))
+    }
   })
   toDelete.forEach(card =>{
     databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).delete())
   })
   toEdit.forEach(card =>{
-    var tmpCard = {...cleanCardValues(card)}
-    databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).set(tmpCard))
+    var tmpCard = { ...cleanCardValues(card) }
+    if (tmpCard.front != "" && tmpCard.back != "") {
+      databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).collection(dbConst.DECKS_CARDS).doc(card.cardId).set(tmpCard))
+    }
   })
 
   databaseActions.push(database.collection(dbConst.COL_DECKS).doc(deckId).set(details, { merge: true}))
@@ -358,7 +362,9 @@ export const deleteReduxTest = () => {
 const cleanCardValues = card =>{
   return {
     front                               : card.front.trim(),
+    frontAnswers                        : getPlainTextAnswers(card.front.trim()),
     back                                : card.back.trim(),
+    backAnswers                         : getPlainTextAnswers(card.back.trim()),
     backSub                             : card.backSub.trim(),
     index                               : card.index ? card.index : 0,
   }
@@ -491,7 +497,7 @@ export const formatAsHTML = text => {
   let stringHTML                        = ""
   let lastStringIndex                   = 0
   let currentList                       = []
-  let innerHTML                         = {}
+  let nestedHTML                        = {}
   let textData                          = validateWYSIWYG(text)
 
   const sanitize = html => {
@@ -504,19 +510,17 @@ export const formatAsHTML = text => {
     return newHTML
   }
 
-  if(textData === true){
-    return sanitize(text)
-  }else if (textData.tags.length == 0){
+  if (textData === true || textData.tags.length == 0) {
     return sanitize(text)
   }
 
-  const checkIfInnerHTMLOrString = (html, fullString) => {
-    let newHTML                         = innerHTML.html ? html.replace(innerHTML.fullString, innerHTML.html) : html
+  const checkIfNested = (html, fullString) => {
+    let newHTML                         = nestedHTML.html ? html.replace(nestedHTML.fullString, nestedHTML.html) : html
     if (currentList.length == 0) {
       stringHTML                        = stringHTML + newHTML
-      innerHTML                         = {}
+      nestedHTML                        = {}
     } else {
-      innerHTML = {
+      nestedHTML = {
         html                            : newHTML,
         fullString,
       }
@@ -543,12 +547,11 @@ export const formatAsHTML = text => {
         if (listLastItem.tag.extraData) {
           switch (tag.tag) {
             case "rby":
-              checkIfInnerHTMLOrString("<ruby>" + dataInBetweenTags + "<rt>" + listLastItem.tag.extraData + "</rt></ruby>", text.substring(listLastItem.frontIndex, textData.back[index] + 1))
+              checkIfNested("<ruby>" + dataInBetweenTags + "<rt>" + listLastItem.tag.extraData + "</rt></ruby>", text.substring(listLastItem.frontIndex, textData.back[index] + 1))
               break
           }
         } else {
-          checkIfInnerHTMLOrString("<" + tag.tag + ">" + dataInBetweenTags + "</" + tag.tag + ">", text.substring(listLastItem.frontIndex, textData.back[index] + 1))
-
+          checkIfNested("<" + tag.tag + ">" + dataInBetweenTags + "</" + tag.tag + ">", text.substring(listLastItem.frontIndex, textData.back[index] + 1))
         }
       }
       if (currentList.length == 0) {
@@ -559,6 +562,80 @@ export const formatAsHTML = text => {
   stringHTML                            = stringHTML + text.substring(lastStringIndex)
   stringHTML                            = sanitize(stringHTML)
   return stringHTML
+}
+
+export const getPlainTextAnswers = text => {
+  let stringPlainText                   = ""
+  let lastStringIndex                   = 0
+  let currentList                       = []
+  let nestedText                         = {}
+  let textData                          = validateWYSIWYG(text)
+  let listOfRuby                        = {}
+
+  const sanitize = text => {
+    let newText = sanitizeHtml(text, {
+      allowedTags                       : WYSIWYG_ALLOWED_TAGS_STYLE.concat(["ruby", "rt", "br"]),
+      allowedAttributes                 : {}
+    })
+    newText                             = newText.replace("\\n", "<br />")
+
+    return newText
+  }
+
+  if (textData === true || textData.tags.length == 0) {
+    return sanitize(text)
+  }
+
+  const checkIfNested = (text, fullString) => {
+    let newText                         = nestedText.text ? text.replace(nestedText.fullString, nestedText.text) : text
+    if (currentList.length == 0) {
+      stringPlainText                   = stringPlainText + newText
+      nestedText                        = {}
+    } else {
+      nestedText                        = {
+        text                            : newText,
+        fullString,
+      }
+    }
+  }
+  textData.tags.forEach((tag, index) => {
+    if (tag.front) {
+      if (currentList.length == 0) {
+        stringPlainText                 = stringPlainText + text.substring(lastStringIndex, textData.front[index])
+        lastStringIndex                 = textData.front[index]
+      }
+      currentList.push({
+        tag,
+        frontIndex                      : textData.front[index],
+        backIndex                       : textData.back[index]
+      })
+    } else {
+      let listLastItem                  = currentList[currentList.length - 1]
+
+      if (listLastItem.tag.tag == tag.tag) {
+        let dataInBetweenTags           = text.substring(listLastItem.backIndex + 1, textData.front[index])
+        currentList.splice(currentList.length - 1, 1)
+
+        if (listLastItem.tag.extraData) {
+          switch (tag.tag) {
+            case "rby":
+              checkIfNested(dataInBetweenTags, text.substring(listLastItem.frontIndex, textData.back[index] + 1))
+              listOfRuby[dataInBetweenTags] = listLastItem.tag.extraData
+              break
+          }
+        } else {
+          checkIfNested(dataInBetweenTags, text.substring(listLastItem.frontIndex, textData.back[index] + 1))
+        }
+      }
+      if (currentList.length == 0) {
+        lastStringIndex                 = textData.back[index] + 1
+      }
+    }
+  })
+  stringPlainText                       = stringPlainText + text.substring(lastStringIndex)
+  stringPlainText                       = sanitize(stringPlainText)
+
+  return stringPlainText.toLowerCase()
 }
 
 export const formatAsHTMLElement = text =>{
