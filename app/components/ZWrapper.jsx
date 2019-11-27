@@ -40,7 +40,7 @@ const ZWrapper = ({
   return(
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <NavLink className="navbar-brand" to="/">Flash Learn</NavLink>
+        <NavLink className="navbar-brand" to="/"><img src="/images/icons/icon.png" width="30" height="30" alt=""/> Flash Learn</NavLink>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>

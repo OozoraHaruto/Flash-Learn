@@ -16,7 +16,7 @@ export default class MainPage extends React.Component{
 
   render(){
     return(
-      <DocumentMeta title="Home">
+      <DocumentMeta title="FlashLearn">
         <div className="wholePageWithNav d-flex flex-column justify-content-center align-items-center">
           <div className="display-4 text-center">Look for a deck you want</div>
           <div className="mt-2">
