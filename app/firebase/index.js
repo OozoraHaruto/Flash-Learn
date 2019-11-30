@@ -3,6 +3,7 @@ import firebase from '@firebase/app';
 import '@firebase/auth';
 import '@firebase/firestore';
 import '@firebase/functions';
+import '@firebase/storage';
 
 try {
   const config = {
@@ -10,7 +11,7 @@ try {
     authDomain            : process.env.FIREBASE_AUTH_DOMAIN,
     databaseURL           : process.env.FIREBASE_DATABASE_URL,
     projectId             : process.env.FIREBASE_PROJECT_ID,
-    storageBucket         : "",
+    storageBucket         : process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId     : process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId                 : process.env.FIREBASE_APP_ID
   };
@@ -22,4 +23,5 @@ try {
 export var database     = firebase.firestore()
 export var auth         = firebase.auth()
 export var functions    = firebase.functions()
+export var storageRef   = firebase.storage().ref();
 export default firebase;

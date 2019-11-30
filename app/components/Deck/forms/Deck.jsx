@@ -1,14 +1,21 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { FaBars } from "react-icons/fa";
 import { Formik, Field, FieldArray } from 'formik';
+import { Random } from "random-js";
 import { 
   SortableContainer, 
   SortableElement,
   SortableHandle, 
 } from 'react-sortable-hoc';
-import { FaBars } from "react-icons/fa";
+var HtmlToReactParser = require('html-to-react').Parser;
+
+import { storageRef } from 'firebase'
+import { firebaseFunctions } from 'actions';
 
 import { decks } from 'actions'
 import { TextField, SubmitButton } from 'reuse'
+import Fallback from 'Fallback'
 
 
 const CardForm = SortableElement(({
@@ -54,6 +61,10 @@ const DragHandle = SortableHandle (() =>(
 ))
 
 const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDeck }) => {
+  const [uploadStep, setUploadStep]       = useState(0)
+  const [fileData, setFileData]           = useState([])
+  const maxStep                           = 5
+
   const validate = values => {
     const errors                          = {};
     const { validateWYSIWYG }             = decks
@@ -140,6 +151,99 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
     arrayHelpers.move(oldIndex, newIndex)
   }
 
+  const getUploadStepMessage = step =>{
+    switch(step){
+      case 1:
+        return `(1/${maxStep}) Uploading the file`
+      case 2:
+        return `(2/${maxStep}) Processing the file`
+      case 3:
+        return `(3/${maxStep}) Getting text`
+      case 4:
+        return `(4/${maxStep}) Formatting the data`
+      case 5:
+        return `(5/${maxStep}) Cleaning Up`
+    }
+  }
+
+  const renderUploadedDataPart = dataPart =>{
+    console.log("render Data", dataPart);
+    var htmlToReactParser                 = new HtmlToReactParser();
+    var reactElement = htmlToReactParser.parse(`<h3>${dataPart.page}</h3><p>${dataPart.text}</p>`);
+
+    return reactElement;
+  }
+
+  const uploadFile = (values, setFieldError) =>{
+    if(!values.file_filename){
+      setFieldError("file", "required")
+      return;
+    } else if (!["application/pdf", "image/tiff"].includes(values.file_type)){
+      setFieldError("file", "accepted file types are pdf and tiff");
+      return;
+    } else if (!values.file_data) {
+      setFieldError("file", "file is too large, the data cannot be loaded");
+      return;
+    }
+    setFieldError("file", "");
+    const { doOCR }                       = firebaseFunctions
+    const random                          = new Random();
+    const fileName                        = random.hex(64);
+    var fileRef                           = storageRef.child(`forOCR/files/${fileName}`)
+    var resultsRef                        = []
+    let pages                             = []
+
+    setUploadStep(1);
+    fileRef.putString(values.file_data, 'data_url').then(snapshot =>{
+      setUploadStep(2);
+      return doOCR(fileRef.bucket, fileRef.fullPath, fileName, values.file_type)
+    }).then(res =>{
+      setUploadStep(3);
+      if (res.success){
+        return storageRef.child(res.uri.replace(`gs://${fileRef.bucket}`, "")).listAll()
+      }else{
+        throw res.err
+      }
+    }).then(res=>{
+      let getURLs = res.items.reduce((result, item) =>{
+        resultsRef.push(storageRef.child(item.fullPath))
+        result.push(storageRef.child(item.fullPath).getDownloadURL())
+        return result
+      }, [])
+      return Promise.all(getURLs)
+    }).then(urls =>{
+      let getData = urls.reduce((result, url) =>{
+        result.push(axios.get(url))
+        return result
+      }, [])
+      return Promise.all(getData)
+    }).then(reses=>{
+      setUploadStep(4);
+      reses.map(res =>{
+        res.data.responses.map(data =>{
+          pages.push({
+            page                          : data.context.pageNumber,
+            text                          : data.fullTextAnnotation.text
+          })
+        })
+      })
+      setUploadStep(5);
+      let deleteDataRefs = resultsRef.reduce((result, ref) =>{
+        result.push(ref.delete())
+        return result
+      }, [])
+      deleteDataRefs.push(fileRef.delete())
+      return Promise.all(deleteDataRefs)
+    }).then(() =>{
+      setUploadStep(6);
+      setFileData(pages)
+    }).catch(err =>{
+      console.log("failed upload file", err.message)
+      setUploadStep(0)
+      setFieldError("file", err.message);
+    })
+  }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -151,6 +255,8 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
       errors,
       isSubmitting,
       dirty,
+      setFieldValue,
+      setFieldError,
     }) => (
       <form onSubmit={handleSubmit}>
         <div className="container-fluid bg-light sticky-top">
@@ -164,6 +270,63 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
                   <SubmitButton title={editingDeck ? "Save Deck" : "Add Deck"} className="w-100" {...{isSubmitting, dirty}} />
                   <small className="text-danger">{errors.cardParent}</small>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#uploadModal">Upload file</button>
+            </div>
+          </div>
+        </div>
+        <div className="modal fade" id="uploadModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered  modal-xl" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">Upload File</h5>
+              </div>
+              <div className="modal-body">
+                {
+                  uploadStep == 0 && 
+                    <Field type="file" placeholder="Upload a file" name="file" component={TextField} onChange={e => {
+                      var file = e.target.files[0];
+                      var reader = new FileReader();
+                      setFieldValue("file_filename", file.name);
+                      reader.onload = function (item) {
+                        setFieldValue("file_data", item.target.result);
+                        setFieldValue("file_type", file.type);
+                      };
+
+                      reader.readAsDataURL(file);
+                    }} />
+                }
+                {
+                  uploadStep > 0 && uploadStep <= maxStep && 
+                    <Fallback wholePage={false} message={getUploadStepMessage(uploadStep)}/>
+                }
+                {
+                  uploadStep > maxStep &&
+                    <div id="uploadedDataResult">
+                      {fileData.map(data => renderUploadedDataPart(data))}
+                    </div>
+                }
+              </div>
+              <div className="modal-footer">
+                {
+                  uploadStep == 0 &&
+                    <React.Fragment>
+                      <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" className="btn btn-primary" onClick={() => uploadFile(values, setFieldError)}>Upload file</button>
+                    </React.Fragment>
+                }
+                {
+                  uploadStep > maxStep &&
+                    <React.Fragment>
+                      <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </React.Fragment>
+                }
               </div>
             </div>
           </div>

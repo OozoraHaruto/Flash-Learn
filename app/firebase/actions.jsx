@@ -20,3 +20,13 @@ export const deleteUsersLikedToDeck = (deckId, usersPaths) =>{
     return {success: false, ...err}
   })
 }
+
+export const doOCR = (bucketName, filePath, fileName, mimeType) => {
+  var doOCR = functions.httpsCallable('doOCR');
+  return doOCR({ bucketName, filePath, fileName, mimeType }).then(result => {
+    return result.data
+  }).catch(err => {
+    console.log('Failed get OCR : ', `${filePath}/${filePath}`, err);
+    return { success: false, ...err }
+  })
+}
