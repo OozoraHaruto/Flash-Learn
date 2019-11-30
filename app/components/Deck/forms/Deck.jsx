@@ -9,6 +9,7 @@ import {
   SortableHandle, 
 } from 'react-sortable-hoc';
 var HtmlToReactParser = require('html-to-react').Parser;
+var sanitizeHtml = require('sanitize-html');
 
 import { storageRef } from 'firebase'
 import { firebaseFunctions } from 'actions';
@@ -223,7 +224,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
         res.data.responses.map(data =>{
           pages.push({
             page                          : data.context.pageNumber,
-            text                          : data.fullTextAnnotation.text
+            text                          : sanitizeHtml(data.fullTextAnnotation.text)
           })
         })
       })
