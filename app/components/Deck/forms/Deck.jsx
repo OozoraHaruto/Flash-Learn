@@ -63,6 +63,9 @@ const DragHandle = SortableHandle (() =>(
 
 const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDeck }) => {
   const [uploadStep, setUploadStep]       = useState(0)
+  const [OCRFrontArray, setOCRFrontArray] = useState([])
+  const [OCRBackArray, setOCRBackArray]   = useState([])
+  const [OCRBackSelect, setOCRBackSelect] = useState(false)
   const [fileData, setFileData]           = useState([])
   const maxStep                           = 5
 
@@ -168,14 +171,13 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
   }
 
   const renderUploadedDataPart = dataPart =>{
-    console.log("render Data", dataPart);
     var htmlToReactParser                 = new HtmlToReactParser();
     var reactElement = htmlToReactParser.parse(`<h3>${dataPart.page}</h3><p>${dataPart.text}</p>`);
 
     return reactElement;
   }
 
-  const uploadFile = (values, setFieldError) =>{
+  const uploadFile = (values, setFieldError, setFieldValue) =>{
     if(!values.file_filename){
       setFieldError("file", "required")
       return;
@@ -235,14 +237,81 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
       }, [])
       deleteDataRefs.push(fileRef.delete())
       return Promise.all(deleteDataRefs)
-    }).then(() =>{
+    }).then(() => {
+      setFieldValue("file_filename", "")
+      setFieldValue("file_data", "")
+      setFieldValue("file_type", "")
       setUploadStep(6);
       setFileData(pages)
     }).catch(err =>{
       console.log("failed upload file", err.message)
+      setFieldValue("file_filename", "")
+      setFieldValue("file_data", "")
+      setFieldValue("file_type", "")
       setUploadStep(0)
       setFieldError("file", err.message);
     })
+  }
+
+  const addToArray = () => { //http://jsfiddle.net/YstZn/1/
+    var text                              = '';
+    const getTextSelected = obj =>{
+      let paraText                        = obj.anchorNode.data || obj.baseNode.data
+      let firstSelectIndex                = obj.anchorOffset || obj.baseOffset
+      let lastSelectIndex                 = obj.extentOffset || obj.focusOffset
+      console.log("selected Index", firstSelectIndex, lastSelectIndex, paraText)
+
+      text                                = paraText.substring(firstSelectIndex, lastSelectIndex)
+    }
+    if (window.getSelection) {
+      getTextSelected(window.getSelection())
+    } else if (document.getSelection) {
+      getTextSelected(document.getSelection())
+    } else if (document.selection) {
+      text                                = document.selection.createRange().text;
+    }
+
+    console.log("Selected Word", text)
+
+    if (OCRBackSelect){
+      let tmpOCRBackArray                 = OCRBackArray
+      tmpOCRBackArray.push(text)
+      setOCRBackArray(tmpOCRBackArray)
+    }else{
+      let tmpOCRFrontArray                = OCRFrontArray
+      tmpOCRFrontArray.push(text)
+      setOCRFrontArray(tmpOCRFrontArray)
+    }
+
+    setOCRBackSelect(!OCRBackSelect)
+  }
+
+  const addToForm = (values, setFieldValue) =>{
+    if (OCRFrontArray.length == 0 && OCRBackArray.length == 0){
+      return
+    }
+
+    let tmpCards                          = values.cards
+    let frontSameAsBack                   = OCRFrontArray.length == OCRBackArray.length ? true : OCRBackArray.length - 1
+    OCRFrontArray.forEach((front, i) =>{
+      tmpCards.push({
+        front,
+        back                              : frontSameAsBack === true? OCRBackArray[i] : (frontSameAsBack == i ? "" : OCRBackArray[i]),
+        backSub                           : "",
+        cardId                            : "",
+        index                             : -1,
+      })
+    })
+
+    setOCRFrontArray([])
+    setOCRBackArray([])
+    setOCRBackSelect(false)
+    setFieldValue("cards", tmpCards)
+  }
+
+  const resetForm = (values, setFieldValue) =>{
+    addToForm(values, setFieldValue)
+    setUploadStep(0)
   }
 
   return (
@@ -282,16 +351,19 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
             </div>
           </div>
         </div>
-        <div className="modal fade" id="uploadModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered  modal-xl" role="document">
+        <div className="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">Upload File</h5>
+                <h5 className="modal-title" id="exampleModalLabel">Transcribe document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
               <div className="modal-body">
                 {
                   uploadStep == 0 && 
-                    <Field type="file" placeholder="Upload a file" name="file" component={TextField} onChange={e => {
+                    <Field type="file" placeholder="" name="file" component={TextField} onChange={e => {
                       var file = e.target.files[0];
                       var reader = new FileReader();
                       setFieldValue("file_filename", file.name);
@@ -315,19 +387,36 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
                 }
               </div>
               <div className="modal-footer">
-                {
-                  uploadStep == 0 &&
-                    <React.Fragment>
-                      <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" className="btn btn-primary" onClick={() => uploadFile(values, setFieldError)}>Upload file</button>
-                    </React.Fragment>
-                }
-                {
-                  uploadStep > maxStep &&
-                    <React.Fragment>
-                      <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </React.Fragment>
-                }
+                <div className="container">
+                  <div className="row">
+                    {
+                      uploadStep == 0 &&
+                        <React.Fragment>
+                          <div className="col text-right">
+                            <button type="button" className="btn btn-primary btn-sm" onClick={() => uploadFile(values, setFieldError, setFieldValue)}>Upload file</button>
+                          </div>
+                        </React.Fragment>
+                    }
+                    {
+                      uploadStep > 0 && uploadStep <= maxStep &&
+                        <div className="text-muted">This may take some time you can continue to edit your cards while we process the document</div>
+                    }
+                    {
+                      uploadStep > maxStep &&
+                        <React.Fragment>
+                          <div className="col col-md-4">
+                            <button type="button" className="btn btn-primary btn-block btn-sm" onClick={() => addToArray()}>{OCRBackSelect ? "Back" : "Front"} of card</button>
+                          </div>
+                          <div className="col col-md-4">
+                            <button type="button" className="btn btn-primary btn-block btn-sm" onClick={() => addToForm(values, setFieldValue)}>Add to form</button>
+                          </div>
+                          <div className="col col-md-4">
+                            <button type="button" className="btn btn-danger btn-block btn-sm" onClick={() => resetForm(values, setFieldValue)}>Upload Another</button>
+                          </div>
+                        </React.Fragment>
+                    }
+                  </div>
+                </div>
               </div>
             </div>
           </div>
