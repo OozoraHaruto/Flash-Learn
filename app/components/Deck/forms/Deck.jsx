@@ -172,7 +172,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
 
   const renderUploadedDataPart = dataPart =>{
     var htmlToReactParser                 = new HtmlToReactParser();
-    var reactElement = htmlToReactParser.parse(`<h3>${dataPart.page}</h3><p>${dataPart.text}</p>`);
+    var reactElement = htmlToReactParser.parse(`${dataPart.page ? `<h3>Page ${dataPart.page}</h3>`: ""}<p>${dataPart.text}</p>`);
 
     return reactElement;
   }
@@ -181,55 +181,74 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
     if(!values.file_filename){
       setFieldError("file", "required")
       return;
-    } else if (!["application/pdf", "image/tiff"].includes(values.file_type)){
-      setFieldError("file", "accepted file types are pdf and tiff");
+    } else if (!["application/pdf", "image/tiff"].includes(values.file_type) && values.file_type.indexOf("image") == -1){
+      setFieldError("file", "accepted files are PDFs and images");
       return;
     } else if (!values.file_data) {
       setFieldError("file", "file is too large, the data cannot be loaded");
       return;
     }
     setFieldError("file", "");
-    const { doOCR }                       = firebaseFunctions
+    const { doOCRDocument, doOCRImage }   = firebaseFunctions
     const random                          = new Random();
     const fileName                        = random.hex(64);
     var fileRef                           = storageRef.child(`forOCR/files/${fileName}`)
     var resultsRef                        = []
     let pages                             = []
 
+    const processDocument = () =>{
+      return doOCRDocument(fileRef.bucket, fileRef.fullPath, fileName, values.file_type).then(res => {
+        setUploadStep(3);
+        if (res.success) {
+          return storageRef.child(res.uri.replace(`gs://${fileRef.bucket}`, "")).listAll()
+        } else {
+          throw res.err
+        }
+      }).then(res => {
+        let getURLs = res.items.reduce((result, item) => {
+          resultsRef.push(storageRef.child(item.fullPath))
+          result.push(storageRef.child(item.fullPath).getDownloadURL())
+          return result
+        }, [])
+        return Promise.all(getURLs)
+      }).then(urls => {
+        let getData = urls.reduce((result, url) => {
+          result.push(axios.get(url))
+          return result
+        }, [])
+        return Promise.all(getData)
+      }).then(reses => {
+        setUploadStep(4);
+        reses.map(res => {
+          res.data.responses.map(data => {
+            pages.push({
+              page                        : data.context.pageNumber,
+              text                        : sanitizeHtml(data.fullTextAnnotation ? data.fullTextAnnotation.text : "No Text found")
+            })
+          })
+        })
+        return true
+      }).catch(err => err)
+    }
+
+    const processImage = () =>{
+      return doOCRImage(fileRef.bucket, fileRef.fullPath, fileName).then(res =>{
+        setUploadStep(4);
+        pages.push({
+          text                            : sanitizeHtml(res.text === false ? "No Text found" : res.text )
+        })
+        return true
+      }).catch(err => err)
+    }
+
     setUploadStep(1);
     fileRef.putString(values.file_data, 'data_url').then(snapshot =>{
       setUploadStep(2);
-      return doOCR(fileRef.bucket, fileRef.fullPath, fileName, values.file_type)
-    }).then(res =>{
-      setUploadStep(3);
-      if (res.success){
-        return storageRef.child(res.uri.replace(`gs://${fileRef.bucket}`, "")).listAll()
-      }else{
-        throw res.err
-      }
+      return ["application/pdf", "image/tiff"].includes(values.file_type) ? processDocument() : processImage()
     }).then(res=>{
-      let getURLs = res.items.reduce((result, item) =>{
-        resultsRef.push(storageRef.child(item.fullPath))
-        result.push(storageRef.child(item.fullPath).getDownloadURL())
-        return result
-      }, [])
-      return Promise.all(getURLs)
-    }).then(urls =>{
-      let getData = urls.reduce((result, url) =>{
-        result.push(axios.get(url))
-        return result
-      }, [])
-      return Promise.all(getData)
-    }).then(reses=>{
-      setUploadStep(4);
-      reses.map(res =>{
-        res.data.responses.map(data =>{
-          pages.push({
-            page                          : data.context.pageNumber,
-            text                          : sanitizeHtml(data.fullTextAnnotation.text)
-          })
-        })
-      })
+      if (res !== true) {
+        throw res
+      }
       setUploadStep(5);
       let deleteDataRefs = resultsRef.reduce((result, ref) =>{
         result.push(ref.delete())
@@ -244,7 +263,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
       setUploadStep(6);
       setFileData(pages)
     }).catch(err =>{
-      console.log("failed upload file", err.message)
+      console.log("failed upload file", err.message ? err.message : err)
       setFieldValue("file_filename", "")
       setFieldValue("file_data", "")
       setFieldValue("file_type", "")
@@ -347,7 +366,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
         <div className="container">
           <div className="row">
             <div className="col">
-              <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#uploadModal">Upload file</button>
+              <button type="button" className="btn btn-primary btn-block" data-toggle="modal" data-target="#uploadModal">Transcribe file</button>
             </div>
           </div>
         </div>

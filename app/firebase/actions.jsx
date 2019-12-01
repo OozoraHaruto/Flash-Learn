@@ -21,12 +21,22 @@ export const deleteUsersLikedToDeck = (deckId, usersPaths) =>{
   })
 }
 
-export const doOCR = (bucketName, filePath, fileName, mimeType) => {
-  var doOCR = functions.httpsCallable('doOCR');
+export const doOCRDocument = (bucketName, filePath, fileName, mimeType) => {
+  var doOCR = functions.httpsCallable('doOCRDocument');
   return doOCR({ bucketName, filePath, fileName, mimeType }).then(result => {
     return result.data
   }).catch(err => {
-    console.log('Failed get OCR : ', `${filePath}/${filePath}`, err);
+    console.log('Failed get OCR : ', `${filePath}/${fileName}`, err);
+    return { success: false, ...err }
+  })
+}
+
+export const doOCRImage = (bucketName, filePath, fileName) => {
+  var doOCR = functions.httpsCallable('doOCRImage');
+  return doOCR({ bucketName, filePath, fileName }).then(result => {
+    return result.data
+  }).catch(err => {
+    console.log('Failed get OCR : ', `${filePath}/${fileName}`, err);
     return { success: false, ...err }
   })
 }
