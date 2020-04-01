@@ -36,7 +36,7 @@ class StartTest extends Component {
     }
 
     var query                           = queryString.parse(this.props.location.search)
-    
+
     if (query.shuffle){
       const {shuffleQuestionsReduxTest} = decks
       this.props.dispatch(shuffleQuestionsReduxTest())
@@ -114,6 +114,14 @@ class StartTest extends Component {
       longestStreak,
       answerDetails,
     }                                   = this.state
+    console.log("Error in finalizing", {
+      noOfQn,
+      gotCorrect,
+      gotWrong,
+      longestStreak,
+      totalTime,
+      answers: answerDetails,
+    });
     this.props.history.replace({
       pathname                          : `/deck/${this.props.test.id}/test/results`,
       state: {
@@ -130,10 +138,10 @@ class StartTest extends Component {
   changeProgressBar = () =>{
     var newState                        = ""
     switch(this.state.progressType){
-      case TEST_PROGRESS_TYPE_COMBO: 
+      case TEST_PROGRESS_TYPE_COMBO:
         newState                        = TEST_PROGRESS_TYPE_INFO
         break
-      case TEST_PROGRESS_TYPE_INFO: 
+      case TEST_PROGRESS_TYPE_INFO:
         newState                        = TEST_PROGRESS_TYPE_COMBO
         break
     }

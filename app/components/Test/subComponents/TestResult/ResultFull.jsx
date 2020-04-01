@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { renderToString } from 'react-dom/server'
 import { connect } from 'react-redux'
 
+import { decks } from 'actions'
+const { formatAsHTMLElement } = decks
 import { TEST_RESULT_SORT_QUESTION_NUMBER_ASC, TEST_RESULT_FILTER_ALL } from 'componentConstants'
 
 import Card from 'app/components/Deck/subComponents/View/DetailsWrapper/WordList/Card'
@@ -43,8 +45,8 @@ class ResultFull extends Component {
   render() {
     var { sortBy, filter, answers }     = this.state
     var {
-      questions, 
-      sortOptions, 
+      questions,
+      sortOptions,
       filterOptions,
       deck,
     }                                   = this.props
@@ -94,8 +96,8 @@ class ResultFull extends Component {
                     answers.map(answer => (
                       <tr key={`test_question_${answer.questionIndex}`}>
                         <th scope="row">{answer.questionIndex + 1}</th>
-                        <td>{questions[answer.questionIndex].question}</td>
-                        <td>{answer.userAnswer}</td>
+                        <td>{formatAsHTMLElement(questions[answer.questionIndex].question)}</td>
+                        <td>{formatAsHTMLElement(answer.userAnswer)}</td>
                         <td className="text-center">{answer.userCorrect ? "✔︎" : `✘ (${questions[answer.questionIndex].answer})`}</td>
                         <td className="text-center">{answer.timeTakenFormatted}</td>
                         <td className="text-center">
@@ -106,7 +108,7 @@ class ResultFull extends Component {
                 }
               </tbody>
             </table>
-            
+
           </div>
         </div>
       </div>

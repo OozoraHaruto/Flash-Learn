@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
+const crypto = require('crypto');
 
 import { NavBarLink, NormLink, NavDropdown } from 'reuse';
 import { auth } from 'firebase'
@@ -11,8 +12,8 @@ const ZWrapper = ({
   const renderRightSideBarLoggedIn = () => {
     return (
       <React.Fragment>
-        <NavDropdown title={<img src={`${auth.currentUser.photoURL}?s=36`} alt="Profile Picture" className="rounded-circle" />} id="navProfile" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
-          <div className="dropdown-item-text text-muted">{`Hi ${auth.currentUser.displayName}`}</div>
+        <NavDropdown title={<img src={`${auth.currentUser.photoURL || `https://secure.gravatar.com/avatar/${crypto.createHash('md5').update(auth.currentUser.email).digest("hex")}`}?s=36`} alt="Profile Picture" className="rounded-circle" />} id="navProfile" linkClassName="pt-0 pl-0 pb-0" menuClassName="dropdown-menu-right" topBar>
+          <div className="dropdown-item-text text-muted">{`Hi ${auth.currentUser.displayName || "君の名は？"}`}</div>
           <NormLink to="/profile" title="Profile" className="dropdown-item" />
           <div className="dropdown-divider" />
           <NormLink to="/logout" title="Logout" className="dropdown-item" />

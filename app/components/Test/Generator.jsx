@@ -170,7 +170,7 @@ class Generator extends Component {
     if (!(typesOfQn.length == 1 && typesOfQn[0] == TEST_OPENENDED)){
       cardDataList                      = deck.map(card=> {return {front: card.data().front, back: card.data().back}})
     }
-    
+
     do{
       if (deck.length == 0) {
         deck                            = this.props.deck.cards.slice(0)
@@ -184,6 +184,7 @@ class Generator extends Component {
       ...this.state,
       loadingMessage                    : false
     })
+    console.log("questions", questions);
   }
 
   startTest = () =>{

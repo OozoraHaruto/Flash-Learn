@@ -38,7 +38,7 @@ const Achievements = ({
             {
               lists != undefined &&
                 lists[1].map((achievement, i) =>(
-                  <Card key={`userAchievement_${achievement.id}`} user={lists[0][i]} {...{ achievement, getLevelIndex, levelColor}} />
+                  <Card key={`userAchievement_${achievement.id}`} user={lists[0][i]} {...{ achievement, getLevelIndex, levelColor}}/>
                 ))
             }
           </div>

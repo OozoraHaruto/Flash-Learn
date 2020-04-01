@@ -14,7 +14,7 @@ export const startAddUser = (email, password) =>{
   var profile                           = {}
   return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
     newUser                             = user.user
-    
+
     if(user.additionalUserInfo.isNewUser){
       return Promise.all([
         getUserGravatar(hash),
@@ -217,7 +217,7 @@ export const deleteReduxProfile = () => {
 // Decks Related
 export const startAddOrEditCreatedDeckRef = (userId, deckId, deckDetails) => {
   return database.collection(dbConst.COL_USER).doc(userId).collection(dbConst.PROFILE_CREATED_DECKS).doc(deckId).set({
-    modified: firebase.firestore.FieldValue.serverTimestamp(), 
+    modified: firebase.firestore.FieldValue.serverTimestamp(),
     ...deckDetails
   }, { merge: true }).then(ref => {
     return { success: true }
