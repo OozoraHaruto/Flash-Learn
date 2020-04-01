@@ -51,7 +51,7 @@ const ZWrapper = ({
             <NavDropdown title="Decks" id="navDeck" topBar>
               <NormLink to="/deck/add" title="Add Decks" className="dropdown-item" />
               <div className="dropdown-divider" />
-              <NormLink to="/deck" title="View All" className="dropdown-item" />
+              <NormLink to="/deck" title="Browse" className="dropdown-item" />
             </NavDropdown>
             {(!jQuery.isEmptyObject(auth.currentUser)) && renderLeftSideBarLoggedIn()}
             <NavDropdown title="FAQ" id="navFAQ" topBar>

@@ -83,8 +83,6 @@ class Generator extends Component {
         return result
       }, [])
 
-      console.log(testType)
-
       if (testType.length == 0){
         return "List of question types are incorrect"
       }else{
@@ -184,7 +182,6 @@ class Generator extends Component {
       ...this.state,
       loadingMessage                    : false
     })
-    console.log("questions", questions);
   }
 
   startTest = () =>{

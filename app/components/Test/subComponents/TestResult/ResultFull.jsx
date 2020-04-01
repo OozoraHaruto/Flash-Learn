@@ -98,7 +98,7 @@ class ResultFull extends Component {
                         <th scope="row">{answer.questionIndex + 1}</th>
                         <td>{formatAsHTMLElement(questions[answer.questionIndex].question)}</td>
                         <td>{formatAsHTMLElement(answer.userAnswer)}</td>
-                        <td className="text-center">{answer.userCorrect ? "✔︎" : `✘ (${questions[answer.questionIndex].answer})`}</td>
+                        <td className="text-center">{answer.userCorrect ? "✔︎" : `✘ (${formatAsHTMLElement(questions[answer.questionIndex].answer)})`}</td>
                         <td className="text-center">{answer.timeTakenFormatted}</td>
                         <td className="text-center">
                           <button type="button" className="btn btn-link p-0" data-toggle="popover" data-trigger="focus" data-html="true" data-content={renderToString(<Card {...deck.cards[questions[answer.questionIndex].card].data()}/>)}>View</button>

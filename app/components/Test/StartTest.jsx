@@ -69,7 +69,7 @@ class StartTest extends Component {
       answerDetails,
     }                                   = this.state
     const currentQuestionObject         = this.props.test.questions[currentQuestion]
-    const userCorrect                   = currentQuestionObject.answer == userAnswer
+    const userCorrect                   = currentQuestionObject.answer.toLowerCase() == userAnswer || currentQuestionObject.answer == userAnswer
     const timeTaken                     = moment().diff(moment(questionTimeStart), 'milliseconds')
     var newState = {
       answerDetails,
@@ -83,7 +83,7 @@ class StartTest extends Component {
       timeTaken,
       timeTakenFormatted                : formatTime(timeTaken)
     })
-    if (currentQuestionObject.answer == userAnswer) {
+    if (userCorrect) {
       newState.gotCorrect               = gotCorrect + 1
       newState.currentStreak            = currentStreak + 1
       if (newState.currentStreak > longestStreak){
