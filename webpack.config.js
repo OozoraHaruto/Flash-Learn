@@ -4,6 +4,7 @@ var envFile = require('node-env-file');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
+
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 try {
@@ -12,12 +13,11 @@ try {
 var fs = require('fs');
 
 module.exports = {
-  entry: {
-    jquery: "script-loader!jquery/dist/jquery.min.js",
-    bootstrap: "script-loader!bootstrap/dist/js/bootstrap.bundle.min.js",
-    polyfill: '@babel/polyfill',
-    main: "./app/app.jsx",
-  },
+  entry:[
+    "script-loader!jquery/dist/jquery.min.js",
+    "script-loader!bootstrap/dist/js/bootstrap.bundle.min.js",
+    "./app/app.jsx"
+  ],
   externals: {
     jquery: 'jQuery'
   },
@@ -124,7 +124,7 @@ module.exports = {
         loader: 'babel-loader',
         query: {
           presets: [
-            '@babel/preset-react', 
+            '@babel/preset-react',
             '@babel/preset-env',
           ],
           plugins: [
@@ -134,7 +134,8 @@ module.exports = {
           ]
         },
         test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
+        // exclude: /node_modules[\\,/](?!(query-string|random-js|split-on-first|strict-uri-encode)[\\,/]).*/,
+        exclude: /node_modules/
       }, {
         test: /\.(s)?css$/,
         use: [
@@ -156,5 +157,5 @@ module.exports = {
       }
     ]
   },
-  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval-source-map'
+  devtool: 'source-map'
 };

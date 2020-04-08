@@ -12,6 +12,12 @@ Student Number : 170280921
 2. View decks of flashcards
 3. Auto generated tests of said decks (requires registration)
 
+## Supported Browsers
+
+- Google Chrome (Highly recommended)
+- Firefox
+- Microsoft edge (Some CSS do not work)
+
 ## Usage
 
 ### Prerequisite
@@ -20,9 +26,9 @@ Student Number : 170280921
 
 ### Running
 
-1. Using a terminal (command line for windows) go to the root directory of this file (../FlashLearn)
+1. Using a terminal (command line for windows) go to the root directory of this file (../FlashLearn or ../Flash-Learn depending on where you get the file from)
 2. Run  `npm install`
-3. Doing so should also trigger a `webpack` command to run automatically, if not done so do run it before proceeding to the next step
+3. Doing so should also trigger a `webpack` command to run automatically, if not done so do run `npm run build` before proceeding to the next step
 4. Once all the packages are installed run `npm start`, it will show a message "Node app is running on port 5000"
 5. Open a web browser and go to [localhost:5000](http://localhost:5000/)
 

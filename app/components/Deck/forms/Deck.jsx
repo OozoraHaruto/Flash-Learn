@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { FaBars } from "react-icons/fa";
 import { Formik, Field, FieldArray } from 'formik';
 import { Random } from "random-js";
-import { 
-  SortableContainer, 
+import {
+  SortableContainer,
   SortableElement,
-  SortableHandle, 
+  SortableHandle,
 } from 'react-sortable-hoc';
 var HtmlToReactParser = require('html-to-react').Parser;
 var sanitizeHtml = require('sanitize-html');
@@ -22,7 +22,7 @@ import Fallback from 'Fallback'
 const CardForm = SortableElement(({
   arrayHelpers: {remove, insert},
   createEmptyCard,
-  id: index, 
+  id: index,
 }) =>(
   <div className="form-group mb-3" >
     <div className="card w-100">
@@ -124,11 +124,11 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
             }
           }
         }
-        if (!jQuery.isEmptyObject(cardError)) 
+        if (!jQuery.isEmptyObject(cardError))
           haveError                       = true
         cardErrors.push(cardError)
       }
-      if(haveError) 
+      if(haveError)
         errors['cards']                   = cardErrors
     }
     return errors
@@ -149,7 +149,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
   ))
 
   const sortEnd = (arrayHelpers) =>({
-    oldIndex, 
+    oldIndex,
     newIndex,
   }) =>{
     arrayHelpers.move(oldIndex, newIndex)
@@ -370,18 +370,18 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
             </div>
           </div>
         </div>
-        <div className="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true">
+        <div className="modal fade" id="uploadModal" tabIndex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true">
           <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">Transcribe document</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div className="modal-body">
                 {
-                  uploadStep == 0 && 
+                  uploadStep == 0 &&
                     <Field type="file" placeholder="" name="file" component={TextField} onChange={e => {
                       var file = e.target.files[0];
                       var reader = new FileReader();
@@ -395,7 +395,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
                     }} />
                 }
                 {
-                  uploadStep > 0 && uploadStep <= maxStep && 
+                  uploadStep > 0 && uploadStep <= maxStep &&
                     <Fallback wholePage={false} message={getUploadStepMessage(uploadStep)}/>
                 }
                 {
