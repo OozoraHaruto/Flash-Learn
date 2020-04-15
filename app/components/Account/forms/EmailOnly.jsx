@@ -5,14 +5,14 @@ import { TextField, SubmitButton } from 'reuse'
 
 const ChangeEmail = ({ initialValues, handleFormSubmission, title }) => {
   const validate = values => {
-    const errors = {};
+    const errors        = {};
 
     if (values.email) {
       if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
         errors['email'] = 'Invalid email address';
       }
     } else {
-      errors['email'] = 'Required';
+      errors['email']   = 'Required';
     }
 
     return errors

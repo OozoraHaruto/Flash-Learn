@@ -1,5 +1,4 @@
 import React from 'react'
-var HtmlToReactParser = require('html-to-react').Parser;
 
 import { decks } from 'actions'
 const { formatAsHTMLElement } = decks
@@ -19,7 +18,7 @@ export default class Card extends React.Component {
     const { index }                                   = this.props;
     const { index: nextIndex }                        = nextProps;
     if (index == nextIndex) {
-      this.animateCard('flipInX') 
+      this.animateCard('flipInX')
     }else{
       this.setState({
         ...this.state,
@@ -57,7 +56,7 @@ export default class Card extends React.Component {
       const { front }                                   = this.state
       const { card }                                    = this.props
 
-      
+
       if (front){
         return (
           <div className="h3 m-0">{formatAsHTMLElement(card.front)}</div>
@@ -70,7 +69,7 @@ export default class Card extends React.Component {
         </React.Fragment>
       )
     }
-    
+
     return (
       <div id="flashcard_card" className="card flex-grow-1 w-100" onClick={()=>this.changeIndex()}>
         <div className="card-body text-center d-flex flex-column align-items-center justify-content-center">

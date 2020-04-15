@@ -85,7 +85,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
     })
 
     if (tmpCards.length < 6){
-      errors['cardParent']                     = 'A deck needs at least 6 cards';
+      errors['cardParent']                = 'A deck needs at least 6 cards';
     }
     if (tmpCards.length != 0){
       var cardErrors                      = []
@@ -113,14 +113,14 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
             let validation = validateWYSIWYG(card.back)
             if (validation instanceof Error) {
               console.log(`${card.back} validation`, validation.message)
-              cardError['back'] = validation.message;
+              cardError['back']           = validation.message;
             }
           }
           if(card.backSub){
             let validation = validateWYSIWYG(card.backSub)
             if (validation instanceof Error) {
               console.log(`${card.backSub} validation`, validation.message)
-              cardError['backSub'] = validation.message;
+              cardError['backSub']        = validation.message;
             }
           }
         }
@@ -172,7 +172,7 @@ const Deck = ({ initialValues, handleFormSubmission, createEmptyCard, editingDec
 
   const renderUploadedDataPart = dataPart =>{
     var htmlToReactParser                 = new HtmlToReactParser();
-    var reactElement = htmlToReactParser.parse(`${dataPart.page ? `<h3>Page ${dataPart.page}</h3>`: ""}<p>${dataPart.text}</p>`);
+    var reactElement                      = htmlToReactParser.parse(`${dataPart.page ? `<h3>Page ${dataPart.page}</h3>`: ""}<p>${dataPart.text}</p>`);
 
     return reactElement;
   }

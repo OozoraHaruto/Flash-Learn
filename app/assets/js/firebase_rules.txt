@@ -1,0 +1,163 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function checkUserExists(){
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    function checkUserIsOwnerForCurrentDoc(){
+      return resource.data.owner == path('/databases/(default)/documents/users/'+request.auth.uid);
+    }
+    function checkUserIsOwner(documentPath){
+    	return get(path('/databases/(default)/documents/'+documentPath)).data.owner
+      					 == path('/databases/(default)/documents/users/'+request.auth.uid)
+    }
+    function checkCurrentUserIsDocumentKey(userId){
+    	return request.auth.uid == userId
+    }
+    function checkDeckPublic(deckId){
+    	return get(/databases/$(database)/documents/decks/$(deckId)).data.public == true
+    }
+
+  	match /users/{userId} {
+  		allow read;
+    	allow create:
+        if checkUserExists()
+          && checkCurrentUserIsDocumentKey(userId)
+      allow update, delete:
+        if request.auth.uid == userId;
+  	}
+    match /users/{userId}/DecksLiked/{deckId}{
+    	allow read;
+      allow create, update:
+      	if checkCurrentUserIsDocumentKey(userId)
+      allow delete:
+        if checkCurrentUserIsDocumentKey(userId)
+          || checkUserIsOwnerForCurrentDoc()
+    }
+  	match /users/{userId}/{document=**}{
+  		allow read;
+  		allow create, update, delete:
+        if checkCurrentUserIsDocumentKey(userId);
+  	}
+
+    match /achievements/{achievement}{
+    	allow read;
+    }
+    match /achievements/{achievement}/users/{userId}{
+    	allow read;
+    	allow create:
+        if checkUserExists()
+          && checkCurrentUserIsDocumentKey(userId)
+      allow update, delete:
+        if request.auth.uid == userId;
+    }
+
+    match /decks/{deckId}{
+    	allow read:
+    	  if resource.data.public == true
+    	    || checkUserIsOwnerForCurrentDoc();
+    	allow create:
+        if checkUserExists();
+      allow update, delete:
+        if checkUserIsOwnerForCurrentDoc();
+    }
+    match /decks/{deckId}/cards/{cardId}{
+    	allow read:
+        if checkDeckPublic(deckId)
+    	    || checkUserIsOwnerForCurrentDoc();
+    	allow create, update, delete:
+        if checkUserIsOwner('decks/'+deckId);
+    }
+    match /decks/{deckId}/likedUsers/{userId}{
+    	allow read:
+        if checkDeckPublic(deckId)
+    	    || checkUserIsOwnerForCurrentDoc();
+    	allow create, update:
+        if request.auth.uid == userId;
+      allow delete:
+        if checkUserIsOwner('decks/'+deckId);
+    }
+    match /decks/{document=**}{
+    	allow read; //FIX: allow only public to be read
+    }
+
+    match /deckLikes/{deckId}{
+    	allow read;
+      allow create, update:
+      	if checkUserExists();
+    }
+    match /deckLikes/{deckId}/users/{userId}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+      allow update, delete:
+        if checkCurrentUserIsDocumentKey(userId)
+    }
+
+    match /leaderboards/point/users/{userId}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+      allow update, delete:
+        if checkCurrentUserIsDocumentKey(userId)
+    }
+    match /leaderboards/mcq/decks/{deckId}/users/{userId}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+      allow update, delete:
+        if checkCurrentUserIsDocumentKey(userId)
+        	|| checkUserIsOwner('decks/'+deckId);
+    }
+    match /leaderboards/mcq/decks/{document=**}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+    }
+    match /leaderboards/openended/decks/{deckId}/users/{userId}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+      allow update, delete:
+        if checkCurrentUserIsDocumentKey(userId)
+        	|| checkUserIsOwner('decks/'+deckId);
+    }
+    match /leaderboards/openended/decks/{document=**}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+    }
+    match /leaderboards/truefalse/decks/{deckId}/users/{userId}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+      allow update, delete:
+        if checkCurrentUserIsDocumentKey(userId)
+        	|| checkUserIsOwner('decks/'+deckId);
+    }
+    match /leaderboards/truefalse/decks/{document=**}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+    }
+    match /leaderboards/ultimate/decks/{deckId}/users/{userId}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+      allow update, delete:
+        if checkCurrentUserIsDocumentKey(userId)
+        	|| checkUserIsOwner('decks/'+deckId);
+    }
+    match /leaderboards/ultimate/decks/{document=**}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+    }
+    match /leaderboards/{document=**}{
+    	allow read;
+      allow create:
+      	if checkUserExists();
+    }
+  }
+}

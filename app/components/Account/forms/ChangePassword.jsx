@@ -5,13 +5,13 @@ import { TextField, SubmitButton } from 'reuse'
 
 const ChangePassword = ({ initialValues, handleFormSubmission }) => {
   const validate = values => {
-    const errors = {};
+    const errors           = {};
     if (values.password) {
       if (values.password.length < 6) {
         errors['password'] = 'Password should be at least 6 characters'
       }
     } else {
-      errors['password'] = 'Required';
+      errors['password']   = 'Required';
     }
 
     return errors

@@ -108,7 +108,7 @@ export const editDeck = (deckId, detailsEdited, toAdd, toDelete, toEdit) =>{
 }
 
 export const deleteDeck = deckId =>{
-  const { 
+  const {
     deleteAtPath,
     deleteUsersLikedToDeck,
   }                                     = firebaseFunctions
@@ -272,7 +272,7 @@ export const searchForDeck = name =>{
   }else{
     queries.push(database.collection(dbConst.COL_DECKS).get())
   }
-  
+
 
   return Promise.all(queries).then(responses =>{
     let snapshotRedundantList           = []
@@ -300,7 +300,7 @@ export const searchForDeck = name =>{
       }
     })
     return {
-      success                           : true, 
+      success                           : true,
       decks                             : resultSnapshots,
       users,
     }
@@ -368,7 +368,7 @@ const cleanCardValues = card =>{
     backSub                             : card.backSub.trim(),
     index                               : card.index ? card.index : 0,
   }
-} 
+}
 
 const cleanNameAndConvertToArray = (name, addFull=true) =>{
   let search                            = XRegExp('([^?<first>\\pL ]+)');
@@ -568,7 +568,7 @@ export const getPlainTextAnswers = text => {
   let stringPlainText                   = ""
   let lastStringIndex                   = 0
   let currentList                       = []
-  let nestedText                         = {}
+  let nestedText                        = {}
   let textData                          = validateWYSIWYG(text)
   let listOfRuby                        = {}
 

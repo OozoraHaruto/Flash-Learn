@@ -7,13 +7,13 @@ import { pushToError } from 'componentConstants'
 import { MiddleWrapper } from 'reuse'
 import SignUpForm from 'app/components/Account/forms/Auth'
 
-const SignUp = ({ 
-  history, 
+const SignUp = ({
+  history,
   location,
  }) => {
   const handleUserRegistration = (values, formikBag) => {
     var { email, password } = values
-    const { startAddUser } = accounts
+    const { startAddUser }  = accounts
 
     return startAddUser(email, password).then(res => {
       if (!res.success) {
@@ -31,7 +31,7 @@ const SignUp = ({
       return pushToError(history, location, e)
     })
   }
-  
+
   return (
     <DocumentMeta title="SignUp">
       <div className="container-fluid p-0">

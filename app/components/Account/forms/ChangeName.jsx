@@ -5,7 +5,7 @@ import { TextField, SubmitButton } from 'reuse'
 
 const ChangeName = ({ initialValues, handleFormSubmission }) => {
   const validate = values => {
-    const errors = {};
+    const errors     = {};
 
     if (!values.name) {
       errors['name'] = 'Required';
