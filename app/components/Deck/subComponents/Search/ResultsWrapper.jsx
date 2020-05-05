@@ -16,7 +16,7 @@ const ResultsWrapper = ({
       </div>
       {
         decks.length > 0 &&
-          decks.map(deck => <Row key={`result_deck_${deck.id}`} deck={deck} owner={users[deck.owner.id]} />)
+        decks.map(deck => <Row key={`result_deck_${deck.id}`} deck={deck} owner={users[deck.owner]} />)
       }
     </React.Fragment>
   )

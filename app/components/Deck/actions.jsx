@@ -233,77 +233,10 @@ const getLikes = id =>{
 }
 
 export const searchForDeck = name =>{
-  const { getUserProfile }              = accounts
-  const searchTerms                     = cleanNameAndConvertToArray(name, false)
-  let resultSnapshots                   = []
-  let usersRedundantList                = []
-  let users                             = {}
-  let queries                           = []
+  const { searchForDeck }               = firebaseFunctions
 
-  const calculateRelevance = doc =>{
-    const formatDeck = (additionalData={}) =>{
-      return{
-        id                              : doc.id,
-        ...doc.data(),
-        modified                        : doc.data().modified.toMillis(),
-        ...additionalData,
-      }
-    }
-    if (name == ""){ return formatDeck() }
-    if (name == doc.data().name) { return formatDeck({ relevance: 99999}) }
-
-    let relevance                       = 0
-    let notIn                           = []
-
-    searchTerms.map(term =>{
-      if (doc.data().searchTerms.includes(term)){
-        relevance                      += 1
-      }else{
-        notIn.push(term)
-      }
-    })
-    return formatDeck({relevance, notIn})
-  }
-
-  if (name != ""){
-    queries = searchTerms.map(term =>{
-      return database.collection(dbConst.COL_DECKS).where("searchTerms", "array-contains", term).get()
-    })
-  }else{
-    queries.push(database.collection(dbConst.COL_DECKS).get())
-  }
-
-
-  return Promise.all(queries).then(responses =>{
-    let snapshotRedundantList           = []
-    let getUserData                     = []
-
-    responses.map(snapshots =>{
-      snapshots.docs.map(doc =>{
-        if (!snapshotRedundantList.includes(doc.id)){
-          resultSnapshots.push(calculateRelevance(doc))
-          snapshotRedundantList.push(doc.id)
-
-          if (!usersRedundantList.includes(doc.data().owner.id)) {
-            getUserData.push(getUserProfile(doc.data().owner.id))
-            usersRedundantList.push(doc.data().owner.id)
-          }
-        }
-      })
-    })
-    return Promise.all(getUserData)
-  }).then(resUsers =>{
-    resUsers.forEach((user, index) =>{
-      users[usersRedundantList[index]] = {
-        displayName                     : user.data.displayName,
-        photoURL                        : user.data.photoURL
-      }
-    })
-    return {
-      success                           : true,
-      decks                             : resultSnapshots,
-      users,
-    }
+  return searchForDeck(name).then(res => {
+    return res.data
   }).catch(e => {
     console.log("searchForDeck", e)
     return { success: false, ...e };

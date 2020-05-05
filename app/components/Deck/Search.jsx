@@ -55,6 +55,7 @@ export default class Search extends Component {
     const sortBy                            = sort.split("_")
 
     return searchForDeck(query).then(res => {
+      console.log("res", res)
       if(res.success){
         this.setState({
           query,
@@ -68,7 +69,7 @@ export default class Search extends Component {
       }
     }).catch(e =>{
       console.log("newSearch", e)
-      this.newSearch(query, sort)
+      // this.newSearch(query, sort)
     })
   }
 
@@ -103,10 +104,10 @@ export default class Search extends Component {
   }
 
   render(){
-    var { 
-      query, 
+    var {
+      query,
       sort,
-      results, 
+      results,
       users,
       loading,
     }                                       = this.state

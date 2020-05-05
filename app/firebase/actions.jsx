@@ -13,13 +13,23 @@ export const deleteAtPath = path =>{
 export const deleteUsersLikedToDeck = (deckId, usersPaths) =>{
   var deleteFn = functions.httpsCallable('deleteUsersLikedToDeck');
   return deleteFn({ deckId, usersPaths }).then(result=>{
-    console.log("result", result)
     return result
   }).catch(err =>{
     console.log('Failed to Delete : ', deckId, err);
     return {success: false, ...err}
   })
 }
+
+export const searchForDeck = name => {
+  var deleteFn = functions.httpsCallable('searchForDeck');
+  return deleteFn({ name }).then(result => {
+    return result
+  }).catch(err => {
+    console.log('Failed get any deck with the name: ', name, err);
+    return { success: false, ...err }
+  })
+}
+
 
 export const doOCRDocument = (bucketName, filePath, fileName, mimeType) => {
   var doOCR = functions.httpsCallable('doOCRDocument');
