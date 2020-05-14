@@ -18,7 +18,7 @@ const Row = ({
               <img src={`${owner.photoURL}?s=50`} alt="user's profile picture" className="rounded" />
             </div>
             <div className="ml-2 d-flex flex-column justify-content-center">
-              <div>by <NormLink title={owner.displayName} to={`/profile/${deck.owner.id}`} className="text-dark" /></div>
+              <div>by <NormLink title={owner.displayName} to={`/profile/${deck.owner}`} className="text-dark" /></div>
               <small className="text-muted">Last modified {formatDateTime(deck.modified, "", true)}</small>
             </div>
           </div>

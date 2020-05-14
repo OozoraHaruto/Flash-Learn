@@ -7,9 +7,9 @@ import * as rConst from "reduxConstants";
 import { formatTime } from 'componentConstants'
 
 // Auth
-export const startAddUser = (email, password) =>{
+export const startAddUser = (email, password) => {
   const cleanEmail                      = email.trim().toLowerCase()
-  const hash                            = crypto.createHash('md5').update(cleanEmail).digest("hex")
+  const hash                            = crypto.createHash('md5').update(cleanEmail).digest("hex") // https://medium.com/@robinlphood/gravatar-in-your-node-js-application-6aded410e883
   var newUser                           = {}
   var profile                           = {}
   return auth.createUserWithEmailAndPassword(cleanEmail, password).then(user => {
