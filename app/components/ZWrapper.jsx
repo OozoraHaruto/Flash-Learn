@@ -58,6 +58,7 @@ const ZWrapper = ({
               <NormLink to="/faq/decks" title="Decks" className="dropdown-item" />
               <NormLink to="/faq/tests" title="Tests" className="dropdown-item" />
               <NormLink to="/faq/gamification" title="Gamification" className="dropdown-item" />
+              <NormLink to="/faq/privacyAndCookies" title="Privacy Policies & Cookies" className="dropdown-item" />
               <div className="dropdown-divider" />
               <NormLink to="/faq" title="All" className="dropdown-item" />
             </NavDropdown>

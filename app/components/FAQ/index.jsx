@@ -62,6 +62,17 @@ const index = () =>{
               </li>
             </ul>
           </div>
+
+          <div className="card">
+            <div className="card-body">
+              <h4 className="card-title">Privacy Policies & Cookies</h4>
+            </div>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <NormLink to="/faq/privacyAndCookies" title="Privacy Policies & Cookies" />
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </DocumentMeta>
